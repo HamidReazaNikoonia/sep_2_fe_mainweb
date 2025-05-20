@@ -22,7 +22,7 @@ import ProductCard from '@/components/Card/ProductCard';
 const sampleProduct =  {
   id: "number",
   title: 'محصول',
-  subtitle: "نمونه",
+  subtitle: "توضیحات محصول در این قسمت قرار میگیرد",
   meta_title: "",
   meta_description: "",
   slug: "string",

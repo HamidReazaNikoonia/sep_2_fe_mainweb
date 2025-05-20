@@ -11,7 +11,9 @@ import Image from 'next/image';
 
 
 // import product_placeholder from "@/public/assets/images/product_placeholder.png";
-import sampleImage from "@/public/assets/images/s3.jpg";
+// import sampleImage from "@/public/assets/images/s3.jpg";
+import sampleImage from "@/public/assets/images/vialon.webp";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
@@ -110,11 +112,11 @@ export default function ProductCard({ product }: { product: IProduct }) {
   return (
     <Link legacyBehavior href={product?._id ? `/product/${product?._id}` : '/product/674b5414a7fc7c43af15f67a'} >
       <div className="relative w-full overflow-hidden rounded-lg bg-white shadow-md cursor-pointer hover:opacity-80">
-        <div className=' relative w-full h-48'>
-          <Image fill className=" rounded-t-lg object-cover" src={product?.thumbnail?.file_name ? `${NEXT_PUBLIC_SERVER_FILES_URL}/${product?.thumbnail?.file_name}` : sampleImage} alt={product.title} />
+        <div className=' relative w-full'>
+          <Image width="256" height="256" className=" rounded-t-lg " src={product?.thumbnail?.file_name ? `${NEXT_PUBLIC_SERVER_FILES_URL}/${product?.thumbnail?.file_name}` : sampleImage} alt={product.title} />
         </div>
         {/* If product not exist */}
-        {!product?.is_available && <span className="absolute top-0 left-0 w-28 translate-y-4 -translate-x-6 -rotate-45 bg-black text-center text-xs text-white">ناموجود</span>}
+        {!product?.is_available && <span className="absolute left-0 top-0 w-28 -translate-x-6 translate-y-4 -rotate-45 bg-black text-center text-xs text-white">ناموجود</span>}
         {(product?.is_available && product?.discountable?.status) && <span className="absolute top-0 left-0 w-28 translate-y-4 -translate-x-6 -rotate-45 bg-red-500 text-center text-xs text-white">
           %{product?.discountable.percent.toLocaleString('ar-EG')} OFF
         </span>}
@@ -125,10 +127,10 @@ export default function ProductCard({ product }: { product: IProduct }) {
               {product.title}
             </h2>
 
-            <h5 className='text-xs font-thin text-right mt-2 mb-4 text-slate-900'>{product.subtitle}</h5>
+            <h5 className='text-xs font-thin text-right mt-2 mb-4 text-slate-900 leading-6'>{product.subtitle}</h5>
           </a>
           <div className="mt-2.5 mb-5 flex items-center">
-            <span className="mr-2 pt-1 rounded bg-yellow-300 text-black px-2.5 py-0.5 text-xs font-semibold">{product?.average_rating || 0}</span>
+            <span className="mr-2 pt-1 rounded bg-yellow-300 text-black px-2.5 py-0.5 text-xs font-semibold">{(product?.average_rating || 0).toLocaleString('fa') || 0}</span>
             {Array.from({ length: 5 }).map((_, index) => (
               <Star
                 key={index}
@@ -140,9 +142,9 @@ export default function ProductCard({ product }: { product: IProduct }) {
             ))}
             {/* <Star  stroke='gray' fill='none' size={18} />       */}
           </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex text-lg font-bold items-center text-slate-900">
+          <div className="flex flex-col gap-y-4 items-center justify-center">
+            <div className='border-2 border-slate-300 text-center py-2 border-dashed w-full'>
+              <div className="flex justify-center text-lg font-bold items-center text-slate-900">
                 {product?.is_available && <span className='mr-1 text-sm'>تومان</span>}
                 {product?.is_available ? (<span>{product.price.toLocaleString('ar-EG')}</span>) : 'ناموجود'}
               </div>
@@ -155,8 +157,8 @@ export default function ProductCard({ product }: { product: IProduct }) {
               <a
                 onClick={addProductToCartHandler}
                 href="#"
-                className={`flex items-center rounded-md ${isClicked ? 'bg-green-500' : 'bg-slate-900 hover:bg-gray-700'
-                  } px-5 py-2.5 text-center text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-blue-300 transition-colors duration-300`}
+                className={`flex justify-center items-center rounded-md ${isClicked ? 'bg-green-500' : 'bg-slate-900 hover:bg-gray-700'
+                  } px-4 w-full py-2.5 text-center text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-blue-300 transition-colors duration-300`}
               >
                 {isClicked ? (
                   'اضافه به سبد'

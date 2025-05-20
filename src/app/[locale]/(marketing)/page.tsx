@@ -4,11 +4,13 @@ import MainSwiper from '@/components/swiper/MainSwiper';
 // import { Sponsors } from '@/components/Sponsors';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
+import CategoriesBannerSlider from '../../../components/CategoriesBannerSlider';
 // sections
 import CoursesCardSection from '../../../sections/home/CoursesCardSection';
 import FAQSection from '../../../sections/home/FAQ';
 import MultimediaTabsPortfolio from '../../../sections/home/MultimediaTabsPortfolio';
 import ServiceSwiper from '../../../sections/home/ServiceCardSection';
+
 import ThumbsSwiperImageGallery from '../../../sections/home/ThumbsSwiperImageGallery';
 
 type IIndexProps = {
@@ -82,9 +84,26 @@ export default async function Index(props: IIndexProps) {
         </div>
       </div>
 
+
+      <div className='py-12 bg-white'>
+        <CategoriesBannerSlider />
+      </div>
+
       {/* Service Card Swiper */}
-      <div className=" py-20">
-        <ServiceSwiper />
+      <div className=" bg-gradient-to-r from-blue-800 to-indigo-900 py-20">
+        <div className="flex w-full flex-col">
+          <div className="mb-20">
+            <ServiceSwiper rowTitle="محصولات فرهنگی" />
+          </div>
+
+          <div className='mb-20'>
+            <ServiceSwiper rowTitle='فیلم و سریال' />
+          </div>
+
+          <div className='mb-2'>
+            <ServiceSwiper rowTitle='نویسندگی' />
+          </div>
+        </div>
       </div>
 
       {/* Courses Card Section */}

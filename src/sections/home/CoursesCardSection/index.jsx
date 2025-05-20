@@ -1,16 +1,22 @@
+'use client'
 import React from 'react'
 import Link from 'next/link';
 import { ChevronsLeft, ClipboardList } from 'lucide-react';
-// import CourseItem from '@/components/CourseItem';
+import CourseCardItem from '@/components/CourseItem';
 // componet
-import CourseCardItem from '@/components/Card/CourseCard';
+// import CourseCardItem from '@/components/Card/CourseCard';
+
+// utils
+import useResponsiveEvent from '@/hooks/useResponsiveEvent'; 
 
 
 export default function CoursesCardSection() {
+
+  const isMobileScreen = useResponsiveEvent(768, 200);
   return (
     <div className='container mx-auto'>
       {/* Header */}
-      <div className='flex justify-between w-full pb-8 px-4'>
+      <div className='flex justify-between w-full pb-8 px-4 gap-y-12'>
 
         <Link href="/course">
           <button
@@ -25,19 +31,38 @@ export default function CoursesCardSection() {
           <ClipboardList className='ml-3' />
         </div>
       </div>
-      <div className="flex w-full flex-wrap justify-center items-center px-5 md:px-0 gap-5">
-        <div className='w-full md:w-[30%] '>
-          <CourseCardItem speaker="مریم صفدری" category="هنری" subtitle="تجربه رشد  فروش در 4 سال، با شما راهکارهای کاربردی که رشد تیم فروش را به همراه دارد را بررسی می‌کنیم." imageSrc={`https://s3.eseminar.tv/upload/slideshow/1738428254-slideshow.jpgg`} title=" تغییر و تطبیق صدا با هوش مصنوعی" link={undefined} />
+      <div className="flex w-full flex-wrap justify-center items-center px-5 md:px-0 ">
+        <div className='w-full md:w-[33%] '>
+          <CourseCardItem score={3} speaker="مریم صفدری" category="هنری" subtitle="تجربه رشد  فروش در 4 سال، با شما راهکارهای کاربردی که رشد تیم فروش را به همراه دارد را بررسی می‌کنیم." imageSrc={`https://s3.eseminar.tv/upload/slideshow/1738428254-slideshow.jpgg`} title=" تغییر و تطبیق صدا با هوش مصنوعی" link={undefined} />
         </div>
 
-        <div className='w-full md:w-[30%] '>
-          <CourseCardItem speaker="مریم صفدری" category="هنری" subtitle="تجربه رشد  فروش در 4 سال، با شما راهکارهای کاربردی که رشد تیم فروش را به همراه دارد را بررسی می‌کنیم." imageSrc={`https://s3.eseminar.tv/upload/slideshow/1738428254-slideshow.jpgg`} title=" تغییر و تطبیق صدا با هوش مصنوعی" link={undefined} />
+        <div className='w-full md:w-[33%] '>
+          <CourseCardItem score={3} speaker="مریم صفدری" category="هنری" subtitle="تجربه رشد  فروش در 4 سال، با شما راهکارهای کاربردی که رشد تیم فروش را به همراه دارد را بررسی می‌کنیم." imageSrc={`https://s3.eseminar.tv/upload/slideshow/1738428254-slideshow.jpgg`} title=" تغییر و تطبیق صدا با هوش مصنوعی" link={undefined} />
         </div>
 
 
-        <div className='w-full md:w-[30%] '>
-          <CourseCardItem speaker="مریم صفدری" category="هنری" subtitle="تجربه رشد  فروش در 4 سال، با شما راهکارهای کاربردی که رشد تیم فروش را به همراه دارد را بررسی می‌کنیم." imageSrc={`https://s3.eseminar.tv/upload/slideshow/1738428254-slideshow.jpgg`} title=" تغییر و تطبیق صدا با هوش مصنوعی" link={undefined} />
+        <div className='w-full md:w-[33%] '>
+          <CourseCardItem  speaker="مریم صفدری" category="هنری" subtitle="تجربه رشد  فروش در 4 سال، با شما راهکارهای کاربردی که رشد تیم فروش را به همراه دارد را بررسی می‌کنیم." imageSrc={`https://s3.eseminar.tv/upload/slideshow/1738428254-slideshow.jpgg`} title=" تغییر و تطبیق صدا با هوش مصنوعی" link={undefined} />
         </div>
+
+        {!isMobileScreen && (
+          <>
+               <div className='w-full md:w-[33%] '>
+          <CourseCardItem  speaker="مریم صفدری" category="هنری" subtitle="تجربه رشد  فروش در 4 سال، با شما راهکارهای کاربردی که رشد تیم فروش را به همراه دارد را بررسی می‌کنیم." imageSrc={`https://s3.eseminar.tv/upload/slideshow/1738428254-slideshow.jpgg`} title=" تغییر و تطبیق صدا با هوش مصنوعی" link={undefined} />
+        </div>
+
+         <div className='w-full md:w-[33%] '>
+          <CourseCardItem  speaker="مریم صفدری" category="هنری" subtitle="تجربه رشد  فروش در 4 سال، با شما راهکارهای کاربردی که رشد تیم فروش را به همراه دارد را بررسی می‌کنیم." imageSrc={`https://s3.eseminar.tv/upload/slideshow/1738428254-slideshow.jpgg`} title=" تغییر و تطبیق صدا با هوش مصنوعی" link={undefined} />
+        </div>
+
+
+         <div className='w-full md:w-[33%] '>
+          <CourseCardItem  speaker="مریم صفدری" category="هنری" subtitle="تجربه رشد  فروش در 4 سال، با شما راهکارهای کاربردی که رشد تیم فروش را به همراه دارد را بررسی می‌کنیم." imageSrc={`https://s3.eseminar.tv/upload/slideshow/1738428254-slideshow.jpgg`} title=" تغییر و تطبیق صدا با هوش مصنوعی" link={undefined} />
+        </div>
+          </>
+        )}
+
+        
 
 
 

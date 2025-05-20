@@ -4,22 +4,27 @@ import { ChevronsLeft, ClipboardList } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
-export default function ServiceCardSection() {
+type IServiceCardSection = {
+  rowTitle: string;
+};
+
+export default function ServiceCardSection({ rowTitle }: IServiceCardSection) {
   return (
     <>
       {/* Header */}
-      <div className="flex w-full justify-between px-4 pb-2 md:px-20">
+      <div className="flex w-full justify-between px-4 md:px-20">
 
         <Link href="/course">
           <button
-            className="bg-transparent text-white font-medium text-xs md:text-sm py-2 px-1 md:px-4  rounded-md inline-flex items-center">
-            <ChevronsLeft className='mr-2' />
+            className="inline-flex items-center rounded-md bg-transparent px-1 py-2 text-xs font-medium  text-white md:px-4 md:text-sm"
+          >
+            <ChevronsLeft className="mr-2" />
             مشاهده همه
           </button>
         </Link>
         <div className="inline-flex items-center py-2  text-lg font-semibold text-white">
 
-          خدمات تخصصی
+          {rowTitle}
           <ClipboardList className="ml-3" />
         </div>
       </div>
