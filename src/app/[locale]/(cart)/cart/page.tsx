@@ -18,7 +18,7 @@ import useResponsiveEvent from '@/hooks/useResponsiveEvent';
 import clsx from 'clsx';
 
 // assets
-import emptyCartSvg from '@/public/assets/svg/empty_cart.svg';
+// import emptyCartSvg from '@/public/assets/svg/empty_cart.svg';
 
 
 // API
@@ -33,6 +33,8 @@ import CartItemComponent from '@/sections/cart/CartList';
 import { submitCartToCreateOrderRequest } from '@/API/order/payment';
 import LoadingButton from '@/components/LoadingButton';
 import useAuth from '@/hooks/useAuth';
+
+
 
 
 const initialCartItems = [
@@ -324,7 +326,7 @@ export default function ShoppingCart() {
   const isAddressDataExist = addressIsSuccess && addressData && Array.isArray(addressData);
 
   return (
-    <div className="w-full primary-gradient-bg min-h-[80vh]">
+    <div className="w-full h-svh bg-gradient-to-t from-slate-900 to-slate-700 min-h-[80vh]">
       <div className="mx-auto px-4 py-8">
         {/* <h2 dir='rtl' className="text-3xl text-right font-bold mb-6 text-gray-800">
         <X size={34} />
@@ -333,13 +335,13 @@ export default function ShoppingCart() {
           {isDataExist ? (
             <>
               {cartItemFiltered && cartItemFiltered.length === 0 ? (
-                <div className="text-center py-32 bg-white rounded-xl shadow-lg">
+                <div className="text-center py-12 bg-none ">
                   <div className='flex justify-center'>
-                    <Image alt="" width="200" height="200" src={emptyCartSvg} />
+                    
                   </div>
-                  <p className="text-xl text-gray-500 mb-12 mt-6">سبد شما خالی میباشد</p>
+                  <p className="text-xl text-gray-100 mb-12 mt-6">سبد شما خالی میباشد</p>
                   <Link href="/product">
-                    <button className="w-60 cursor-pointer  bg-purple-800 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+                    <button className="w-60 cursor-pointer  bg-purple-900 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
                       ادامه خرید
                     </button>
                   </Link>

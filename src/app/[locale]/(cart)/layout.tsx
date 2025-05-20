@@ -3,7 +3,7 @@ import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { BaseTemplate } from '@/templates/BaseTemplate';
 import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import Navbar from '@/components/Navbar';
+import TopNavBar from '@/components/TopNavBar';
 // components
 import Footer from '@/templates/Footer';
 
@@ -21,7 +21,7 @@ export default async function Layout(props: {
   return (
     <>
       {/* <DemoBanner /> */}
-        <Navbar />
+        <TopNavBar />
         <div className="pt-16">{props.children}</div>
          {/* Footer */}
          {/* <Footer /> */}
