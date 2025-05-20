@@ -1,0 +1,53 @@
+/* service_swiper */
+
+
+.service_swiper .swiper-slide {
+  /* border: 5px solid red; */
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s ease;
+  opacity: 0.5;
+  /* -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
+  mask-image: gradient(linear, left top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0))); */
+}
+
+.service_swiper.swiper {
+  width: 100%;
+  /* height: 300px; */
+  margin: 20px auto;
+}
+
+
+.service_swiper .swiper-button-prev, .service_swiper .swiper-button-next {
+  padding: 28px;
+  border-radius: 34px;
+  background: #f0f8ffba;
+  border: 1px solid lightgrey;
+}
+
+.service_swiper .swiper-button-prev:after, .service_swiper .swiper-button-next:after {
+  font-size: 34px;
+}
+
+
+
+/* Fully opaque for active slide */
+.service_swiper .swiper-slide-active {
+  opacity: 1;
+  background-image: none;
+  mask-image: none;
+}
+
+/* Slightly more opaque for adjacent slides */
+.service_swiper .swiper-slide-next,
+.service_swiper .swiper-slide-prev {
+  opacity: 1;
+  background-image: none;
+  mask-image: none;
+}
+
+
+/** **/

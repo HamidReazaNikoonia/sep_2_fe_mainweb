@@ -1,0 +1,5 @@
+.course-item:hover .like-button {
+  transform: translateY(-0.25rem);
+  opacity: 0.9;
+  background-color: #000000af;
+}
