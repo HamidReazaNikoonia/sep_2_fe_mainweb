@@ -128,7 +128,7 @@ const Navbar = () => {
             <UserAvatar user={user} logOut={logout} />
           </>
         ) : (
-          <Link href='/sign-in'>
+          <Link href='/'>
             <button className="bg-purple-800 hover:bg-blue-600 px-4 py-2 rounded text-sm">
               ورود | ثبت‌نام
             </button>

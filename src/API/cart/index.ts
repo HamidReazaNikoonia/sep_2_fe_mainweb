@@ -1,5 +1,5 @@
 import { IProduct } from '@/types/Product';
-import {SERVER_API_URL, SERVER_API_TOKEN} from '../config';
+import {SERVER_API_URL, SERVER_API_TOKEN, getAuthToken} from '../config';
 
 const API_BASE_URL = SERVER_API_URL;
 const API_TOKEN = SERVER_API_TOKEN;
@@ -24,7 +24,7 @@ async function getUserCart() {
     headers: {
       accept: "application/json",
       Authorization:
-        `Bearer ${API_TOKEN}`,
+        `Bearer ${getAuthToken()}`,
     },
   };
 
@@ -45,7 +45,7 @@ async function updateUserCart({productId, quantity}: {productId: string, quantit
       accept: "application/json",
       'Content-Type': 'application/json',
       Authorization:
-        `Bearer ${API_TOKEN}`,
+        `Bearer ${getAuthToken()}`,
     },
     body: JSON.stringify({quantity: quantity})
   };
@@ -69,7 +69,7 @@ async function addProductToCart({productId, quantity, courseId}: {productId?: st
       accept: "application/json",
       'Content-Type': 'application/json',
       Authorization:
-        `Bearer ${API_TOKEN}`,
+        `Bearer ${getAuthToken()}`,
     },
     body: JSON.stringify({
       quantity,
@@ -96,7 +96,7 @@ async function deleteProductInCart({cartItemId}: {cartItemId: string}) {
       accept: "application/json",
       'Content-Type': 'application/json',
       Authorization:
-        `Bearer ${API_TOKEN}`,
+        `Bearer ${getAuthToken()}`,
     }
   };
 
