@@ -62,6 +62,7 @@
     "react-hot-toast": "^2.4.1",
     "react-range-slider-input": "^3.0.7",
     "react-tilt": "^1.0.2",
+    "reactjs-otp-input": "^2.0.10",
     "swiper": "^11.1.15",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",

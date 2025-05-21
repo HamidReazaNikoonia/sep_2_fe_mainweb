@@ -22,7 +22,7 @@ const Button: FC<ButtonProps> = ({
         "relative flex items-center justify-center px-4 py-2 rounded-md font-medium transition duration-200",
         {
           "bg-gray-400 text-gray-700 cursor-not-allowed": isLoading || disabled,
-          "bg-green-600 text-white hover:bg-blue-700": !isLoading && !disabled,
+          "bg-purple-800 text-white hover:bg-blue-700": !isLoading && !disabled,
         },
         className
       )}

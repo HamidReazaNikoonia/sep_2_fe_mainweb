@@ -2,13 +2,12 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { OtpInput } from 'reactjs-otp-input';
 
 // assets
-import AuthVector from '@/public/assets/svg/undraw_authentication_tbfc.svg';
 
 // API
 import { completeProfileRequest, loginByOTPRequest, validateOTPRequest } from '@/API/auth';
@@ -16,11 +15,55 @@ import { completeProfileRequest, loginByOTPRequest, validateOTPRequest } from '@
 // Components
 import LoadingButton from '@/components/LoadingButton';
 
-import { Button } from '@/components/ui/button';
+import useAuth from '@/hooks/useAuth';
 // utils
 import { isEmpty, isValidIranianMobileNumber, storeAuthToken, toPersianDigits } from '@/utils/Helpers';
-import useAuth from '@/hooks/useAuth';
 
+const AuthCardContainer = ({ children }) => {
+  return (
+    <div className="flex min-h-screen flex-col justify-center bg-gray-100 py-6 sm:py-12">
+      <div className="relative py-3 sm:mx-auto sm:max-w-xl">
+        <div
+          className="absolute inset-0 -skew-y-6 bg-gradient-to-r from-cyan-400 to-sky-500 shadow-lg sm:-rotate-6 sm:skew-y-0 sm:rounded-3xl"
+        >
+        </div>
+        <div className="relative bg-white px-4 py-10 shadow-lg sm:rounded-3xl sm:p-20">
+
+          {/* <div class="max-w-md mx-auto">
+        <div>
+          <h1 class="text-2xl font-semibold">Login</h1>
+        </div>
+        <div class="divide-y divide-gray-200">
+          <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+            <div class="relative">
+              <input autocomplete="off" id="email" name="email" type="text" class="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Email address" />
+              <label for="email" class="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Email Address</label>
+            </div>
+            <div class="relative">
+              <input autocomplete="off" id="password" name="password" type="password" class="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Password" />
+              <label for="password" class="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Password</label>
+            </div>
+            <div class="relative">
+              <button class="bg-cyan-500 text-white rounded-md px-2 py-1">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div> */}
+
+          {children}
+
+          {/* <div className="w-full flex justify-center">
+        <button className="">
+
+          <span>Continue with Google</span>
+        </button>
+      </div> */}
+
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function AuthComponent() {
   const [mobileNumber, setMobileNumber] = useState('');
@@ -31,7 +74,7 @@ export default function AuthComponent() {
   const [otp, setOtp] = useState('');
   const [timer, setTimer] = useState(120); // 2-minute timer
   const [canResend, setCanResend] = useState(false);
-  const [uiSteps, setUISteps] = useState(0);
+  const [uiSteps, setUISteps] = useState(1);
   const [isFirstLogin, setisFirstLogin] = useState(false);
   const [showSetProfileInfo, setshowSetProfileInfo] = useState(false);
   const [curentLoginUserId, setCurentLoginUserId] = useState(null);
@@ -230,12 +273,12 @@ export default function AuthComponent() {
                 required
                 className="w-full appearance-none rounded-md border-gray-700 bg-gray-800 px-4 py-2 pr-10 text-xs text-white placeholder:text-gray-400 md:text-sm"
               >
-                <option style={{padding: '10px 0'}} value="" disabled>جنسیت خود را انتخاب کنید</option>
+                <option style={{ padding: '10px 0' }} value="" disabled>جنسیت خود را انتخاب کنید</option>
                 <option value="W">زن</option>
                 <option value="M">مرد</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-400">
-                <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <svg className="size-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                 </svg>
               </div>
@@ -253,97 +296,81 @@ export default function AuthComponent() {
   }
 
   return (
-    <div className="flex h-screen w-full bg-gray-900 text-white">
-      {/* Image half */}
-      <div className="relative hidden w-1/2 md:block ">
-        <div className="mt-16 flex items-center justify-center">
-          <Image
-            src={AuthVector}
-            alt="Authentication background"
-            width={400}
-            height={500}
+    <AuthCardContainer>
 
-          />
+      <div className="mx-auto max-w-md">
+        <div className="text-center">
+          <h2 className="mt-6 text-sm font-semibold text-gray-700 md:text-lg">
+            {uiSteps === 1 && 'با شماره موبایل خود وارد شوید'}
+            {uiSteps === 2 && 'کد را وارد کنید'}
+          </h2>
         </div>
-      </div>
 
-      {/* Form half */}
-      <div className=" flex w-full items-center justify-center p-8 md:w-1/2">
-        <div className="w-full max-w-md space-y-8">
-          <div className="text-center">
-            <h2 className="mt-6 text-sm font-extrabold text-white md:text-xl">
-              {uiSteps === 1 && 'با شماره موبایل خود وارد شوید'}
-              {uiSteps === 2 && 'کد را وارد کنید'}
-            </h2>
-          </div>
-          <form dir="rtl" className="mt-8 flex flex-col items-center justify-center text-right" onSubmit={handleSubmit}>
-            {uiSteps === 0 && (
-              <div className="flex w-full flex-col space-y-4">
-                <Button onClick={() => setUserRoleHandler('user')} variant="secondary"> ورود کاربر</Button>
-                <Button onClick={() => setUserRoleHandler('coach')} variant="secondary"> ورود مربی</Button>
+        <form dir="rtl" className="mt-8 flex w-full flex-col items-center justify-center text-right" onSubmit={handleSubmit}>
+
+          {uiSteps === 1
+          && (
+            <div className="relative mt-4">
+              <input required autoFocus type="tel" value={mobileNumber} placeholder=" شماره موبایل " onChange={e => setMobileNumber(e.target.value)} autoComplete="off" id="mobile" name="mobile" className="focus:borer-rose-600 peer h-10 w-full border-b-2 border-gray-300 text-gray-900 placeholder:text-transparent focus:outline-none" />
+              <label htmlFor="mobile" className="peer-placeholder-shown:text-gray-440 absolute -top-3.5 right-0 text-xs text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-xs peer-focus:-top-3.5 peer-focus:text-[11px] peer-focus:text-gray-600">شماره موبایل</label>
+            </div>
+
+          )}
+
+          {uiSteps === 2 && (
+            <div>
+              <p className="mb-3 mt-1 text-center text-xs text-gray-600">
+                {' '}
+                شماره موبایل شما&nbsp;
+                {mobileNumber && toPersianDigits(mobileNumber)}
+              </p>
+
+              <div dir="ltr" className="flex justify-center py-4">
+
+                <OtpInput inputStyle={{ width: '35px', border: '1px solid #cbcbcb', padding: '5px 12px', borderRadius: '8px' }} focusStyle isInputNum value={otp} onChange={setOtp} numInputs={6} separator={<span> &nbsp;</span>} />
+
               </div>
-            )}
 
-            {uiSteps === 1
-              && (
-
-                <input
-                  type="tel"
-                  autoFocus
-                  placeholder=" شماره موبایل "
-                  value={mobileNumber}
-                  onChange={e => setMobileNumber(e.target.value)}
-                  required
-                  className="mb-4 rounded-md border-gray-700 bg-gray-800 px-4 py-2 text-xs text-white placeholder:text-gray-400 md:text-sm"
-                />
-              )}
-
-            {uiSteps === 2 && (
-              <div>
-                <p className="mb-3 mt-1 text-center text-xs text-gray-300">
-                  {' '}
-                  شماره موبایل شما
-                  {mobileNumber && toPersianDigits(mobileNumber)}
-                </p>
-                <input
+              {/* <input
                   type="text"
                   placeholder=""
                   value={otp}
                   onChange={e => setOtp(e.target.value)}
                   required
                   className="mb-4 rounded-md border-gray-700 bg-gray-800 px-4 py-1 text-white placeholder:text-gray-400"
-                />
+                /> */}
 
-                {!canResend && (
-                  <p className="mt-2 text-xs text-gray-600">
-                    ارسال مجدد کد به شماره موبایل شما بعد از
-                    {' '}
-                    {timer}
-                    {' '}
-                    ثانیه
-                  </p>
-                )}
-                <button
-                  type="button"
-                  onClick={handleResendOtp}
-                  disabled={!canResend}
-                  className={`mt-2 w-full text-center text-xs text-blue-500 ${!canResend ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-                    }`}
-                >
-                  ارسال مجدد کد
-                </button>
-              </div>
-            )}
+              {!canResend && (
+                <p className="mt-2 text-xs text-gray-600">
+                  ارسال مجدد کد به شماره موبایل شما بعد از
+                  {' '}
+                  {timer}
+                  {' '}
+                  ثانیه
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={handleResendOtp}
+                disabled={!canResend}
+                className={`mt-2 w-full text-center text-xs text-blue-500 ${!canResend ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                }`}
+              >
+                ارسال مجدد کد
+              </button>
+            </div>
+          )}
 
-            {uiSteps !== 0 && (
-              <LoadingButton isLoading={(loginByOTPMutation.isPending || validateOTPMutation.isPending)} className="mt-4 w-52 py-2 text-xs md:w-72 md:text-sm " type="submit">
-                {uiSteps === 1 && 'وارد شوید'}
-                {uiSteps === 2 && ' تایید کد'}
-              </LoadingButton>
-            )}
-          </form>
-        </div>
+          {uiSteps !== 0 && (
+            <LoadingButton isLoading={(loginByOTPMutation.isPending || validateOTPMutation.isPending)} className="mt-12 w-52 py-2 text-xs md:w-72 md:text-sm  " type="submit">
+              {uiSteps === 1 && 'وارد شوید'}
+              {uiSteps === 2 && ' تایید کد'}
+            </LoadingButton>
+          )}
+        </form>
       </div>
-    </div>
+
+    </AuthCardContainer>
+
   );
 }
