@@ -2,6 +2,15 @@
 .mySwiper.swiper {
   width: 100%;
   height: 25rem;
+  border-radius: 0px;
+}
+
+/* For tablets (portrait) */
+@media (max-width: 460px) {
+  .mySwiper.swiper {
+    height: 8rem; /* Optional intermediate size */
+    border-radius: 15px;
+  }
 }
 
 .mySwiper.swiper-slide {

@@ -42,8 +42,28 @@ export default async function Index(props: IIndexProps) {
     <div className=" overflow-hidden bg-black pt-16">
 
       {/* Main Slider In md Screen */}
-      <div className="flex">
+      <div className="mt-6 flex flex-col px-4 md:mt-0 md:px-0">
+        <div className=" mt-4 block px-4 pb-3 text-right text-sm text-white md:hidden">
+          پرفروش ترین ها
+        </div>
         <MainSwiper />
+      </div>
+
+      <div className="mt-6 flex flex-col px-4 md:hidden">
+        <div className="flex flex-col">
+          <div className=" px-4 pb-3 text-right text-sm text-white">
+            پرفروش ترین ها
+          </div>
+          <MainSwiper />
+        </div>
+
+        <div className="mt-6 flex flex-col">
+          <div className=" px-4 pb-3 text-right text-sm text-white">
+            پرفروش ترین ها
+          </div>
+          <MainSwiper />
+        </div>
+
       </div>
 
       {/* Service Card Item */}
