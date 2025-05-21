@@ -110,13 +110,15 @@ export default function ProductList({ productsData }: { productsData: { count: n
 
 
   return (
-    <div className="flex flex-col md:flex-row gap-1 md:gap-4 px-1 md:px-4 mb-14 relative" >
-      <div dir='rtl' className="w-full md:w-3/4">
+    <div className="flex flex-col md:flex-row gap-1 md:gap-4 px-1 md:px-8 mb-14 relative" >
+      <div dir='rtl' className="w-full">
         <List products={filteredProducts} />
       </div>
-      <div className="w-full order-first md:order-last mb-12 md:mb-0 md:w-1/4 bg-gray-100 rounded-xl pb-6 pt-4 " style={{ maxHeight: '650px' }}>
+
+      {/* Filter and Search */}
+      {/* <div className="w-full order-first md:order-last mb-12 md:mb-0 md:w-1/4 bg-gray-100 rounded-xl pb-6 pt-4 " style={{ maxHeight: '650px' }}>
         <FilterAndSearch onFilter={handleFilter} />
-      </div>
+      </div> */}
     </div>
   )
 }

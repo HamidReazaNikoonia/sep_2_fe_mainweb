@@ -1,10 +1,7 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-
-import ProductListHeader from '@/sections/product/ProductListHeader';
+import { SERVER_API_URL } from '@/API/config';
 import ProductList from '@/sections/product/ProductList';
 
-import {SERVER_API_URL} from '@/API/config';
-
+import ProductListHeader from '@/sections/product/ProductListHeader';
 
 type IAboutProps = {
   params: Promise<{ slug: string; locale: string }>;
@@ -22,7 +19,6 @@ export async function generateMetadata(props: IAboutProps) {
   // };
 }
 
-
 const fetchRepo = async () => {
   const res = await fetch(`${SERVER_API_URL}/product`, {
     next: { revalidate: 60 }, // Enables ISR (Incremental Static Regeneration)
@@ -35,7 +31,6 @@ const fetchRepo = async () => {
   return res.json();
 };
 
-
 export default async function Courses(props: IAboutProps) {
   // const { locale } = await props.params;
   // setRequestLocale(locale);
@@ -45,20 +40,18 @@ export default async function Courses(props: IAboutProps) {
   // });
 
   const productsData = await fetchRepo();
-  console.log(productsData.data.products)
-
-
+  console.log(productsData.data.products);
 
   return (
-    <div className='overflow-hidden bg-[#E1EBEE] text-black min-h-screen'>
-        <div className="container mx-auto pt-8">
-          {/* Header */}
-          <ProductListHeader />
-        </div>
+    <div className="min-h-screen overflow-hidden pt-16 bg-[#000000] text-white">
+      <div className="container mx-auto pt-8">
+        {/* Header */}
+        <ProductListHeader />
+      </div>
 
-        <div className="px-4 pt-4">
-          <ProductList productsData={productsData?.data} />
-        </div>
+      <div className="px-4 pt-4">
+        <ProductList productsData={productsData?.data} />
+      </div>
     </div>
   );
 };

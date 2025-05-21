@@ -24,7 +24,7 @@ export default function ProductListHeader() {
 
 
   return (
-    <div className="mb-8 flex mr-8 md:mr-0 flex-col-reverse md:flex-row justify-between items-end">
+    <div className="mb-8 flex mr-8 md:mr-0  px-4 flex-col-reverse md:flex-row justify-between items-end">
      
 
 
