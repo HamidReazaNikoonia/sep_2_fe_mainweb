@@ -49,6 +49,11 @@ export default withSentryConfig(
           },
           {
             protocol: 'https',
+            hostname: 'images.pexels.com',
+            port: '',
+          },
+          {
+            protocol: 'https',
             hostname: 'i.postimg.cc',
             port: '',
           },

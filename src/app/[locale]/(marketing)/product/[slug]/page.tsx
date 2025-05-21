@@ -4,13 +4,14 @@ import Image from 'next/image'
 // import ProductListHeader from '@/sections/product/ProductListHeader';
 // import ProductList from '@/sections/product/ProductList';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import { Star } from 'lucide-react';
+import { Star, Heart } from 'lucide-react';
 import AddToCartButton from '@/components/AddToCartButton';
 import CommentLayout from '@/components/Comment';
 
 import {SERVER_API_URL} from '@/API/config';
 
 import product_placeholder from "@/public/assets/images/product_placeholder.png";
+import ProductImageGallery from '@/components/ProductImageGallery';
 
 type IAboutProps = {
   params: Promise<{ slug: string; locale: string }>;
@@ -66,7 +67,7 @@ export default async function SpecificCourse(props: IAboutProps) {
 
 
   return (
-    <div className='overflow-hidden bg-[#E1EBEE] text-black min-h-screen'>
+    <div className='overflow-hidden bg-black text-white pt-16 min-h-screen'>
       <div className="container mx-auto pt-12">
         {/* Header */}
         <div className='mb-8 flex mr-8 md:mr-0 flex-col-reverse md:flex-row justify-end items-end'>
@@ -75,12 +76,12 @@ export default async function SpecificCourse(props: IAboutProps) {
 
       </div>
 
-      <div className="max-w-7xl mx-auto mt-16 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col-reverse md:flex-row -mx-4">
+      <div className="max-w-7xl mx-auto my-16 px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row -mx-4">
 
           {/* Left Side */}
 
-          <div className="md:flex-1 px-4">
+          {/* <div className="md:flex-1 px-4">
             <div >
               <div className="h-64 md:h-80 rounded-lg bg-gray-100 mb-4">
                 <div className="h-64 relative md:h-80 rounded-lg shadow-lg bg-gray-100 mb-4 flex items-center justify-center">
@@ -136,15 +137,19 @@ export default async function SpecificCourse(props: IAboutProps) {
 
 
           </div>
+ */}
 
+              <div className='w-full md:w-1/2'>
+                <ProductImageGallery />
+              </div>
 
           {/* Rigth SIde */}
 
-          <div className="md:flex-1 px-4 mb-16">
-            <h2 className="mb-2 leading-tight tracking-tight font-bold text-black text-right text-2xl md:text-3xl">
+          <div className="md:flex-1 px-4 mt-16 md:mt-0">
+            <h2 className="mb-2 leading-tight tracking-tight font-bold text-white text-right text-2xl md:text-3xl">
               {product?.title}
             </h2>
-            <p className="text-gray-800 text-right text-sm mt-6">
+            <p className="text-gray-300 text-right text-sm mt-6">
               {product?.subtitle}
             </p>
 
@@ -160,7 +165,7 @@ export default async function SpecificCourse(props: IAboutProps) {
                     </>
 
 
-                  ) : (<span className='text-gray-700 font-bold px-12' > ناموجود </span>)}
+                  ) : (<span className='text-gray-100 font-bold px-12' > ناموجود </span>)}
                 </div>
               </div>
               {(product?.discountable?.status && product?.is_available) && (
@@ -168,7 +173,7 @@ export default async function SpecificCourse(props: IAboutProps) {
                 <p className="text-green-500 text-xl font-semibold">
                   {(10).toLocaleString('ar-EG')}٪ تخفیف
                 </p>
-                <p className="text-gray-800 text-sm">شامل هزینه مالیات</p>
+                <p className="text-gray-400 text-sm">شامل هزینه مالیات</p>
               </div>
               )}
               
@@ -188,13 +193,13 @@ export default async function SpecificCourse(props: IAboutProps) {
               </div>
             </div>
 
-            <p className="text-gray-800 text-sm pl-2 text-right leading-8 mt-8 border-t-2 pt-8 border-gray-700">
+            <p className="text-gray-300 text-sm pl-2 text-right leading-8 mt-8 border-t-2 pt-8 border-gray-700">
 
               لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد
 
             </p>
 
-            <div className="flex justify-center md:justify-end mt-8 py-4 space-x-4">
+            <div className="flex flex-col md:flex-row justify-center items-stretch md:items-center md:justify-end mt-8 py-4 space-y-4 space-x-0 md:space-y-0 md:space-x-4">
               {/* <div className="relative">
             <div className="text-center left-0 pt-2 right-0 absolute block text-xs uppercase text-gray-400 tracking-wide font-semibold">Qty</div>
             <select className="cursor-pointer appearance-none rounded-xl border border-gray-200 pl-4 pr-8 h-14 flex items-end pb-1">
@@ -208,9 +213,10 @@ export default async function SpecificCourse(props: IAboutProps) {
             
           </div> */}
 
-              {/* <button type="button" className="h-14 px-6 py-2 font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white">
-            Add to Cart
-          </button> */}
+              <button type="button" className="h-14 flex justify-center items-center px-6 py-2  rounded-xl bg-[#981e1e] text-white">
+            اضافه به علاقه مندی ها
+            <Heart className='ml-3' />
+          </button>
               <AddToCartButton productIsAvailable={true} product={productsData.data} />
             </div>
           </div>
