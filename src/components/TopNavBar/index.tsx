@@ -165,8 +165,18 @@ const Navbar = () => {
                     <li className="px-4 py-2 hover:bg-gray-600">خدمات</li>
                   </ul>
                 </li>
-                <li className="hover:text-gray-300">آکادمی آموزشی</li>
-                <li className="hover:text-gray-300">خانه</li>
+
+                <Link href="/course">
+                  <li className="hover:text-gray-300">دوره ها</li>
+                </Link> 
+
+                <Link href="/product">
+                  <li className="hover:text-gray-300">محصولات</li>
+                </Link>                
+                
+                <Link href="/">
+                  <li className="hover:text-gray-300">خانه</li>
+                </Link>
               </ul>
 
               {/* Logo */}
