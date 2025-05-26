@@ -44,6 +44,7 @@ export default function CoursesCardSection() {
         <div className='w-full md:w-[33%] '>
           <CourseCardItem  speaker="مریم صفدری" category="هنری" subtitle="تجربه رشد  فروش در 4 سال، با شما راهکارهای کاربردی که رشد تیم فروش را به همراه دارد را بررسی می‌کنیم." imageSrc={`https://s3.eseminar.tv/upload/slideshow/1738428254-slideshow.jpgg`} title=" تغییر و تطبیق صدا با هوش مصنوعی" link={undefined} />
         </div>
+        
 
         {!isMobileScreen && (
           <>

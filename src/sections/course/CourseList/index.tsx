@@ -9,9 +9,10 @@ import { getCoursesRequest } from '@/API/course';
 // Types
 import type { ICourseTypes } from '@/types/Course';
 
+import CourseCardItem from '@/components/CourseItem';
 // components
 // import CourseItem from '@/components/CourseItem';
-import CourseCardItem from '@/components/Card/CourseCard';
+// import CourseCardItem from '@/components/Card/CourseCard';
 import CourseListFilter from '@/sections/course/CourseListFilter';
 // import { getProductsRequest } from '@/API/product';
 
@@ -77,7 +78,7 @@ export default function CourseList({ data }: { data: { courses: ICourseTypes[]; 
         </div>
 
       </div>
-      <div className="flex w-full flex-wrap justify-center gap-3 px-4 md:justify-end md:px-0">
+      <div dir='rtl' className="grid w-full grid-cols-1 gap-3 px-4 md:grid-cols-3 md:px-0">
 
         {filteredCourses.length === 0 && (
           <div className="w-full items-center justify-center py-12 text-center text-lg font-semibold text-black">
@@ -85,8 +86,12 @@ export default function CourseList({ data }: { data: { courses: ICourseTypes[]; 
           </div>
         )}
 
-        {filteredCourses && filteredCourses.map(course => (
+        {/* {filteredCourses && filteredCourses.map(course => (
           <CourseCardItem data={course} key={course._id} isLikedByUser />
+        ))} */}
+
+        {filteredCourses && filteredCourses.map(course => (
+          <CourseCardItem course={course} key={course._id} isLikedByUser />
         ))}
 
       </div>

@@ -4,18 +4,17 @@ import MainSwiper from '@/components/swiper/MainSwiper';
 // import { Sponsors } from '@/components/Sponsors';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import CategoriesBannerSlider from '../../../components/CategoriesBannerSlider';
+// import CategoriesBannerSlider from '../../../components/CategoriesBannerSlider';
 // sections
 import CoursesCardSection from '../../../sections/home/CoursesCardSection';
 import FAQSection from '../../../sections/home/FAQ';
 import MultimediaTabsPortfolio from '../../../sections/home/MultimediaTabsPortfolio';
-import ServiceSwiper from '../../../sections/home/ServiceCardSection';
+// import ServiceSwiper from '../../../sections/home/ServiceCardSection';
 
-import ThumbsSwiperImageGallery from '../../../sections/home/ThumbsSwiperImageGallery';
-import CourseCardItem from '@/components/Card/CourseCard';
-import ToturialsSwiperCardSection from '@/sections/home/ToturialsSwiperCardSection';
-import HSwiper from '@/components/swiper/HSwiper';
 import CourseHotBanner from '@/sections/home/CourseHotBanner';
+
+import ToturialsSwiperCardSection from '@/sections/home/ToturialsSwiperCardSection';
+import ThumbsSwiperImageGallery from '../../../sections/home/ThumbsSwiperImageGallery';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
@@ -35,12 +34,12 @@ export async function generateMetadata(props: IIndexProps) {
 }
 
 export default async function Index(props: IIndexProps) {
-  const { locale } = await props.params;
-  setRequestLocale(locale);
-  const t = await getTranslations({
-    locale,
-    namespace: 'Index',
-  });
+  // const { locale } = await props.params;
+  // setRequestLocale(locale);
+  // const t = await getTranslations({
+  //   locale,
+  //   namespace: 'Index',
+  // });
 
   return (
     <div className=" overflow-hidden bg-black pt-16">
@@ -108,7 +107,6 @@ export default async function Index(props: IIndexProps) {
         </div>
       </div>
 
-
       {/* <div className='py-12 bg-white'>
         <CategoriesBannerSlider />
       </div> */}
@@ -131,19 +129,18 @@ export default async function Index(props: IIndexProps) {
       </div> */}
 
       {/* Courses Card Section */}
-      <div className="container mx-auto py-20">
+      {/* <div className="container mx-auto py-20">
         <CoursesCardSection />
-      </div>
+      </div> */}
 
       {/* Toturials */}
-      <div className='py-20'>
+      <div className="py-20">
         <ToturialsSwiperCardSection />
       </div>
 
-
-        <div className='w-full py-20'>
-          <CourseHotBanner />
-        </div>
+      <div className="w-full py-20">
+        <CourseHotBanner />
+      </div>
 
       {/* Image Gallery Section */}
       <div className="container mx-auto py-20">

@@ -1,4 +1,6 @@
+/* eslint-disable ts/consistent-type-definitions */
 export interface ICourseTypes {
+  id: string;
   _id: string;
   createdAt: any;
   title: string;
@@ -24,8 +26,8 @@ export interface ICourseTypes {
   course_views?: number;
   score?: number;
   course_category?: {
-    name: string
-    _id: string
+    name: string;
+    _id: string;
   }; // Reference to 'Course_Category'
   coach_id?: string; // Reference to 'Coach'
   course_objects?: {
