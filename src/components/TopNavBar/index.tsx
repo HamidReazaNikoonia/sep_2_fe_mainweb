@@ -171,7 +171,7 @@ const Navbar = () => {
                 </Link> 
 
                 <Link href="/product">
-                  <li className="hover:text-gray-300">محصولات</li>
+                  <li className="hover:text-gray-300">فیلم آموزشی</li>
                 </Link>                
                 
                 <Link href="/">

@@ -12,6 +12,10 @@ import MultimediaTabsPortfolio from '../../../sections/home/MultimediaTabsPortfo
 import ServiceSwiper from '../../../sections/home/ServiceCardSection';
 
 import ThumbsSwiperImageGallery from '../../../sections/home/ThumbsSwiperImageGallery';
+import CourseCardItem from '@/components/Card/CourseCard';
+import ToturialsSwiperCardSection from '@/sections/home/ToturialsSwiperCardSection';
+import HSwiper from '@/components/swiper/HSwiper';
+import CourseHotBanner from '@/sections/home/CourseHotBanner';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
@@ -105,12 +109,12 @@ export default async function Index(props: IIndexProps) {
       </div>
 
 
-      <div className='py-12 bg-white'>
+      {/* <div className='py-12 bg-white'>
         <CategoriesBannerSlider />
-      </div>
+      </div> */}
 
       {/* Service Card Swiper */}
-      <div className=" bg-gradient-to-r from-blue-800 to-indigo-900 py-20">
+      {/* <div className=" bg-gradient-to-r from-blue-800 to-indigo-900 py-20">
         <div className="flex w-full flex-col">
           <div className="mb-20">
             <ServiceSwiper rowTitle="محصولات فرهنگی" />
@@ -124,12 +128,22 @@ export default async function Index(props: IIndexProps) {
             <ServiceSwiper rowTitle='نویسندگی' />
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Courses Card Section */}
       <div className="container mx-auto py-20">
         <CoursesCardSection />
       </div>
+
+      {/* Toturials */}
+      <div className='py-20'>
+        <ToturialsSwiperCardSection />
+      </div>
+
+
+        <div className='w-full py-20'>
+          <CourseHotBanner />
+        </div>
 
       {/* Image Gallery Section */}
       <div className="container mx-auto py-20">

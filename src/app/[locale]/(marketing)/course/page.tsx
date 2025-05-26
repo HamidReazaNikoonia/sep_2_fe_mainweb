@@ -21,17 +21,17 @@ type IPortfolioProps = {
 //   };
 // }
 
-// const fetchRepo = async () => {
-//   const res = await fetch(`${SERVER_API_URL}/course`, {
-//     next: { revalidate: 60 }, // Enables ISR (Incremental Static Regeneration)
-//   });
+const fetchRepo = async () => {
+  const res = await fetch(`${SERVER_API_URL}/course`, {
+    next: { revalidate: 60 }, // Enables ISR (Incremental Static Regeneration)
+  });
 
-//   if (!res.ok) {
-//     throw new Error('Failed to fetch data');
-//   }
+  if (!res.ok) {
+    throw new Error('Failed to fetch data');
+  }
 
-//   return res.json();
-// };
+  return res.json();
+};
 
 export default async function Portfolio(props: IPortfolioProps) {
   // const { locale } = await props.params;
@@ -41,8 +41,9 @@ export default async function Portfolio(props: IPortfolioProps) {
   //   namespace: 'Portfolio',
   // });
 
-  // const coursesData = await fetchRepo();
-  // console.log({coursesData: coursesData.data.courses})
+  const coursesData = await fetchRepo();
+  // eslint-disable-next-line no-console
+  console.log({coursesData: coursesData.data.courses})
 
   return (
     <div className="min-h-screen overflow-hidden pt-16 bg-black text-white">
@@ -60,7 +61,7 @@ export default async function Portfolio(props: IPortfolioProps) {
 
       <div className=" container mx-auto mb-24">
 
-        {/* <CourseList data={coursesData.data} /> */}
+        <CourseList data={coursesData.data} />
 
       </div>
     </div>
