@@ -24,7 +24,7 @@ export default function CoursePageHeader({title, courseCategory}: {title: string
 
 
   return (
-    <div className="mb-8 bg-[#efefef] py-4 md:py-8 flex flex-col-reverse md:flex-row justify-end pr-4 md:pr-8 items-end">
+    <div className="mb-8 bg-[#310c58] py-4 md:py-8 flex flex-col-reverse md:flex-row justify-end pr-4 md:pr-8 items-end">
      
 
 

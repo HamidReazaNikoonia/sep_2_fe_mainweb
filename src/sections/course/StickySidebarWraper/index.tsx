@@ -5,7 +5,7 @@ import Image from 'next/image'
 import toast from 'react-hot-toast';
 
 // Icons
-import { Heart, ShoppingBasket, Users, Languages, Link, Timer, Cast, Copy, BookAudio, Scroll, Calendar, Star, FolderClosed } from 'lucide-react';
+import { Heart, ShoppingBasket, Users, Languages, Link, Timer, Cast, Copy, SquareArrowUpLeft, BookAudio, Scroll, Calendar, Star, FolderClosed } from 'lucide-react';
 
 
 import { useCartStore } from '@/_store/Cart';
@@ -30,6 +30,7 @@ import useAuth from '@/hooks/useAuth';
 import { addProductToCartRequest } from '@/API/cart';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import LoadingButton from '@/components/LoadingButton';
+import CourseSchedule from '../CourseSchedule';
 
 moment.loadPersian({ usePersianDigits: true });
 
@@ -150,10 +151,10 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
               {/* Price Section */}
               <div className='flex w-full justify-between items-center border-2 border-green-600 border-dashed p-4 rounded-xl'>
                 <div className='flex items-center'>
-                  <div className='text-lg text-gray-800 font-bold mr-2' >تومان</div>
+                  <div className='text-lg text-gray-100 font-bold mr-2' >تومان</div>
                   <div className='text-4xl' >{(price).toLocaleString('ar-EG')}</div>
                 </div>
-                <div className='text-lg text-gray-800' >قیمت</div>
+                <div className='text-lg text-gray-100' >قیمت</div>
               </div>
 
 
@@ -161,8 +162,8 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
               <div className='flex flex-col space-y-2 mt-6 w-full justify-between items-center'>
 
                 <LoadingButton disabled={addToCartMutation.isPending} isLoading={addToCartMutation.isPending} onClick={attToBasketHandler} className=" text-white  flex justify-center items-center w-full hover:bg-blue-600 px-4 py-3 rounded mr-2 text-sm md:text-lg">
-                  افزودن به سبد خرید
-                  <ShoppingBasket className='ml-2' />
+                     ثبت نام
+                  <SquareArrowUpLeft className='ml-2' />
                 </LoadingButton>
                 
                 <button >
@@ -180,7 +181,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
 
             {/* Course Information */}
-            <div className='w-full flex flex-col mt-4 px-4 bg-gray-200 rounded-lg py-5'>
+            <div className='w-full flex flex-col mt-4 px-4 bg-black rounded-lg py-5'>
               {/* Item */}
               <div className='flex justify-center items-center py-4 text-sm'>
 
@@ -276,7 +277,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
 
             {/* Course Information Second Card */}
-            <div className='w-full flex flex-col mt-4 px-8 text-sm bg-gray-200 rounded-lg py-5'>
+            <div className='w-full flex flex-col mt-4 px-8 text-sm bg-black rounded-lg py-5'>
               {/* Item */}
               <div className="w-full flex justify-end items-center border-b border-cyan-800 py-4">
 
@@ -388,17 +389,21 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
 
             {/* Video Sample Gallery */}
-            <div className='w-full bg-gray-300 px-6 py-10 rounded-t-lg shadow-lg' >
+            <div className='w-full bg-black px-6 py-10 rounded-t-lg shadow-lg' >
               <VideoSampleGallery />
             </div>
 
 
             {/* Course Details information */}
-            <div className='w-full bg-gray-300 px-6 py-10 rounded-b-lg'>
+            <div className='w-full bg-black px-6 py-10 rounded-b-lg'>
               <CourseDetails />
             </div>
 
 
+            {/* CourseSchedule */}
+            <div className='w-full mt-12 py-8 bg-black rounded-lg'>
+              <CourseSchedule />
+            </div>
             
 
             {/* Commen Course Swiper Section */}

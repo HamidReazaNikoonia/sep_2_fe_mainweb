@@ -6,7 +6,7 @@ export default function VideoSampleGallery() {
     <>
       <div className='w-full flex flex-col justify-center items-end'>
         {/* Title */}
-        <h3 className='flex text-lg text-black mb-6'>
+        <h3 className='flex text-lg text-white mb-6'>
           نمونه ویدیو ها
           <SwatchBook className='ml-3' />
         </h3>
@@ -27,7 +27,7 @@ export default function VideoSampleGallery() {
               </video>
             </div>
 
-            <div className='text-black text-center mt-2 text-xs'>عنوان</div>
+            <div className='text-white text-center mt-2 text-xs'>عنوان</div>
           </article>
 
           <article className="w-1/2 md:w-1/3 p-2 md:p-3 mb-3 md:mb-0">
@@ -38,7 +38,7 @@ export default function VideoSampleGallery() {
               </video>
             </div>
 
-            <div className='text-black text-center mt-2 text-xs'>عنوان</div>
+            <div className='text-white text-center mt-2 text-xs'>عنوان</div>
           </article>
 
 
@@ -50,7 +50,7 @@ export default function VideoSampleGallery() {
               </video>
             </div>
 
-            <div className='text-black text-center mt-2 text-xs'>عنوان</div>
+            <div className='text-white text-center mt-2 text-xs'>عنوان</div>
           </article>
         </div>
       </div>

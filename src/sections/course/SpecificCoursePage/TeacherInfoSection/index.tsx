@@ -4,8 +4,8 @@ import TeacherCourseSwiper from '../TeacherCourseSwiper'
 export default function TeacherInfoSection() {
   return (
     <>
-      <div className='w-full flex flex-col mt-4 px-8 bg-gray-200 rounded-lg py-5'>
-        <div style={{ marginBottom: "-18px" }} className='text-center text-sm relative w-40 flex justify-center mx-auto py-2 rounded-md yellow-gradient-bg'>
+      <div className='w-full flex flex-col mt-4 px-8 bg-black rounded-lg py-5'>
+        <div style={{ marginBottom: "-18px" }} className='text-center text-sm relative w-40 flex justify-center mx-auto py-2 rounded-md yellow-gradient-bg text-black'>
           درباره این مدرس
         </div>
         <div className='w-full flex justify-between items-center border-t border-cyan-700 pt-10'>
@@ -18,8 +18,8 @@ export default function TeacherInfoSection() {
           {/* Avatar */}
           <div className="flex text-right">
             <div className='mr-2'>
-              <h6 className="text-sm font-medium text-gray-700 dark:text-white">زهرا احمدی </h6>
-              <p className="text-xs text-gray-600 mt-1">هنر جوی این دوره</p>
+              <h6 className="text-sm font-medium text-gray-200">زهرا احمدی </h6>
+              {/* <p className="text-xs text-gray-300 mt-1">هنر جوی این دوره</p> */}
             </div>
             <img className="w-12 h-12 rounded-full" src="https://randomuser.me/api/portraits/women/12.jpg" alt="user avatar" width="400" height="400" loading="lazy" />
           </div>

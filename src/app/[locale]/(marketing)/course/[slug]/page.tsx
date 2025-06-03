@@ -1,3 +1,6 @@
+/* eslint-disable react/no-useless-fragment */
+/* eslint-disable style/indent */
+/* eslint-disable tailwindcss/classnames-order */
 import { AppConfig } from '@/utils/AppConfig';
 import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -49,7 +52,6 @@ const fetchRepo = async ({ courseId }: { courseId: string }): Promise<ICourseTyp
   return res.json();
 };
 
-
 export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
   // const { locale, slug } = await props.params;
   // setRequestLocale(locale);
@@ -64,20 +66,19 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
 
   return (
     <>
-      <div className='overflow-hidden bg-[#E1EBEE] text-black min-h-screen'>
+      <div className="overflow-hidden bg-[#242525] text-white pt-16 min-h-screen">
 
         {/* heaser title */}
         <div>
           <CoursePageHeader courseCategory={productsData.course_category?.name || ''} title={productsData.title} />
         </div>
 
-
-        <div className='container mx-auto' id="StickySidebarWraper">
+        <div className="container mx-auto" id="StickySidebarWraper">
           <StickySidebarWraper dataFromServer={productsData} />
         </div>
 
          {/* Comment Section */}
-         <CommentLayout type="course" productId={productsData._id} />
+        <CommentLayout type="product" productId={`672f3b105a9ecf2eb7dc1eb4`} />
       </div>
     </>
   );
