@@ -1,3 +1,5 @@
+/* eslint-disable style/jsx-quotes */
+/* eslint-disable tailwindcss/classnames-order */
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
 import moment from 'moment-jalaali';
@@ -24,15 +26,18 @@ import CommenCourseSwiper from '../SpecificCoursePage/CommenCourseSwiper';
 import CommentLayout from '@/components/Comment';
 
 
+import { addProductToCartRequest } from '@/API/cart';
+import LoadingButton from '@/components/LoadingButton';
+import useAuth from '@/hooks/useAuth';
 // utils
 import useResponsiveEvent from '@/hooks/useResponsiveEvent'; // Adjust the path
-import useAuth from '@/hooks/useAuth';
-import { addProductToCartRequest } from '@/API/cart';
+import { formatDuration, formatDurationWithPersian } from '@/utils/Helpers';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import LoadingButton from '@/components/LoadingButton';
 import CourseSchedule from '../CourseSchedule';
 
 moment.loadPersian({ usePersianDigits: true });
+
+const NEXT_PUBLIC_SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL || '';
 
 
 export default function StickyComponent({ dataFromServer }: { dataFromServer: ICourseTypes }) {
@@ -80,13 +85,14 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
   }, [isMobileScreen])
 
 
-  const { price_discount, price_real, course_duration, course_type, course_subject_header, is_have_licence, score } = dataFromServer;
+  const { price_discount, price_real, course_duration, sample_media, course_objects, is_have_licence, score, tumbnail_image } = dataFromServer;
 
   const memberCount = (Array.isArray(dataFromServer.member) ? dataFromServer.member?.length : 0);
   const courseLanguage: string = (dataFromServer?.course_language || "FA");
   const createAtDateInJalaliFormat = moment(dataFromServer?.createdAt).format('jYYYY jMMMM jD');
-  const courseCategoryName = (dataFromServer.course_category?.name || '');
-
+  const courseCategoryName = (dataFromServer.course_category[0]?.name || '');
+  const coachData = dataFromServer.coach_id;
+  const tumbnailImage = tumbnail_image?.file_name ? `${NEXT_PUBLIC_SERVER_FILES_URL}/${tumbnail_image?.file_name}` : SampleImage;
 
   const courseLanguageMap: {
     [key: string]: string,
@@ -204,7 +210,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
                 <div className='flex flex-grow before_style_course_info'>
                   <span className='mr-1'>هنرجو</span>
-                  <span>{memberCount}</span>
+                  <span>{(memberCount + 2) || 0}</span>
                 </div>
 
                 <div className=''>
@@ -232,9 +238,17 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
               {/* Item */}
               <div className='flex justify-center items-center py-4 text-sm'>
 
-                <div className='flex flex-grow before_style_course_info'>
-                  <span className='mr-1'>ساعت</span>
-                  <span>{course_duration}</span>
+                <div className='flex grow before_style_course_info'>
+                  {course_duration
+                    ? (
+                        <span>{formatDurationWithPersian(course_duration)}</span>
+                      )
+                    : (
+                        <>
+                          <span className='mr-1'>دقیقه</span>
+                          <span>0</span>
+                        </>
+                      )}
                 </div>
 
                 <div className=''>
@@ -246,7 +260,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
 
               {/* Item */}
-              <div className='flex justify-center items-center py-4 text-sm'>
+              {/* <div className='flex justify-center items-center py-4 text-sm'>
 
                 <div className='flex flex-grow before_style_course_info'>
                   <span>{courseTypeMap[course_type]}</span>
@@ -257,7 +271,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                 </div>
 
                 <Cast size={20} className="ml-2" />
-              </div>
+              </div> */}
 
 
 
@@ -266,7 +280,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
                 <div className='flex flex-grow before_style_course_info'>
                   <span className='mr-1'>فصل</span>
-                  <span>{course_subject_header}</span>
+                  <span>{course_objects && course_objects.length}</span>
                 </div>
 
                 <div className=''>
@@ -333,7 +347,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
 
                 <div className='text-right text-xs mt-4'>
-                  {`آکادمی آموزشی / آموزش های ${courseTypeMap[course_type]} / ${courseCategoryName}`}
+                  {`آکادمی آموزشی / آموزش های / ${courseCategoryName}`}
                 </div>
               </div>
 
@@ -349,7 +363,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
                 <div className='text-right text-xs py-2 items-center mt-4 flex justify-between px-2 border border-cyan-800 rounded-md'>
                   <span>
-                    https://aisun-ci.ir/?p=3633
+                    -
                   </span>
                   <Copy size={18} />
                 </div>
@@ -363,10 +377,10 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
             <div 
             ref={stickyRef}
             className={` flex ${
-              isSticky ? 'fixed top-20  w-[426px]' : 'w-full'
-            }`}
+                isSticky ? 'fixed top-20  w-[426px]' : 'w-full'
+              }`}
           >
-            <TeacherInfoSection />
+            {coachData && <TeacherInfoSection coach={coachData} />}
           </div>
             
           </div>
@@ -395,7 +409,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
           <div className='flex flex-col justify-center items-center px-0 md:px-8'>
             {/* Thumb Image */}
             <div>
-              <Image className=' rounded-lg' alt="" width={700} height={450} src={SampleImage} />
+              <Image className=' rounded-lg' alt="" width={700} height={450} src={tumbnailImage} />
             </div>
 
 
@@ -406,8 +420,8 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
 
             {/* Video Sample Gallery */}
-            <div className='w-full bg-black px-6 py-10 rounded-t-lg shadow-lg' >
-              <VideoSampleGallery />
+            <div className='w-full bg-black px-6 py-10 rounded-t-lg shadow-lg'>
+              <VideoSampleGallery sampleMedia={sample_media} />
             </div>
 
 

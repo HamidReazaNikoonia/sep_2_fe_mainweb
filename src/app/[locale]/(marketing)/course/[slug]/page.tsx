@@ -70,7 +70,7 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
 
         {/* heaser title */}
         <div>
-          <CoursePageHeader courseCategory={productsData.course_category?.name || ''} title={productsData.title} />
+          <CoursePageHeader courseCategory={productsData.course_category[0]?.name || ''} title={productsData.title} />
         </div>
 
         <div className="container mx-auto" id="StickySidebarWraper">

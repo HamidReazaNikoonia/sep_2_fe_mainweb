@@ -1,7 +1,7 @@
 import React from 'react'
 import TeacherCourseSwiper from '../TeacherCourseSwiper'
 
-export default function TeacherInfoSection() {
+export default function TeacherInfoSection({ coach }: { coach: any }) {
   return (
     <>
       <div className='w-full flex flex-col mt-4 px-8 bg-black rounded-lg py-5'>
@@ -18,7 +18,9 @@ export default function TeacherInfoSection() {
           {/* Avatar */}
           <div className="flex text-right">
             <div className='mr-2'>
-              <h6 className="text-sm font-medium text-gray-200">زهرا احمدی </h6>
+              <h6 className="text-sm font-medium text-gray-200">
+                {coach.first_name} {coach.last_name}
+              </h6>
               {/* <p className="text-xs text-gray-300 mt-1">هنر جوی این دوره</p> */}
             </div>
             <img className="w-12 h-12 rounded-full" src="https://randomuser.me/api/portraits/women/12.jpg" alt="user avatar" width="400" height="400" loading="lazy" />

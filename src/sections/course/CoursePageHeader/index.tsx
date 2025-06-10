@@ -41,7 +41,7 @@ export default function CoursePageHeader({title, courseCategory}: {title: string
 
 
         {/* Breadcrumb */}
-        <Breadcrumbs levels={[{title: 'دوره های آموزشی', link: '/course'}, {title: courseCategory, link: '/'}, {title: title}]} />
+        <Breadcrumbs levels={[{title: 'فیلم های آموزشی', link: '/course'}, {title: courseCategory, link: '/'}, {title: title}]} />
 
 
         

@@ -1,59 +1,57 @@
-import React from 'react'
+import MediaViewer from '@/components/MediaViewer';
 import { SwatchBook } from 'lucide-react';
+/* eslint-disable react/no-useless-fragment */
+import React from 'react';
 
-export default function VideoSampleGallery() {
+const NEXT_PUBLIC_SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL || '';
+
+export default function VideoSampleGallery({ sampleMedia }: { sampleMedia: any }) {
+  const firstSampleMedia = sampleMedia[0];
+  const otherSampleMedia = sampleMedia.length > 1 ? sampleMedia.slice(1) : [];
+
   return (
     <>
-      <div className='w-full flex flex-col justify-center items-end'>
+      <div className="flex w-full flex-col items-end justify-center">
         {/* Title */}
-        <h3 className='flex text-lg text-white mb-6'>
+        <h3 className="mb-6 flex text-lg text-white">
           نمونه ویدیو ها
-          <SwatchBook className='ml-3' />
+          <SwatchBook className="ml-3" />
         </h3>
 
-        <video className="h-full w-full rounded-lg" controls autoPlay muted>
-          <source src="https://docs.material-tailwind.com/demo.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        {/* First Sample Media */}
+        {firstSampleMedia && (
 
+          <MediaViewer
+            data={{
+              mediaType: firstSampleMedia?.media_type,
+              mediaSrc: `${NEXT_PUBLIC_SERVER_FILES_URL}/${firstSampleMedia?.file?.file_name}`,
+            }}
+            videoPlayerContainerClassName="bg-black w-full"
+            videoPlayerClassName="aspect-video h-full w-full rounded-lg"
+          />
+
+        )}
 
         {/* Video Items */}
-        <div className='flex  md:flex-row flex-wrap w-full mt-8'>
-          <article className=" w-1/2 md:w-1/3 p-2  md:p-3 mb-3 md:mb-0">
-            <div className=" flex items-end overflow-hidden rounded-xl">
-              <video className="h-full w-full rounded-lg" controls muted>
-                <source src="https://docs.material-tailwind.com/demo.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
+        <div className="mt-8  flex w-full flex-wrap md:flex-row">
+          {otherSampleMedia && otherSampleMedia.map((item: any) => (
+            <article key={item?._id} className=" mb-3 w-1/2 p-2  md:mb-0 md:w-1/3 md:p-3">
+              <div className=" flex items-end overflow-hidden rounded-xl">
+                <MediaViewer
+                  data={{
+                    mediaType: item?.media_type,
+                    mediaSrc: `${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`,
+                  }}
+                  videoPlayerContainerClassName="bg-black w-full"
+                  videoPlayerClassName="aspect-video h-full w-full rounded-lg"
+                />
+              </div>
 
-            <div className='text-white text-center mt-2 text-xs'>عنوان</div>
-          </article>
-
-          <article className="w-1/2 md:w-1/3 p-2 md:p-3 mb-3 md:mb-0">
-            <div className=" flex items-end overflow-hidden rounded-xl">
-              <video className="h-full w-full rounded-lg" controls muted>
-                <source src="https://docs.material-tailwind.com/demo.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-
-            <div className='text-white text-center mt-2 text-xs'>عنوان</div>
-          </article>
-
-
-          <article className="w-1/2 md:w-1/3 p-2 md:p-3 mb-3 md:mb-0">
-            <div className=" flex items-end overflow-hidden rounded-xl">
-              <video className="h-full w-full rounded-lg" controls muted>
-                <source src="https://docs.material-tailwind.com/demo.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-
-            <div className='text-white text-center mt-2 text-xs'>عنوان</div>
-          </article>
+              <div className="mt-2 text-center text-xs text-white">{item.media_title}</div>
+            </article>
+          ))}
         </div>
       </div>
     </>
-  )
+  );
 }

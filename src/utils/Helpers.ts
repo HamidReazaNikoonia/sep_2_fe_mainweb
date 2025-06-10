@@ -91,6 +91,28 @@ export const truncateDescription = (description: string | any[], maxLength = 800
   return `${description.slice(0, maxLength)}...`;
 };
 
+/**
+ * Converts minutes to a readable hours and minutes format
+ * @param minutes Total minutes
+ * @returns Formatted string (e.g., "2 ساعت و 30 دقیقه" or "45 دقیقه")
+ */
+export const formatDurationWithPersian = (minutes: number): string => {
+  if (!minutes || minutes <= 0) {
+    return '0 دقیقه';
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  if (hours === 0) {
+    return `${remainingMinutes} دقیقه`;
+  } else if (remainingMinutes === 0) {
+    return `${hours} ساعت`;
+  } else {
+    return `${hours} ساعت و ${remainingMinutes} دقیقه`;
+  }
+};
+
 // const mobileReg = /(0|\+98)?([ ]|-|[()]){0,2}9[1|2|3|4]([ ]|-|[()]){0,2}(?:[0-9]([ ]|-|[()]){0,2}){8}/ig,
 // junkReg = /[^\d]/ig,
 // persinNum = [/۰/gi,/۱/gi,/۲/gi,/۳/gi,/۴/gi,/۵/gi,/۶/gi,/۷/gi,/۸/gi,/۹/gi],
