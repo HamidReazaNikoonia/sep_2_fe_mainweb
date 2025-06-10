@@ -281,6 +281,7 @@ const ProgramCard = ({
   isSelected: boolean
   onSelect: () => void
 }) => {
+  const firstSessionDate = program?.sessions[0]?.date || "تاریخ نامشخص";
   return (
     <Card
       className={`w-full mb-4 cursor-pointer transition-all ${
@@ -357,9 +358,9 @@ const ProgramCard = ({
       </CardContent>
       <CardFooter className="flex justify-between">
         <div className="text-xs text-muted-foreground">
-          شروع دوره: {new Date(program.createdAt).toLocaleDateString()}
+          شروع دوره: {firstSessionDate}
         </div>
-        <div className="text-xs text-muted-foreground">وضعیت: {program.status}</div>
+        <div className="text-xs text-muted-foreground">وضعیت: {program.status === "active" ? "فعال" : "غیرفعال"}</div>
       </CardFooter>
 
       {/* Hidden radio input for form submission */}
