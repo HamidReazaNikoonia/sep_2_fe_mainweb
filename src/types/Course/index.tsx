@@ -1,5 +1,6 @@
 /* eslint-disable ts/consistent-type-definitions */
 export interface ICourseTypes {
+  price_discount: any;
   id: string;
   _id: string;
   createdAt: any;

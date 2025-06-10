@@ -80,7 +80,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
   }, [isMobileScreen])
 
 
-  const { price, course_duration, course_type, course_subject_header, is_have_licence, score } = dataFromServer;
+  const { price_discount, price_real, course_duration, course_type, course_subject_header, is_have_licence, score } = dataFromServer;
 
   const memberCount = (Array.isArray(dataFromServer.member) ? dataFromServer.member?.length : 0);
   const courseLanguage: string = (dataFromServer?.course_language || "FA");
@@ -150,11 +150,29 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
             <div className=' w-full flex flex-col justify-center items-center px-2'>
               {/* Price Section */}
               <div className='flex w-full justify-between items-center border-2 border-green-600 border-dashed p-4 rounded-xl'>
-                <div className='flex items-center'>
-                  <div className='text-lg text-gray-100 font-bold mr-2' >تومان</div>
-                  <div className='text-4xl' >{(price).toLocaleString('ar-EG')}</div>
+                <div className='flex flex-col items-start'>
+                  {price_discount ? (
+                    <>
+                      <div className='flex items-center'>
+                        <div className='text-lg text-gray-100 font-bold mr-2'>تومان</div>
+                        <div className='text-4xl'>{(price_discount).toLocaleString('ar-EG')}</div>
+                        <div className='ml-2 px-3 py-1 bg-[#cf741e] text-white text-sm rounded-full'>تخفیف ویژه</div>
+                      </div>
+                      <div className='flex items-center mt-1 relative'>
+                        <div className='text-sm text-gray-400 font-bold mr-2'>تومان</div>
+                        <div className='text-lg text-gray-400'>{(price_real).toLocaleString('ar-EG')}</div>
+                        {/* Custom diagonal line through the original price */}
+                        <div className="absolute top-1/2 left-0 right-0 h-[1.5px] w-full -rotate-12 transform bg-red-500"></div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className='flex items-center'>
+                      <div className='text-lg text-gray-100 font-bold mr-2'>تومان</div>
+                      <div className='text-4xl'>{(price_real).toLocaleString('ar-EG')}</div>
+                    </div>
+                  )}
                 </div>
-                <div className='text-lg text-gray-100' >قیمت</div>
+                <div className='text-lg text-gray-100'>قیمت</div>
               </div>
 
 
