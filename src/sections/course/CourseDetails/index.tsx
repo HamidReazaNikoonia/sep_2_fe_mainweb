@@ -1,24 +1,39 @@
-import React from 'react'
+/* eslint-disable react-dom/no-dangerously-set-innerhtml */
 
-export default function CourseDetails() {
+import React from 'react';
+
+export default function CourseDetails({ courseDescriptionLong, courseDescriptionShort }: { courseDescriptionLong: string; courseDescriptionShort: string }) {
   return (
     <>
-      <p style={{whiteSpace: 'pre-line'}} className='text-sm text-right leading-8'>
-      این روزها صفحات اینستاگرام و شبکه های اجتماعی را که بالا و پایین می‌کنیم، ویدیوهای شگفت انگیزی به چشم می‌خورند که بدون شک ما را حیرت زده کردند؛ ویدیوهایی که علاوه بر جذاب بودن، متفاوت از نمونه‌هایی هستند که تا به حال داشتیم.در پشت پرده این ویدیوها قطعا هوش مصنوعی نقش داشته و همین موجب ایجاد تمایز ویدیوهای امروزی شده است.
+      <div className="flex flex-col gap-4">
+        {courseDescriptionShort && (
+          <div>
+            <h3 className="text-right  text-lg font-bold">
+              توضیحات دوره
+            </h3>
+            <p style={{ whiteSpace: 'pre-line' }} className="text-right text-sm leading-8">
+              {courseDescriptionShort}
+            </p>
+          </div>
+        )}
+      </div>
 
-همانطور که انتظار می‌رفت، هوش مصنوعی هر روز پیشرفته‌تر و شگفتی‌های آن هم بیشتر می‌شود. طی این یکسال اخیر، موضوعاتی مانند چت‌بات‌های هوشمند ChatGPT، ابزارهای هوش مصنوعی تبدیل متن به عکس مثل میدجورنی و Dall-e3 و ساخت عکس پروفایل با هوش مصنوعی ترند بوده و الان هم نوبت رسیده به ساخت ویدیو با هوش مصنوعی!
-
-در این آموزش قصد داریم با بهترین سایت‌ها ساخت ویدیو با هوش مصنوعی را به شما آموزش دهیم
-
-
-
-
-
-فرقی ندارد که شما شاغل هستید یا دانشجو، فرقی ندارد در چه حرفه‌ای مشغول به کار هستید و یا در چه رشته‌ای درحال تحصیل و مهم نیست که چه سنی دارید، مهم این هست که به ویدئو و فیلم احتیاج دارید!
-می‌خواهید استوری‌های اینستاگرامتان رو طراحی کنید یا برای سایتتون ویدئوهای خوب و باکیفیت بگذارید یا برنامه دیگری دارید، در هر صورت هوش مصنوعی برای ساخت ویدئو موردنظرتان در خدمت شماست.
-
-در حال حاضر تعداد سایت و اپلیکیشن‌هایی که براساس هوش مصنوعی ساخت ویدئو را برایتان انجام می‌دهند، بسیار زیاد است، اما شاید خیلی از این برنامه‌ها نتواند نیاز شما را برطرف کند و خیلی از آنها چندان کاربردی نیستند و فقط زمان زیادی از شما می‌گیرند و حوصله‌ سربرند، ما بهترین سایت و اپلیکیشن‌های هوش مصنوعی را در این دوره معرفی و به شما آموزش خواهیم داد.
-      </p>
+      <div className="flex flex-col gap-4">
+        {courseDescriptionLong && (
+          <div className="mt-8">
+            <h3 className="text-right  text-lg font-bold">
+              توضیحات بیشتر
+            </h3>
+            {/* <p style={{ whiteSpace: 'pre-line' }} className="text-right text-sm leading-8">
+              {courseDescriptionLong}
+            </p> */}
+            <div
+              dangerouslySetInnerHTML={{ __html: courseDescriptionLong }}
+              className="mt-4 text-right text-sm leading-8"
+            />
+          </div>
+        )}
+      </div>
     </>
-  )
+  );
 }

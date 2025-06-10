@@ -85,7 +85,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
   }, [isMobileScreen])
 
 
-  const { price_discount, price_real, course_duration, sample_media, course_objects, is_have_licence, score, tumbnail_image } = dataFromServer;
+  const { price_discount, price_real, course_duration, sample_media, course_objects, is_have_licence, score, tumbnail_image, description_long, description } = dataFromServer;
 
   const memberCount = (Array.isArray(dataFromServer.member) ? dataFromServer.member?.length : 0);
   const courseLanguage: string = (dataFromServer?.course_language || "FA");
@@ -427,7 +427,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
             {/* Course Details information */}
             <div className='w-full bg-black px-6 py-10 rounded-b-lg'>
-              <CourseDetails />
+              <CourseDetails courseDescriptionLong={description_long} courseDescriptionShort={description} />
             </div>
 
 
