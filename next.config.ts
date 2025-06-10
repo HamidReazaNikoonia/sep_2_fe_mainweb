@@ -26,6 +26,7 @@ export default withSentryConfig(
       },
       poweredByHeader: false,
       images: {
+        unoptimized: true,
         remotePatterns: [
           {
             protocol: 'https',
@@ -65,6 +66,11 @@ export default withSentryConfig(
           {
             protocol: 'http',
             hostname: '5.34.204.190',
+            port: '9000',
+          },
+          {
+            protocol: 'http',
+            hostname: '37.32.31.123',
             port: '9000',
           },
         ],

@@ -33,7 +33,7 @@ const fetchRepo = async () => {
   return res.json();
 };
 
-export default async function Portfolio() {
+export default async function Portfolio(props: IPortfolioProps) {
   // const { locale } = await props.params;
   // setRequestLocale(locale);
   // const t = await getTranslations({
