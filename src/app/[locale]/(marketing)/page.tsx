@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-contradicting-classname */
 import ServiceCardItem from '@/components/Card/ServiceCardItem';
 import MainSwiper from '@/components/swiper/MainSwiper';
 
@@ -45,7 +46,7 @@ export default async function Index(props: IIndexProps) {
     <div className=" overflow-hidden bg-black pt-16">
 
       {/* Main Slider In md Screen */}
-      <div className="hidden md:block mt-6 flex flex-col px-4 md:mt-0 md:px-0">
+      <div className="mt-6 hidden flex-col px-4 md:mt-0 md:block md:px-0">
         <MainSwiper />
       </div>
 
@@ -61,24 +62,24 @@ export default async function Index(props: IIndexProps) {
           />
 
           <ServiceCardItem
-            title="پژوهشکده هوش مصنوعی"
-            subtitle="دنیایی از تکنولوژی های جدید"
+            title="آکادمی آموزشی"
+            subtitle="دوره های آموزش تخصصی "
             backgroundImage="https://aisun-ci.ir/wp-content/uploads/2024/08/photography5.jpg"
             buttonText="ورود به این بخش"
             buttonLink="/"
           />
 
           <ServiceCardItem
-            title="پژوهشکده هوش مصنوعی"
-            subtitle="دنیایی از تکنولوژی های جدید"
+            title="استدیو تخصصی"
+            subtitle="تولید محتوای دیجیتال"
             backgroundImage="https://aisun-ci.ir/wp-content/uploads/2024/08/photography5.jpg"
             buttonText="ورود به این بخش"
             buttonLink="/"
           />
 
           <ServiceCardItem
-            title="پژوهشکده هوش مصنوعی"
-            subtitle="دنیایی از تکنولوژی های جدید"
+            title="مجم.عه دختران"
+            subtitle="ویژه دختران و بانوان"
             backgroundImage="https://aisun-ci.ir/wp-content/uploads/2024/08/photography5.jpg"
             buttonText="ورود به این بخش"
             buttonLink="/"
