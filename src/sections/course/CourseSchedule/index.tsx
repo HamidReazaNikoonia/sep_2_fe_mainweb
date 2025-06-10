@@ -9,6 +9,8 @@ import { Calendar, Clock, Check, Users, Play, FileText } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Mock data that matches the API structure
+const NEXT_PUBLIC_SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL || '';
+
 const mockPrograms = [
   {
     _id: "683df3bbec28c1ed6d9fa1ce",
@@ -216,24 +218,36 @@ const SessionItem = ({ session }: { session: Session }) => {
 }
 
 // Component to display portfolio items
-const PortfolioGrid = ({ portfolio }: { portfolio: PortfolioItem[] }) => {
+const PortfolioGrid = ({ portfolio }: { portfolio: any[] }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
       {portfolio.map((item) => (
         <div key={item._id} className="relative group">
           <div className="aspect-square bg-muted rounded-lg overflow-hidden">
-            <img
-              src={item.type === "video" ? item.thumbnail || item.url : item.url}
-              alt={item.title}
-              className="w-full h-full object-cover"
-            />
-            {item.type === "video" && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
-                <Play className="h-8 w-8 text-white" />
-              </div>
+            {item.media_type === "IMAGE" ? (
+              <img
+                src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`}
+                alt={item.media_title}
+                className="w-full h-full object-cover"
+              />
+            ) : item.media_type === "VIDEO" && (
+              <>
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
+                  <Play className="h-8 w-8 text-white" />
+                </div>
+                <video 
+                  className="w-full h-full object-cover"
+                  controls
+                  preload="none"
+                  poster="/placeholder.svg?height=200&width=200"
+                >
+                  <source data-src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </>
             )}
           </div>
-          <p className="text-xs mt-2 text-center">{item.title}</p>
+          <p className="text-xs mt-2 text-center">{item.media_title}</p>
         </div>
       ))}
     </div>
@@ -243,10 +257,10 @@ const PortfolioGrid = ({ portfolio }: { portfolio: PortfolioItem[] }) => {
 // Component to display course subjects
 const SubjectsList = ({ subjects }: { subjects: CourseSubject[] }) => {
   return (
-    <div className="p-4 space-y-3">
+    <div dir="rtl" className="p-4 space-y-3">
       {subjects.map((subject) => (
         <div key={subject._id} className="flex items-start space-x-3 p-3 border rounded-lg">
-          <FileText className="h-5 w-5 mt-0.5 text-muted-foreground flex-shrink-0" />
+          <FileText className="h-5 w-5 mt-0.5 text-muted-foreground flex-shrink-0 ml-2" />
           <div className="flex-1">
             <h4 className="font-medium text-sm">{subject.title}</h4>
             <p className="text-xs text-muted-foreground mt-1">{subject.sub_title}</p>
@@ -325,16 +339,16 @@ const ProgramCard = ({
           </TabsContent>
 
           <TabsContent value="portfolio" className="mt-4">
-            {program.coach.portfolio && program.coach.portfolio.length > 0 ? (
-              <PortfolioGrid portfolio={program.coach.portfolio} />
+            {program?.sample_media && program?.sample_media.length > 0 ? (
+              <PortfolioGrid portfolio={program?.sample_media} />
             ) : (
               <div className="p-4 text-center text-muted-foreground text-sm">نمونه کاری موجود نیست</div>
             )}
           </TabsContent>
 
           <TabsContent value="subjects" className="mt-4">
-            {program.course_subjects && program.course_subjects.length > 0 ? (
-              <SubjectsList subjects={program.course_subjects} />
+            {program.subjects && program.subjects.length > 0 ? (
+              <SubjectsList subjects={program.subjects} />
             ) : (
               <div className="p-4 text-center text-muted-foreground text-sm">سرفصل موجود نیست</div>
             )}
