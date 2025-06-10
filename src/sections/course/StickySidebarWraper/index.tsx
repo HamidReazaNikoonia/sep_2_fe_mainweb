@@ -432,21 +432,21 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
 
             {/* CourseSchedule */}
-            <div className='w-full mt-12 py-8 bg-black rounded-lg'>
+            {/* <div className='w-full mt-12 py-8 bg-black rounded-lg'>
               <CourseSchedule />
-            </div>
+            </div> */}
             
 
             {/* Commen Course Swiper Section */}
             <div className='w-full  px-4 md:px-0 pt-10 rounded-lg pb-3 mt-6'>
-              <h3 className='text-center mb-8 text-lg md:text-2xl font-bold text-gray-800'>
+              <h3 className='text-center mb-8 text-lg md:text-2xl font-semibold text-gray-200'>
                 دوره های مشابه
               </h3>
               <CommenCourseSwiper />
             </div>
 
             {/* Get a List of Course Based on Category */}
-            <div className='w-full px-6 py-10'>
+            <div className='w-full px-6 py-4'>
               <button className=" bg-purple-800 text-white w-full hover:bg-blue-900 px-4 py-2 rounded mr-2 text-sm">
                 مشاهده دوره های بیشتر
               </button>
