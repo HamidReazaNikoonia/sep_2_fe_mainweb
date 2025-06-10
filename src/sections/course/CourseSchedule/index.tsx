@@ -282,6 +282,7 @@ const ProgramCard = ({
   onSelect: () => void
 }) => {
   const firstSessionDate = program?.sessions[0]?.date || "تاریخ نامشخص";
+  const hasDiscount = program?.price_discounted && program.price_discounted !== program.price_real;
   return (
     <Card
       className={`w-full mb-4 cursor-pointer transition-all ${
@@ -362,6 +363,27 @@ const ProgramCard = ({
         </div>
         <div className="text-xs text-muted-foreground">وضعیت: {program.status === "active" ? "فعال" : "غیرفعال"}</div>
       </CardFooter>
+
+      {/* Price display section */}
+      {program.price_real && (
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="text-sm font-medium">قیمت:</span>
+            {hasDiscount ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm line-through text-muted-foreground">
+                  {program.price_real.toLocaleString()} تومان
+                </span>
+                <Badge variant="destructive" className="px-2 py-0">
+                  {program.price_discounted.toLocaleString()} تومان
+                </Badge>
+              </div>
+            ) : (
+              <span className="text-sm font-semibold">
+                {program.price_real.toLocaleString()} تومان
+              </span>
+            )}
+          </div>
+        )}
 
       {/* Hidden radio input for form submission */}
       <input
