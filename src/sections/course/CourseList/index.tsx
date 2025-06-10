@@ -73,7 +73,7 @@ export default function CourseList({ data }: { data: { courses: ICourseTypes[]; 
         <CourseListFilter filterHandler={(d: any) => filterHandler(d)} />
 
         <div className="flex">
-          <h3 className=" mr-3 text-right text-xl font-bold"> دوره ها</h3>
+          <h3 className=" mr-3 text-right text-xl font-bold">فیلم های آموزشی</h3>
           <Clapperboard />
         </div>
 
@@ -91,7 +91,7 @@ export default function CourseList({ data }: { data: { courses: ICourseTypes[]; 
         ))} */}
 
         {filteredCourses && filteredCourses.map(course => (
-          <CourseCardItem course={course} key={course._id} isLikedByUser />
+          <CourseCardItem course={course} key={course?.id} isLikedByUser />
         ))}
 
       </div>

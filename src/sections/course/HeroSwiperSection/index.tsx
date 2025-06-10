@@ -44,12 +44,12 @@ export default function HeroSwiperSection() {
 
 
 
-      <div className='mx-8 mt-16 justify-end flex'>
+      {/* <div className='mx-8 mt-16 justify-end flex'>
       <h3 className=' text-right mr-3 text-lg md:text-xl font-bold'>جدیدترین دوره ها</h3>
       <Clapperboard />
-      </div>
+      </div> */}
       
-       <Swiper
+       {/* <Swiper
         effect={'coverflow'}
         grabCursor={true}
         loop
@@ -83,22 +83,8 @@ export default function HeroSwiperSection() {
           <Image alt="dd" fill src={CourseSwiperImg} />
         </SwiperSlide>
         
-        {/* <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-4.jpg" />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-5.jpg" />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-6.jpg" />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-7.jpg" />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-8.jpg" />
-        </SwiperSlide> */}
-      </Swiper>
+      
+      </Swiper> */}
     </div>
   )
 }
