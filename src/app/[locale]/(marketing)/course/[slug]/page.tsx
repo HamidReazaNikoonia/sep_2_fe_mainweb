@@ -78,7 +78,7 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
         </div>
 
          {/* Comment Section */}
-        <CommentLayout type="product" productId={`672f3b105a9ecf2eb7dc1eb4`} />
+        <CommentLayout type="product" productId={productsData.id} />
       </div>
     </>
   );

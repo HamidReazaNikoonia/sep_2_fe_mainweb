@@ -173,7 +173,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                     </>
                   ) : (
                     <div className='flex items-center'>
-                      <div className='text-lg text-gray-100 font-bold mr-2'>تومان</div>
+                      <div className='text-lg text-gray-100 font-bold mr-2'>ریال</div>
                       <div className='text-4xl'>{(price_real).toLocaleString('ar-EG')}</div>
                     </div>
                   )}
@@ -438,12 +438,12 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
             
 
             {/* Commen Course Swiper Section */}
-            <div className='w-full  px-4 md:px-0 pt-10 rounded-lg pb-3 mt-6'>
+            {/* <div className='w-full  px-4 md:px-0 pt-10 rounded-lg pb-3 mt-6'>
               <h3 className='text-center mb-8 text-lg md:text-2xl font-semibold text-gray-200'>
                 دوره های مشابه
               </h3>
               <CommenCourseSwiper />
-            </div>
+            </div> */}
 
             {/* Get a List of Course Based on Category */}
             <div className='w-full px-6 py-4'>
@@ -455,9 +455,9 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
 
             {/* User Review */}
-            <div className='w-full px-1 py-10'>
+            {/* <div className='w-full px-1 py-10'>
               <UserReviewForCourse />
-            </div>
+            </div> */}
           </div>
         </div>
 
