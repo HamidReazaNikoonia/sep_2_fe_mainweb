@@ -115,9 +115,9 @@ export default async function Index(props: IIndexProps) {
       </div> */}
 
       {/* Toturials */}
-      <div className="py-20">
+      {/* <div className="py-20">
         <ToturialsSwiperCardSection />
-      </div>
+      </div> */}
 
       <div className="w-full py-20">
         <CourseHotBanner />
