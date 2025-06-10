@@ -1,5 +1,5 @@
 /* eslint-disable react-dom/no-dangerously-set-innerhtml */
-
+import parse from 'html-react-parser';
 import React from 'react';
 
 export default function CourseDetails({ courseDescriptionLong, courseDescriptionShort }: { courseDescriptionLong: string; courseDescriptionShort: string }) {
@@ -29,6 +29,7 @@ export default function CourseDetails({ courseDescriptionLong, courseDescription
             </p> */}
             <div
               dangerouslySetInnerHTML={{ __html: courseDescriptionLong }}
+              style={{ whiteSpace: 'pre-wrap', lineBreak: 'anywhere' }}
               className="mt-4 text-right text-sm leading-8"
             />
           </div>

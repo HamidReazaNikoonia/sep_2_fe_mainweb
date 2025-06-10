@@ -33,7 +33,7 @@ import useAuth from '@/hooks/useAuth';
 import useResponsiveEvent from '@/hooks/useResponsiveEvent'; // Adjust the path
 import { formatDuration, formatDurationWithPersian } from '@/utils/Helpers';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import CourseSchedule from '../CourseSchedule';
+import CourseSchedule from '@/sections/course/CourseSchedule';
 
 moment.loadPersian({ usePersianDigits: true });
 
@@ -337,9 +337,9 @@ export default function CourseSessionSpecificContainer({ dataFromServer }: { dat
 
 
             {/* CourseSchedule */}
-            {/* <div className='w-full mt-12 py-8 bg-black rounded-lg'>
+            <div className='w-full mt-12 py-8 bg-black rounded-lg'>
               <CourseSchedule />
-            </div> */}
+            </div>
             
 
             {/* Commen Course Swiper Section */}
