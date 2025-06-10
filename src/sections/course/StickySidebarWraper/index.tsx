@@ -165,9 +165,8 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                      ثبت نام
                   <SquareArrowUpLeft className='ml-2' />
                 </LoadingButton>
-                
                 <button >
-                  
+
                 </button>
 
 
