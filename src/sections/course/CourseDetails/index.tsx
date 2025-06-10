@@ -11,7 +11,7 @@ export default function CourseDetails({ courseDescriptionLong, courseDescription
             <h3 className="text-right  text-lg font-bold">
               توضیحات دوره
             </h3>
-            <p style={{ whiteSpace: 'pre-line' }} className="text-right text-sm leading-8">
+            <p style={{ whiteSpace: 'pre-wrap', lineBreak: 'anywhere' }} className="text-right text-sm leading-8">
               {courseDescriptionShort}
             </p>
           </div>

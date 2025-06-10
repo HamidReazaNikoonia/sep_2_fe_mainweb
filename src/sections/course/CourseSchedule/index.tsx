@@ -1,10 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { getCourseSessionPrograms } from "@/API/course"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Clock, Check, Users } from "lucide-react"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Calendar, Clock, Check, Users, Play, FileText } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Mock data that matches the API structure
 const mockPrograms = [
@@ -18,6 +20,27 @@ const mockPrograms = [
       __t: "Coach",
       first_name: "حمید",
       last_name: "نیکونیا",
+      portfolio: [
+        {
+          _id: "port1",
+          type: "image",
+          url: "/placeholder.svg?height=200&width=200",
+          title: "نمونه کار ۱",
+        },
+        {
+          _id: "port2",
+          type: "video",
+          url: "/placeholder.svg?height=200&width=200",
+          thumbnail: "/placeholder.svg?height=200&width=200",
+          title: "ویدیو آموزشی",
+        },
+        {
+          _id: "port3",
+          type: "image",
+          url: "/placeholder.svg?height=200&width=200",
+          title: "نمونه کار ۲",
+        },
+      ],
     },
     class_id: "683b425f3dbcefc2a0f0bbbb",
     program_type: "ON-SITE",
@@ -39,6 +62,23 @@ const mockPrograms = [
         location: "Music Room A",
       },
     ],
+    course_subjects: [
+      {
+        _id: "sub1",
+        title: "مبانی موسیقی",
+        sub_title: "آشنایی با نت‌ها و ریتم",
+      },
+      {
+        _id: "sub2",
+        title: "تکنیک‌های پیشرفته",
+        sub_title: "تمرین‌های تخصصی و حرفه‌ای",
+      },
+      {
+        _id: "sub3",
+        title: "اجرای قطعات کلاسیک",
+        sub_title: "تفسیر و اجرای آثار بزرگان",
+      },
+    ],
     members: [],
     createdAt: "2025-06-02T18:55:55.691Z",
     updatedAt: "2025-06-02T18:55:55.691Z",
@@ -54,6 +94,21 @@ const mockPrograms = [
       __t: "Coach",
       first_name: "سارا",
       last_name: "محمدی",
+      portfolio: [
+        {
+          _id: "port4",
+          type: "video",
+          url: "/placeholder.svg?height=200&width=200",
+          thumbnail: "/placeholder.svg?height=200&width=200",
+          title: "کلاس آنلاین نمونه",
+        },
+        {
+          _id: "port5",
+          type: "image",
+          url: "/placeholder.svg?height=200&width=200",
+          title: "گواهینامه تدریس",
+        },
+      ],
     },
     class_id: "683b425f3dbcefc2a0f0bbbc",
     program_type: "ONLINE",
@@ -75,6 +130,18 @@ const mockPrograms = [
         location: "Zoom Meeting",
       },
     ],
+    course_subjects: [
+      {
+        _id: "sub4",
+        title: "آموزش آنلاین موثر",
+        sub_title: "روش‌های نوین تدریس مجازی",
+      },
+      {
+        _id: "sub5",
+        title: "تعامل با دانشجو",
+        sub_title: "ایجاد ارتباط موثر در فضای مجازی",
+      },
+    ],
     members: [],
     createdAt: "2025-06-02T19:00:00.000Z",
     updatedAt: "2025-06-02T19:00:00.000Z",
@@ -92,11 +159,26 @@ interface Session {
   status: string
 }
 
+interface PortfolioItem {
+  _id: string
+  type: "image" | "video"
+  url: string
+  thumbnail?: string
+  title: string
+}
+
+interface CourseSubject {
+  _id: string
+  title: string
+  sub_title: string
+}
+
 interface Coach {
   _id: string
   __t: string
   first_name: string
   last_name: string
+  portfolio?: PortfolioItem[]
 }
 
 interface Program {
@@ -108,6 +190,7 @@ interface Program {
   class_id: string
   program_type: string
   sessions: Session[]
+  course_subjects?: CourseSubject[]
   members: any[]
   createdAt: string
   updatedAt: string
@@ -117,7 +200,7 @@ interface Program {
 // Component to display a single session
 const SessionItem = ({ session }: { session: Session }) => {
   return (
-    <div className="flex flex-col space-y-2 p-4 border-t">
+    <div dir="rtl" className="flex flex-col space-y-2 p-4 border-t">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <Calendar className="h-4 w-4 ml-2 text-muted-foreground" />
@@ -128,6 +211,48 @@ const SessionItem = ({ session }: { session: Session }) => {
         <Clock className="h-4 w-4 ml-2 text-muted-foreground" />
         <span className="text-sm">{`${session.startTime} - ${session.endTime}`}</span>
       </div>
+    </div>
+  )
+}
+
+// Component to display portfolio items
+const PortfolioGrid = ({ portfolio }: { portfolio: PortfolioItem[] }) => {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
+      {portfolio.map((item) => (
+        <div key={item._id} className="relative group">
+          <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+            <img
+              src={item.type === "video" ? item.thumbnail || item.url : item.url}
+              alt={item.title}
+              className="w-full h-full object-cover"
+            />
+            {item.type === "video" && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
+                <Play className="h-8 w-8 text-white" />
+              </div>
+            )}
+          </div>
+          <p className="text-xs mt-2 text-center">{item.title}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Component to display course subjects
+const SubjectsList = ({ subjects }: { subjects: CourseSubject[] }) => {
+  return (
+    <div className="p-4 space-y-3">
+      {subjects.map((subject) => (
+        <div key={subject._id} className="flex items-start space-x-3 p-3 border rounded-lg">
+          <FileText className="h-5 w-5 mt-0.5 text-muted-foreground flex-shrink-0" />
+          <div className="flex-1">
+            <h4 className="font-medium text-sm">{subject.title}</h4>
+            <p className="text-xs text-muted-foreground mt-1">{subject.sub_title}</p>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -145,7 +270,7 @@ const ProgramCard = ({
   return (
     <Card
       className={`w-full mb-4 cursor-pointer transition-all ${
-        isSelected ? "border-green-600 border-4" : "hover:bg-muted/90"
+        isSelected ? "border-green-500 border-2" : "hover:bg-muted/95"
       }`}
       onClick={onSelect}
       tabIndex={0}
@@ -158,8 +283,8 @@ const ProgramCard = ({
       role="radio"
       aria-checked={isSelected}
     >
-      <CardHeader className="relative">
-        <div className="flex justify-between items-start pt-6">
+      <CardHeader className="relative pt-16">
+        <div className="flex justify-between items-start">
           <div>
             <CardDescription>استاد</CardDescription>
             <CardTitle>{`${program.coach.first_name} ${program.coach.last_name}`}</CardTitle>
@@ -178,16 +303,43 @@ const ProgramCard = ({
           <span className="text-xs">{`جای خالی ${program.max_member_accept} `}</span>
         </div>
 
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="sessions">
-            <AccordionTrigger>جلسه ها ({program.sessions.length})</AccordionTrigger>
-            <AccordionContent>
+        <Tabs defaultValue="sessions" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="sessions" className="text-xs">
+               کلاس های دوره
+            </TabsTrigger>
+            <TabsTrigger value="portfolio" className="text-xs">
+              نمونه کار های استاد
+            </TabsTrigger>
+            <TabsTrigger value="subjects" className="text-xs">
+              سرفصل ها
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="sessions" className="mt-4">
+            <div className="space-y-2">
               {program.sessions.map((session) => (
                 <SessionItem key={session._id} session={session} />
               ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="portfolio" className="mt-4">
+            {program.coach.portfolio && program.coach.portfolio.length > 0 ? (
+              <PortfolioGrid portfolio={program.coach.portfolio} />
+            ) : (
+              <div className="p-4 text-center text-muted-foreground text-sm">نمونه کاری موجود نیست</div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="subjects" className="mt-4">
+            {program.course_subjects && program.course_subjects.length > 0 ? (
+              <SubjectsList subjects={program.course_subjects} />
+            ) : (
+              <div className="p-4 text-center text-muted-foreground text-sm">سرفصل موجود نیست</div>
+            )}
+          </TabsContent>
+        </Tabs>
       </CardContent>
       <CardFooter className="flex justify-between">
         <div className="text-xs text-muted-foreground">
@@ -211,13 +363,19 @@ const ProgramCard = ({
 
 // Main component to display all programs
 export default function CourseSchedule({
-  programs = mockPrograms,
+  courseId,
   onProgramSelect,
 }: {
-  programs?: Program[]
+  courseId: string
   onProgramSelect?: (programId: string) => void
 }) {
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null)
+  
+  const { data: programs, isLoading, error } = useQuery({
+    queryKey: ['coursePrograms', courseId],
+    queryFn: () => getCourseSessionPrograms(courseId),
+    enabled: !!courseId,
+  })
 
   const handleProgramSelect = (programId: string) => {
     setSelectedProgramId(programId)
@@ -226,11 +384,29 @@ export default function CourseSchedule({
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-3xl mx-auto p-4 text-center" dir="rtl">
+        <p>در حال بارگذاری...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="w-full max-w-3xl mx-auto p-4 text-center text-red-500" dir="rtl">
+        <p>خطا در دریافت اطلاعات: {(error as Error).message}</p>
+      </div>
+    )
+  }
+
+  const programsData = programs?.data?.programs || []
+
   return (
-    <div className="w-full max-w-3xl mx-auto p-4" dir="rtl">
+    <div className="mx-auto w-full max-w-3xl p-4" dir="rtl">
       <h2 className="text-xs md:text-lg text-center font-semibold mb-6">اساتیدی که این درس را ارایه میکنند</h2>
       <div className="space-y-4" role="radiogroup" aria-label="انتخاب استاد">
-        {programs.map((program) => (
+        {programsData.map((program) => (
           <ProgramCard
             key={program._id}
             program={program}
@@ -242,12 +418,12 @@ export default function CourseSchedule({
 
       {selectedProgramId && (
         <div className="mt-6 flex justify-end">
-          {/* <button
+          <button
             className="bg-primary text-primary-foreground px-4 py-2 rounded-md"
             onClick={() => console.log("Selected program:", selectedProgramId)}
           >
             تایید انتخاب
-          </button> */}
+          </button>
         </div>
       )}
     </div>

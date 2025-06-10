@@ -338,7 +338,7 @@ export default function CourseSessionSpecificContainer({ dataFromServer }: { dat
 
             {/* CourseSchedule */}
             <div className='w-full mt-12 py-8 bg-black rounded-lg'>
-              <CourseSchedule />
+              <CourseSchedule courseId={dataFromServer?.id} />
             </div>
             
 

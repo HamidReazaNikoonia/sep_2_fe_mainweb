@@ -137,6 +137,26 @@ async function getCourses(params: FilterParams = {}): Promise<CourseResponse> {
 //   return response.json();
 // }
 
+export async function getCourseSessionPrograms(courseId: string) {
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      // Authorization: `Bearer ${API_TOKEN}`,
+    },
+  };
+
+  const response = await fetch(
+    `${API_BASE_URL}/course-session/${courseId}/program`,
+    options,
+  );
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+
+  return response.json();
+}
 
 export async function getCoursesRequest(params: FilterParams) {
   const data = await getCourses(params);
