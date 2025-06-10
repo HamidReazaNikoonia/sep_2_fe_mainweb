@@ -146,7 +146,7 @@ const Navbar = () => {
               {/* Desktop Menu */}
               <ul className="hidden md:flex space-x-6 relative text-sm">
                 <li className="hover:text-gray-300">تماس با ما</li>
-                <li
+                {/* <li
                   className="hover:text-gray-300 relative"
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
@@ -155,7 +155,6 @@ const Navbar = () => {
                     <ChevronDown className=" w-3 h-3 mr-1" />
                   </span>
                   خدمات
-                  {/* Dropdown Menu */}
 
                   <ul
                     className={`absolute left-0 mt-2 bg-gray-700 rounded shadow-lg w-40 transition-opacity duration-200 ${dropdownOpen ? "opacity-100 visible" : "opacity-0 invisible"
@@ -164,13 +163,13 @@ const Navbar = () => {
                     <li className="px-4 py-2 hover:bg-gray-600">خدمات</li>
                     <li className="px-4 py-2 hover:bg-gray-600">خدمات</li>
                   </ul>
-                </li>
+                </li> */}
 
-                <Link href="/course">
+                <Link href="/course-session">
                   <li className="hover:text-gray-300">دوره ها</li>
                 </Link> 
 
-                <Link href="/product">
+                <Link href="/course">
                   <li className="hover:text-gray-300">فیلم آموزشی</li>
                 </Link>                
                 
@@ -218,12 +217,11 @@ const Navbar = () => {
           </button>
           <ul className="mt-12 space-y-6 px-6 pt-9 text-sm text-right">
             <li className="hover:text-gray-300">خانه</li>
-            <li
+            {/* <li
               className="hover:text-gray-300 cursor-pointer"
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
               خدمات
-              {/* Nested Menu for Mobile */}
               <ul
                 className={`pl-4 mt-2 space-y-2 text-sm ${dropdownOpen ? "block" : "hidden"
                   }`}
@@ -231,7 +229,20 @@ const Navbar = () => {
                 <li className="hover:text-gray-400">خدمات</li>
                 <li className="hover:text-gray-400">خدمات</li>
               </ul>
-            </li>
+            </li> */}
+            
+                  <li className="hover:text-gray-300">
+                  <Link href="/course-session">
+                    دوره ها
+                  </Link>
+                  </li>
+                
+
+                <li className="hover:text-gray-300">
+                  <Link href="/course">
+                    فیلم آموزشی
+                  </Link>
+                </li>    
             <li className="hover:text-gray-300">آکادمی آموزشی</li>
             <li className="hover:text-gray-300">تماس با ما</li>
           </ul>

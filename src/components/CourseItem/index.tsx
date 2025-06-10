@@ -145,13 +145,13 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
           </div>
 
           <div className="flex items-center justify-between border-t border-[#e1dfe2] py-2.5">
-            <div className="flex w-full items-center justify-center text-center text-sm text-black">
+            {/* <div className="flex w-full items-center justify-center text-center text-sm text-black">
               <City className="ml-1 size-4" />
               <span>
                &nbsp; دوره آموزش&nbsp;
                 {courseTypeMap[course?.course_type] || courseTypeMap.HOZORI}
               </span>
-            </div>
+            </div> */}
           </div>
 
           <div className=" flex items-center justify-between py-2">

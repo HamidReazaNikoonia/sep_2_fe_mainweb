@@ -119,9 +119,9 @@ export default async function Index(props: IIndexProps) {
         <ToturialsSwiperCardSection />
       </div> */}
 
-      <div className="w-full py-20">
+      {/* <div className="w-full py-20">
         <CourseHotBanner />
-      </div>
+      </div> */}
 
       {/* Image Gallery Section */}
       <div className="container mx-auto py-20">
@@ -129,9 +129,9 @@ export default async function Index(props: IIndexProps) {
       </div>
 
       {/* Multimedia Video Tabs Section */}
-      <div className="container mx-auto py-20">
+      {/* <div className="container mx-auto py-20">
         <MultimediaTabsPortfolio />
-      </div>
+      </div> */}
 
       {/* FAQs Section */}
       <div className="container mx-auto py-20">
