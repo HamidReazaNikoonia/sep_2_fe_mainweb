@@ -5,11 +5,16 @@ const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME || 'sepah_2';
 const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const [isUserCompleteProfile, setIsUserCompleteProfile] = useState(false);
+  const [userProfileData, setUserProfileData] = useState(null);
 
   useEffect(() => {
     // Load authentication state from localStorage
     const storedAuth = typeof window !== 'undefined' ? localStorage.getItem(`${PROJECT_NAME}-isAuthenticated`) : false;
     const storedUser = typeof window !== 'undefined' ? localStorage.getItem(`${PROJECT_NAME}-user`) : false;
+    // Load profile completion state and profile data from localStorage
+    const storedProfileCompletion = typeof window !== 'undefined' ? localStorage.getItem(`${PROJECT_NAME}-isUserCompleteProfile`) : false;
+    const storedProfileData = typeof window !== 'undefined' ? localStorage.getItem(`${PROJECT_NAME}-userProfileData`) : false;
 
     if (storedAuth === 'true' && storedUser) {
       setIsAuthenticated(true);
@@ -17,6 +22,15 @@ const useAuth = () => {
     } else {
       setIsAuthenticated(false);
       setUser(null);
+    }
+
+    // Set profile completion state and profile data if available
+    if (storedProfileCompletion === 'true' && storedProfileData) {
+      setIsUserCompleteProfile(true);
+      setUserProfileData(JSON.parse(storedProfileData));
+    } else {
+      setIsUserCompleteProfile(false);
+      setUserProfileData(null);
     }
   }, []);
 
@@ -45,6 +59,23 @@ const useAuth = () => {
     setUser(userDoc);
   };
 
+  // New method to update user profile data
+  const updateUserProfile = (profileData) => {
+    if (!profileData) {
+      return false;
+    }
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`${PROJECT_NAME}-userProfileData`, JSON.stringify(profileData));
+      localStorage.setItem(`${PROJECT_NAME}-isUserCompleteProfile`, 'true');
+    }
+
+    setUserProfileData(profileData);
+    setIsUserCompleteProfile(true);
+
+    return true;
+  };
+
   // Function to log out and clear data
   const logout = () => {
     if (typeof window !== 'undefined') {
@@ -53,13 +84,28 @@ const useAuth = () => {
       localStorage.removeItem(`${PROJECT_NAME}-lastLogin`);
       localStorage.removeItem(`${PROJECT_NAME}-isAuthenticated`);
       localStorage.removeItem(`${PROJECT_NAME}-user`);
+      // Also remove profile-related items
+      localStorage.removeItem(`${PROJECT_NAME}-isUserCompleteProfile`);
+      localStorage.removeItem(`${PROJECT_NAME}-userProfileData`);
     }
 
     setIsAuthenticated(false);
     setUser(null);
+    // Reset profile states
+    setIsUserCompleteProfile(false);
+    setUserProfileData(null);
   };
 
-  return { isAuthenticated, user, login, logout, updateUser };
+  return {
+    isAuthenticated,
+    user,
+    login,
+    logout,
+    updateUser,
+    isUserCompleteProfile,
+    userProfileData,
+    updateUserProfile,
+  };
 };
 
 export default useAuth;
