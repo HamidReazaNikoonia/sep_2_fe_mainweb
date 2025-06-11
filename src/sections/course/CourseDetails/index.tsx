@@ -1,8 +1,11 @@
 /* eslint-disable react-dom/no-dangerously-set-innerhtml */
-import parse from 'html-react-parser';
+'use client';
+import he from 'he';
 import React from 'react';
 
 export default function CourseDetails({ courseDescriptionLong, courseDescriptionShort }: { courseDescriptionLong: string; courseDescriptionShort: string }) {
+  const decodedHtml = he.decode(courseDescriptionLong || '');
+
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -28,8 +31,7 @@ export default function CourseDetails({ courseDescriptionLong, courseDescription
               {courseDescriptionLong}
             </p> */}
             <div
-              dangerouslySetInnerHTML={{ __html: courseDescriptionLong }}
-              style={{ whiteSpace: 'pre-wrap', lineBreak: 'anywhere' }}
+              dangerouslySetInnerHTML={{ __html: decodedHtml || '' }}
               className="mt-4 text-right text-sm leading-8"
             />
           </div>
