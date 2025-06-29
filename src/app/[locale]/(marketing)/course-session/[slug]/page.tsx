@@ -1,16 +1,15 @@
+import type { ICourseTypes } from '@/types/Course';
+import { SERVER_API_URL } from '@/API/config';
+import CommentLayout from '@/components/Comment';
 /* eslint-disable react/no-useless-fragment */
 /* eslint-disable style/indent */
 /* eslint-disable tailwindcss/classnames-order */
-import { AppConfig } from '@/utils/AppConfig';
-import Image from 'next/image';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+// import { AppConfig } from '@/utils/AppConfig';
+
+import { getTranslations } from 'next-intl/server';
+
 // import StickySidebarWraper from '@/sections/course/StickySidebarWraper';
 import CoursePageHeader from '@/sections/course/CoursePageHeader';
-
-import { ICourseTypes } from '@/types/Course';
-import CommentLayout from '@/components/Comment';
-
-import {SERVER_API_URL} from '@/API/config';
 import CourseSessionSpecificContainer from '@/sections/courseSession/CourseSessionSpecificContainer';
 
 type IPortfolioDetailProps = {
@@ -67,7 +66,7 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
 
   return (
     <>
-      <div className="overflow-hidden bg-[#242525] text-white pt-16 min-h-screen">
+      <div className="overflow-hidden bg-black text-white pt-16 min-h-screen">
 
         {/* heaser title */}
         <div>

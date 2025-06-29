@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-contradicting-classname */
 /* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable @next/next/no-img-element */
 'use client';
@@ -286,7 +287,7 @@ const PortfolioGrid = ({ portfolio }: { portfolio: any[] }) => {
                     className="size-full object-cover"
                     controls
                     preload="none"
-                    poster="/placeholder.svg?height=200&width=200"
+                    poster=""
                   >
                     <source data-src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`} type="video/mp4" />
                     Your browser does not support the video tag.
@@ -333,7 +334,7 @@ const ProgramCard = ({
   return (
     <Card
       className={`mb-4 w-full cursor-pointer py-4 transition-all ${isSelected ? 'border-4 border-green-500' : 'border-0'
-        }`}
+      }`}
       onClick={onSelect}
       tabIndex={0}
       onKeyDown={(e) => {
@@ -389,21 +390,21 @@ const ProgramCard = ({
           <TabsContent value="portfolio" className="mt-4">
             {program?.sample_media && program?.sample_media.length > 0
               ? (
-                <PortfolioGrid portfolio={program?.sample_media} />
-              )
+                  <PortfolioGrid portfolio={program?.sample_media} />
+                )
               : (
-                <div className="p-4 text-center text-sm text-muted-foreground">نمونه کاری موجود نیست</div>
-              )}
+                  <div className="p-4 text-center text-sm text-muted-foreground">نمونه کاری موجود نیست</div>
+                )}
           </TabsContent>
 
           <TabsContent value="subjects" className="mt-4">
             {program.subjects && program.subjects.length > 0
               ? (
-                <SubjectsList subjects={program.subjects} />
-              )
+                  <SubjectsList subjects={program.subjects} />
+                )
               : (
-                <div className="p-4 text-center text-sm text-muted-foreground">سرفصل موجود نیست</div>
-              )}
+                  <div className="p-4 text-center text-sm text-muted-foreground">سرفصل موجود نیست</div>
+                )}
           </TabsContent>
         </Tabs>
       </CardContent>
@@ -422,29 +423,29 @@ const ProgramCard = ({
       {/* Price display section */}
       {program.price_real && (
         <div className="mb-4 flex items-center justify-center gap-2">
-          <span className="text-sm font-medium">قیمت:</span>
+          <span className="text-xl font-medium">قیمت:</span>
           {hasDiscount
             ? (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground line-through">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl text-muted-foreground line-through">
+                    {program.price_real.toLocaleString()}
+                    {' '}
+                    تومان
+                  </span>
+                  <Badge variant="destructive" className="px-2 py-0 text-xl">
+                    {program.price_discounted.toLocaleString()}
+                    {' '}
+                    تومان
+                  </Badge>
+                </div>
+              )
+            : (
+                <span className="text-xl font-semibold">
                   {program.price_real.toLocaleString()}
                   {' '}
                   تومان
                 </span>
-                <Badge variant="destructive" className="px-2 py-0">
-                  {program.price_discounted.toLocaleString()}
-                  {' '}
-                  تومان
-                </Badge>
-              </div>
-            )
-            : (
-              <span className="text-sm font-semibold">
-                {program.price_real.toLocaleString()}
-                {' '}
-                تومان
-              </span>
-            )}
+              )}
         </div>
       )}
 
@@ -488,7 +489,7 @@ export default function CourseSchedule({
   };
 
   const handlePackageSelect = (packageId: string) => {
-    setSelectedPackages(prev => {
+    setSelectedPackages((prev) => {
       if (prev.includes(packageId)) {
         return prev.filter(id => id !== packageId);
       } else {
@@ -533,14 +534,14 @@ export default function CourseSchedule({
       </div>
 
 
-      <div className='w-full mt-12'>
-        <div className='w-full flex justify-center items-center'>
+      <div className="mt-12 w-full">
+        <div className="flex w-full items-center justify-center">
           {selectedProgram?.packages && selectedProgram.packages.length > 0 && (
             <div className="w-full">
               <h3 className="mb-8  text-center text-lg font-semibold">پکیج‌های ارائه شده برای این استاد</h3>
               <div className="space-y-3">
                 {selectedProgram.packages.map((pkg) => (
-                  <div key={pkg._id} className="flex border-2 border-gray-500 px-4 md:px-8 bg-white items-center justify-between rounded-lg border p-3">
+                  <div key={pkg._id} className="flex items-center justify-between rounded-lg border-2 border-gray-500 bg-white p-3 px-4 md:px-8">
                     <div className="flex items-center space-x-3 space-x-reverse">
                       <input
                         type="checkbox"
@@ -550,23 +551,26 @@ export default function CourseSchedule({
                         className="size-4 rounded border-gray-300 text-primary focus:ring-primary"
                       />
                       <label htmlFor={`package-${pkg._id}`} className="flex cursor-pointer items-center">
-                        {pkg.image ? (
-                          <img
-                            src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${pkg.image.file_name}`}
-                            alt={pkg.title}
-                            className="ml-3 size-10 rounded object-cover"
-                          />
-                        ) : (
-                          <div className="ml-3 size-10  rounded bg-gray-200 flex items-center justify-center">
-                            <span className="text-gray-600 text-center text-[8px]">بدون تصویر</span>
-                          </div>
-                        )}
+                        {pkg.image
+                          ? (
+                              <img
+                                src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${pkg.image.file_name}`}
+                                alt={pkg.title}
+                                className="ml-3 size-10 rounded object-cover"
+                              />
+                            )
+                          : (
+                              <div className="ml-3 flex  size-10 items-center justify-center rounded bg-gray-200">
+                                <span className="text-center text-[8px] text-gray-600">بدون تصویر</span>
+                              </div>
+                            )}
                         <span className="text-sm text-gray-900">{pkg.title}</span>
                       </label>
                     </div>
                     <div className="text-left">
                       <span className="font-medium text-primary">
-                        {pkg.price.toLocaleString()} ریال
+                        {pkg.price.toLocaleString()}
+                        ریال
                       </span>
                     </div>
                   </div>
@@ -577,9 +581,9 @@ export default function CourseSchedule({
         </div>
       </div>
 
-      <div className='w-full mt-6'>
+      <div className="mt-6 w-full">
         {selectedProgram && (
-          <div className="w-full rounded-lg border-2 border-dashed border-gray-400 p-4 my-6">
+          <div className="my-6 w-full rounded-lg border-2 border-dashed border-gray-400 p-4">
             <h3 className="mb-4 text-center text-lg font-semibold">پیش فاکتور</h3>
 
             <div className="space-y-3">
@@ -591,23 +595,29 @@ export default function CourseSchedule({
                     ? `${selectedProgram.price_discounted.toLocaleString()} ریال`
                     : selectedProgram.price_real
                       ? `${selectedProgram.price_real.toLocaleString()} ریال`
-                      : "رایگان"}
+                      : 'رایگان'}
                 </span>
               </div>
 
               {/* Selected Packages */}
               {selectedPackages.length > 0 && (
                 <div className="border-b pb-2">
-                  <div className="font-medium mb-2">پکیج‌های انتخاب شده:</div>
-                  <div className="space-y-1 mr-4">
+                  <div className="mb-2 font-medium">پکیج‌های انتخاب شده:</div>
+                  <div className="mr-4 space-y-1">
                     {selectedPackages.map((packageId) => {
                       const pkg = selectedProgram.packages.find(p => p._id === packageId);
-                      return pkg ? (
-                        <div key={pkg._id} className="flex justify-between text-sm">
-                          <span>{pkg.title}</span>
-                          <span>{pkg.price.toLocaleString()} ریال</span>
-                        </div>
-                      ) : null;
+                      return pkg
+                        ? (
+                            <div key={pkg._id} className="flex justify-between text-sm">
+                              <span>{pkg.title}</span>
+                              <span>
+                                {pkg.price.toLocaleString()}
+                                {' '}
+                                ریال
+                              </span>
+                            </div>
+                          )
+                        : null;
                     })}
                   </div>
                 </div>
@@ -616,7 +626,7 @@ export default function CourseSchedule({
               {/* Total Price */}
               <div className="flex justify-between pt-2 font-bold">
                 <span>مبلغ کل:</span>
-                <span className="text-primary bg-gray-200 px-2 py-1 rounded-md">
+                <span className="rounded-md bg-gray-200 px-2 py-1 text-primary">
                   {(() => {
                     // Calculate base program price
                     const programPrice = selectedProgram.price_discounted !== undefined &&

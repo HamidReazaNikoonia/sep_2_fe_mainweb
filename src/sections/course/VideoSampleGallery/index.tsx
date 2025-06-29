@@ -18,6 +18,12 @@ export default function VideoSampleGallery({ sampleMedia }: { sampleMedia: any }
           <SwatchBook className="ml-3" />
         </h3>
 
+        {(!sampleMedia || sampleMedia.length === 0) && (
+          <div className="text-center text-sm text-gray-400">
+            هیچ ویدیویی برای نمایش وجود ندارد
+          </div>
+        )}
+
         {/* First Sample Media */}
         {firstSampleMedia && (
 

@@ -5,7 +5,7 @@ import { WalletMinimal, Headset, Clock } from 'lucide-react';
 export default function CourseCharacter() {
   return (
     <>
-      <div className='w-full bg-black py-8 flex flex-col md:flex-row justify-around mt-8 mb-2 md:mb-4 py-4 px-4 rounded-lg'>
+      <div className='w-full bg-gray-900 py-8 flex flex-col md:flex-row justify-around mt-8 mb-2 md:mb-4 py-4 px-4 rounded-lg'>
         <div className='flex items-center justify-end mb-5 md:mb-0'>
           <div className='text-[13px] text-right pr-4 leading-7 font-medium w-56 md:w-44'>
             بازگشت وجه درصورت عدم رضایـت از دوره آموزشی
