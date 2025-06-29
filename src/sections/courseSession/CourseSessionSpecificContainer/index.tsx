@@ -133,90 +133,14 @@ export default function CourseSessionSpecificContainer({ dataFromServer }: { dat
   }
 
   return (
-    <div className=" mt-12">
+    <div className=" mt-1">
 
 
       {/* Image Hero Section */}
-      <div className='w-full flex justify-center items-center bg-black rounded-lg'>
-          {/* Thumb Image */}
-          <div>
-              <Image className='' alt="" width={700} height={450} src={tumbnailImage} />
-            </div>
-        </div>
+      <div className='w-full flex flex-col-reverse md:flex-row justify-center items-center bg-black rounded-lg'>
 
-      <div className="flex flex-col-reverse md:flex-row">
-
-        
-
-        {/* Left Side (Sticky Side Bar) */}
-        <div className="md:w-1/3 space-y-6 mt-6 md:mt-0 px-4 md:px-0">
-
-
-
-
-
-
-          {/* <div className="bg-red-500 rounded-md overflow-hidden">
-            <h5 className="text-white text-lg p-2">Sticky Pens</h5>
-            {["Stinky Footer", "Stick Up", "Sticky Sidebar"].map((item, index) => (
-              <a key={index} href="#" className="block bg-gray-100 bg-opacity-80 hover:bg-blue-400 hover:text-black p-2 text-sm">{item}</a>
-            ))}
-          </div> */}
-
-          <div className=' w-full flex justify-center items-center flex-col'>
-            {/* Buttons */}
-            <div className=' w-full flex flex-col justify-center items-center px-2'>
-              {/* Price Section */}
-              {/* <div className='flex w-full justify-between items-center border-2 border-green-600 border-dashed p-4 rounded-xl'>
-                <div className='flex flex-col items-start'>
-                  {price_discount ? (
-                    <>
-                      <div className='flex items-center'>
-                        <div className='text-lg text-gray-100 font-bold mr-2'>تومان</div>
-                        <div className='text-4xl'>{(price_discount).toLocaleString('ar-EG')}</div>
-                        <div className='ml-2 px-3 py-1 bg-[#cf741e] text-white text-sm rounded-full'>تخفیف ویژه</div>
-                      </div>
-                      <div className='flex items-center mt-1 relative'>
-                        <div className='text-sm text-gray-400 font-bold mr-2'>تومان</div>
-                        <div className='text-lg text-gray-400'>{(price_real).toLocaleString('ar-EG')}</div>
-                        
-                        <div className="absolute top-1/2 left-0 right-0 h-[1.5px] w-full -rotate-12 transform bg-red-500"></div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className='flex items-center'>
-                      <div className='text-lg text-gray-100 font-bold mr-2'>ریال</div>
-                      <div className='text-4xl'>{(price_real).toLocaleString('ar-EG')}</div>
-                    </div>
-                  )}
-                </div>
-                <div className='text-lg text-gray-100'>قیمت</div>
-              </div> */}
-
-
-              {/* Buttons Section */}
-              {/* <div className='flex flex-col space-y-2 mt-6 w-full justify-between items-center'>
-
-                <LoadingButton disabled={addToCartMutation.isPending} isLoading={addToCartMutation.isPending} onClick={attToBasketHandler} className=" text-white  flex justify-center items-center w-full hover:bg-blue-600 px-4 py-3 rounded mr-2 text-sm md:text-lg">
-                     ثبت نام
-                  <SquareArrowUpLeft className='ml-2' />
-                </LoadingButton>
-                <button >
-
-                </button>
-
-
-                <button className="bg-[#251f3e] text-white hover:opacity-80 w-full flex justify-center px-4 py-3 rounded mr-2 text-sm md:text-lg">
-                  افزودن به علاقه مندی ها
-                  <Heart className='ml-3' />
-                </button>
-              </div> */}
-
-            </div>
-
-
-            {/* Course Information Second Card */}
-            <div className='w-full flex flex-col mt-4 px-8 text-sm bg-black rounded-lg py-5'>
+        {/* Course Information Second Card */}
+        <div className=' w-full md:w-1/4 flex flex-col mt-4 px-8 text-sm bg-black rounded-lg py-5'>
               {/* Item */}
               <div className="w-full flex justify-end items-center border-b border-cyan-800 py-4">
 
@@ -281,39 +205,22 @@ export default function CourseSessionSpecificContainer({ dataFromServer }: { dat
             </div>
 
 
-            {/* Course Information Teacher Info */}
-            {/* <div 
-            ref={stickyRef}
-            className={` flex ${
-                isSticky ? 'fixed top-20  w-[426px]' : 'w-full'
-              }`}
-          >
-            {coachData && <TeacherInfoSection coach={coachData} />}
-          </div> */}
-            
-          </div>
+
+          {/* Thumb Image */}
+          <div>
+              <Image className='' alt="" width={800} height={450} src={tumbnailImage} />
+            </div>
 
 
-
-
-
-          {/* ******************** LAST ITEM STICKY WITH REF ************** */}
-
-          {/* <div 
-            ref={stickyRef}
-            className={`bg-red-500 rounded-md overflow-hidden ${
-              isSticky ? 'fixed top-20  w-1/3' : ''
-            }`}
-          >
-            <h5 className="text-white text-lg p-2">More Cool Stuff</h5>
-            {["Boxes", "Riveting Rivets"].map((item, index) => (
-              <a key={index} href="#" className="block bg-gray-100 bg-opacity-80 hover:bg-blue-400 hover:text-black p-2 text-sm">{item}</a>
-            ))}
-          </div> */}
+             
         </div>
 
+      <div className="container mx-auto flex flex-col-reverse md:flex-row">
+
+        
+
         {/* Rigth Side */}
-        <div className="md:w-2/3">
+        <div className="w-full">
           <div className='flex flex-col justify-center items-center px-0 md:px-8'>
             
 
@@ -337,7 +244,7 @@ export default function CourseSessionSpecificContainer({ dataFromServer }: { dat
 
 
             {/* CourseSchedule */}
-            <div className='w-full mt-12 py-8 bg-black rounded-lg'>
+            <div className='w-full mt-12 py-8 px-4 md:px-6 bg-black rounded-lg'>
               <CourseSchedule courseId={dataFromServer?.id} />
             </div>
             

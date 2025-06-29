@@ -74,7 +74,7 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
           <CoursePageHeader courseCategory={productsData.course_session_category[0]?.name || ''} title={productsData.title} />
         </div>
 
-        <div className="container mx-auto" id="StickySidebarWraper">
+        <div className="" id="StickySidebarWraper">
           <CourseSessionSpecificContainer dataFromServer={productsData} />
         </div>
 
