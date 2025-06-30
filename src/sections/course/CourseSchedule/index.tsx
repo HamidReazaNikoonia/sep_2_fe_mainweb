@@ -1,4 +1,3 @@
-/* eslint-disable tailwindcss/no-contradicting-classname */
 /* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable @next/next/no-img-element */
 'use client';
@@ -7,9 +6,16 @@ import { getCourseSessionPrograms } from '@/API/course';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import avatarImage from '@/public/assets/images/avatar.png';
+import { filterPriceNumber, toPersianDigits } from '@/utils/Helpers';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar, Check, Clock, FileText, Play, Users } from 'lucide-react';
+import router from 'next/dist/shared/lib/router/router';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 // Mock data that matches the API structure
 const NEXT_PUBLIC_SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL || '';
@@ -236,7 +242,7 @@ const SessionItem = ({ session }: { session: Session }) => {
     >
       <div className="mb-3 flex items-center justify-between border-b pb-2">
         <h4 className="font-medium">جلسه آموزشی</h4>
-        <Badge variant="outline" className={`${statusConfig.badgeStyle} px-2 py-1 font-semibold`}>
+        <Badge variant="outline" className={`${statusConfig.badgeStyle} rounded-2xl px-3 py-1.5 text-xs font-medium`}>
           {statusConfig.text}
         </Badge>
       </div>
@@ -244,12 +250,12 @@ const SessionItem = ({ session }: { session: Session }) => {
       <div className="space-y-3">
         <div className="flex items-center">
           <Calendar className="ml-2 size-4 text-primary" />
-          <span className="text-sm text-gray-700">{session.date}</span>
+          <span className="text-sm text-gray-700">{toPersianDigits(session.date)}</span>
         </div>
 
         <div className="flex items-center">
           <Clock className="ml-2 size-4 text-primary" />
-          <span className="text-sm text-gray-700">{`${session.startTime} - ${session.endTime}`}</span>
+          <span className="text-sm text-gray-700">{`${toPersianDigits(session.startTime) || ''} - ${toPersianDigits(session.endTime) || ''}`}</span>
         </div>
 
         {session.location && (
@@ -307,8 +313,8 @@ const SubjectsList = ({ subjects }: { subjects: CourseSubject[] }) => {
   return (
     <div dir="rtl" className="space-y-3 p-4">
       {subjects.map(subject => (
-        <div key={subject._id} className="flex items-start space-x-3 rounded-lg border p-3">
-          <FileText className="ml-2 mt-0.5 size-5 shrink-0 text-muted-foreground" />
+        <div key={subject._id} className="flex items-center space-x-3 rounded-lg border p-3">
+          <FileText className="ml-4 mt-0.5 size-5 shrink-0 text-muted-foreground" />
           <div className="flex-1">
             <h4 className="text-sm font-medium">{subject.title}</h4>
             <p className="mt-1 text-xs text-muted-foreground">{subject.sub_title}</p>
@@ -381,7 +387,7 @@ const ProgramCard = ({
 
           <TabsContent value="sessions" className="mt-4">
             <div dir="rtl" className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-              {[...program.sessions, ...program.sessions, ...program.sessions, ...program.sessions].map(session => (
+              {program.sessions.map(session => (
                 <SessionItem key={session._id} session={session} />
               ))}
             </div>
@@ -428,12 +434,12 @@ const ProgramCard = ({
             ? (
                 <div className="flex items-center gap-2">
                   <span className="text-xl text-muted-foreground line-through">
-                    {program.price_real.toLocaleString()}
+                    {filterPriceNumber(program.price_real)}
                     {' '}
                     تومان
                   </span>
                   <Badge variant="destructive" className="px-2 py-0 text-xl">
-                    {program.price_discounted.toLocaleString()}
+                    {filterPriceNumber(program.price_discounted)}
                     {' '}
                     تومان
                   </Badge>
@@ -441,7 +447,7 @@ const ProgramCard = ({
               )
             : (
                 <span className="text-xl font-semibold">
-                  {program.price_real.toLocaleString()}
+                  {filterPriceNumber(program.price_real)}
                   {' '}
                   تومان
                 </span>
@@ -472,6 +478,7 @@ export default function CourseSchedule({
 }) {
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
+  const router = useRouter();
 
   const { data: programs, isLoading, error } = useQuery({
     queryKey: ['coursePrograms', courseId],
@@ -519,11 +526,59 @@ export default function CourseSchedule({
 
   const programsData = programs?.data?.programs || [];
 
+  const handleSubmit = () => {
+    // eslint-disable-next-line no-console
+    console.log('Selected program:', selectedProgram, 'Selected packages:', selectedPackages);
+
+    // validate selected program and packages
+    if (!selectedProgram) {
+      toast.error('لطفا یک دوره انتخاب کنید');
+      return false;
+    }
+
+    // navigate user to the course-session checkout process
+    router.push(`/course-session/checkout?programId=${selectedProgram._id}&packageIds=${selectedPackages.join(',')}`);
+    return false;
+  };
+
   return (
     <div className="w-full p-4" dir="rtl">
-      <h2 className="mb-6 text-center text-xs font-semibold md:text-lg">اساتیدی که این درس را ارایه میکنند</h2>
+      <h2 className="mb-12 text-center text-xs font-semibold md:text-3xl">اساتیدی که این درس را ارایه میکنند</h2>
+
+      <div className="z-0 my-12 flex items-center justify-center -space-x-2">
+        <div
+          className="relative z-0 flex size-20 shrink-0 select-none items-center justify-center rounded-full bg-gray-100 text-sm font-bold uppercase text-gray-800 ring ring-white"
+        >
+          <Image alt="avatar" className="size-full rounded-full object-cover object-center" src={avatarImage} />
+
+        </div>
+        <div
+          className="relative z-10 flex size-28 shrink-0 select-none items-center justify-center rounded-full bg-gray-100 text-sm font-bold uppercase text-gray-800 ring ring-white"
+        >
+          <Image alt="avatar" className="size-full rounded-full object-cover object-center" src={avatarImage} />
+
+        </div>
+        <div
+          className="relative z-10 flex size-40 shrink-0 select-none items-center justify-center rounded-full bg-gray-100 text-sm font-bold uppercase text-gray-800 ring ring-white"
+        >
+          <Image alt="avatar" className="size-full rounded-full object-cover object-center" src={avatarImage} />
+
+        </div>
+        <div
+          className="relative z-10 flex size-28 shrink-0 select-none items-center justify-center rounded-full bg-gray-100 text-sm font-bold uppercase text-gray-800 ring ring-white"
+        >
+          <Image alt="avatar" className="size-full rounded-full object-cover object-center" src={avatarImage} />
+
+        </div>
+        <div
+          className="relative z-0 flex size-20 shrink-0 select-none items-center justify-center rounded-full bg-gray-100 text-sm font-bold uppercase text-gray-800 ring ring-white"
+        >
+          <Image alt="avatar" className="size-full rounded-full object-cover object-center" src={avatarImage} />
+        </div>
+      </div>
+
       <div className="space-y-4" role="radiogroup" aria-label="انتخاب استاد">
-        {programsData.map((program: { _id: any; sample_media?: any; price_discounted?: any; price_real?: any; subjects?: any; max_member_accept?: number; status?: string; course?: any; coach?: Coach; class_id?: string; program_type?: string; sessions?: Session[]; course_subjects?: CourseSubject[] | undefined; members?: any[]; createdAt?: string; updatedAt?: string; __v?: number; }) => (
+        {programsData.map((program: { _id: any; sample_media?: any; price_discounted?: any; price_real?: any; subjects?: any; max_member_accept?: number; status?: string; course?: any; coach?: Coach; class_id?: string; program_type?: string; sessions?: Session[]; course_subjects?: CourseSubject[] | undefined; members?: any[]; createdAt?: string; updatedAt?: string; __v?: number }) => (
           <ProgramCard
             key={program._id}
             program={program}
@@ -533,14 +588,13 @@ export default function CourseSchedule({
         ))}
       </div>
 
-
       <div className="mt-12 w-full">
         <div className="flex w-full items-center justify-center">
           {selectedProgram?.packages && selectedProgram.packages.length > 0 && (
             <div className="w-full">
               <h3 className="mb-8  text-center text-lg font-semibold">پکیج‌های ارائه شده برای این استاد</h3>
               <div className="space-y-3">
-                {selectedProgram.packages.map((pkg) => (
+                {selectedProgram.packages.map(pkg => (
                   <div key={pkg._id} className="flex items-center justify-between rounded-lg border-2 border-gray-500 bg-white p-3 px-4 md:px-8">
                     <div className="flex items-center space-x-3 space-x-reverse">
                       <input
@@ -569,7 +623,7 @@ export default function CourseSchedule({
                     </div>
                     <div className="text-left">
                       <span className="font-medium text-primary">
-                        {pkg.price.toLocaleString()}
+                        {filterPriceNumber(pkg.price)}
                         ریال
                       </span>
                     </div>
@@ -592,9 +646,9 @@ export default function CourseSchedule({
                 <span className="font-medium">قیمت دوره:</span>
                 <span className="font-medium">
                   {selectedProgram.price_discounted !== undefined && selectedProgram.price_discounted !== selectedProgram.price_real
-                    ? `${selectedProgram.price_discounted.toLocaleString()} ریال`
+                    ? `${filterPriceNumber(selectedProgram.price_discounted)} ریال`
                     : selectedProgram.price_real
-                      ? `${selectedProgram.price_real.toLocaleString()} ریال`
+                      ? `${filterPriceNumber(selectedProgram.price_real)} ریال`
                       : 'رایگان'}
                 </span>
               </div>
@@ -611,7 +665,7 @@ export default function CourseSchedule({
                             <div key={pkg._id} className="flex justify-between text-sm">
                               <span>{pkg.title}</span>
                               <span>
-                                {pkg.price.toLocaleString()}
+                                {filterPriceNumber(pkg.price)}
                                 {' '}
                                 ریال
                               </span>
@@ -629,8 +683,8 @@ export default function CourseSchedule({
                 <span className="rounded-md bg-gray-200 px-2 py-1 text-primary">
                   {(() => {
                     // Calculate base program price
-                    const programPrice = selectedProgram.price_discounted !== undefined &&
-                      selectedProgram.price_discounted !== selectedProgram.price_real
+                    const programPrice = selectedProgram.price_discounted !== undefined
+                      && selectedProgram.price_discounted !== selectedProgram.price_real
                       ? selectedProgram.price_discounted
                       : selectedProgram.price_real || 0;
 
@@ -641,7 +695,7 @@ export default function CourseSchedule({
                     }, 0);
 
                     // Return total formatted price
-                    return `${(programPrice + packagesPrice).toLocaleString()} ریال`;
+                    return `${filterPriceNumber(programPrice + packagesPrice)} ریال`;
                   })()}
                 </span>
               </div>
@@ -655,7 +709,7 @@ export default function CourseSchedule({
           <button
             type="button"
             className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
-            onClick={() => console.log('Selected program:', selectedProgram, 'Selected packages:', selectedPackages)}
+            onClick={handleSubmit}
           >
             تایید انتخاب
           </button>
