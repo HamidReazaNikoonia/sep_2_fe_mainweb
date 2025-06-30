@@ -7,6 +7,7 @@ const useAuth = () => {
   const [user, setUser] = useState(null);
   const [isUserCompleteProfile, setIsUserCompleteProfile] = useState(false);
   const [userProfileData, setUserProfileData] = useState(null);
+  const [selectedCourseSession, setSelectedCourseSession] = useState(null);
 
   useEffect(() => {
     // Load authentication state from localStorage
@@ -76,6 +77,15 @@ const useAuth = () => {
     return true;
   };
 
+  // New method to updateselectedCourseSession data
+  const updateSelectedCourseSession = (selectedCourseSession) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`${PROJECT_NAME}-selectedCourseSession`, JSON.stringify(selectedCourseSession));
+    }
+
+    setSelectedCourseSession(selectedCourseSession);
+  };
+
   // Function to log out and clear data
   const logout = () => {
     if (typeof window !== 'undefined') {
@@ -105,6 +115,8 @@ const useAuth = () => {
     isUserCompleteProfile,
     userProfileData,
     updateUserProfile,
+    selectedCourseSession,
+    updateSelectedCourseSession,
   };
 };
 
