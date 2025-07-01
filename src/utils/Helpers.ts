@@ -113,6 +113,30 @@ export const formatDurationWithPersian = (minutes: number): string => {
   }
 };
 
+// Iranian National ID validation function
+export const validateIranianNationalId = (nationalId: string) => {
+  if (!nationalId || nationalId.length !== 10) {
+    return false;
+  }
+
+  // Check if all digits are the same
+  if (/^(\d)\1{9}$/.test(nationalId)) {
+    return false;
+  }
+
+  // Calculate check digit
+  let sum = 0;
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < 9; i++) {
+    sum += Number.parseInt(nationalId[i], 10) * (10 - i);
+  }
+
+  const remainder = sum % 11;
+  const checkDigit = remainder < 2 ? remainder : 11 - remainder;
+
+  return Number.parseInt(nationalId[9], 10) === checkDigit;
+};
+
 // const mobileReg = /(0|\+98)?([ ]|-|[()]){0,2}9[1|2|3|4]([ ]|-|[()]){0,2}(?:[0-9]([ ]|-|[()]){0,2}){8}/ig,
 // junkReg = /[^\d]/ig,
 // persinNum = [/۰/gi,/۱/gi,/۲/gi,/۳/gi,/۴/gi,/۵/gi,/۶/gi,/۷/gi,/۸/gi,/۹/gi],

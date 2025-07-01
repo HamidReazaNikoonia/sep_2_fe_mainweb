@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import type React from 'react';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import useAuth from '@/hooks/useAuth';
-import { BarChart2, Calendar, GraduationCap, Heart, Home, LogOut, Settings, ShoppingBag, Users } from 'lucide-react';
+import { BarChart2, Calendar, GraduationCap, Heart, Home, LogOut, Settings, ShoppingBag, User, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -65,7 +66,29 @@ export default function DashboardLayout({
       {/* Sidebar */}
       <div className="w-64 border-r bg-white shadow-sm">
         <div className="p-4">
-          <h1 className="mb-8 text-2xl font-bold text-[#4338CA]">Teamsy.</h1>
+          <div className="mb-8 flex items-center gap-3 p-2">
+            {user?.avatar
+              ? (
+                  <img
+                    src={user.avatar}
+                    alt={`${user?.first_name} ${user?.last_name}`}
+                    className="size-12 rounded-full object-cover"
+                  />
+                )
+              : (
+                  <div className="flex size-12 items-center justify-center rounded-full bg-[#E6E6FF]">
+                    <User size={24} className="text-[#4338CA]" />
+                  </div>
+                )}
+            <div className="flex flex-col">
+              <h2 className="font-semibold text-gray-900">
+                {user?.first_name}
+                {' '}
+                {user?.last_name}
+              </h2>
+              <p className="text-right text-sm text-gray-500">خوش آمدید</p>
+            </div>
+          </div>
 
           <nav className="space-y-1">
             <SidebarLink href="/dashboard" icon={Home} isActive={pathname === '/dashboard'}>
@@ -98,7 +121,7 @@ export default function DashboardLayout({
               {user?.first_name?.[0]}
             </div>
             <div>
-              <p className="font-medium text-gray-900">
+              <p className="text-sm font-medium text-gray-900">
                 {user?.first_name}
                 {' '}
                 {user?.last_name}
@@ -114,17 +137,14 @@ export default function DashboardLayout({
         <header className="bg-white shadow-sm">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center space-x-4">
-              <input
-                type="search"
-                placeholder="جستجو..."
-                className="w-64 rounded-lg border border-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
-              />
+
             </div>
             <div className="flex items-center space-x-4">
-              <button type='button' className="rounded-lg p-2 hover:bg-gray-100">
-                <Settings size={20} className="text-gray-600" />
+              <button type="button" className="rounded-lg p-2 hover:bg-gray-100">
+                <User size={20} className="text-gray-600" />
               </button>
               <button
+                type="button"
                 onClick={() => router.push('/sign-in')}
                 className="rounded-lg p-2 hover:bg-gray-100"
               >
