@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable ts/ban-ts-comment */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 'use client';
@@ -12,6 +13,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import Modal from '@/components/ui/Modal';
 import useAuth from '@/hooks/useAuth';
 import { validateIranianNationalId } from '@/utils/Helpers';
+import { completeProfileRequest } from '@/API/auth';
 
 type User = {
   first_name: string;
@@ -19,10 +21,12 @@ type User = {
   mobile: string;
   role?: string;
   gender?: 'M' | 'W';
-};
-
-type UserProfile = {
-  gender: 'M' | 'W';
+  nationalId?: string;
+  avatar?: string;
+  national_card_images?: Array<{
+    _id: string;
+    file_name: string;
+  }>;
 };
 
 type IUserProfilePageProps = {
@@ -38,22 +42,21 @@ type FormData = {
   gender: 'M' | 'W';
   nationalId: string;
   avatar: string;
+  national_card_images: string[];
 };
 
-// First, add a type for form errors
 type FormErrors = {
   first_name?: string;
   last_name?: string;
   nationalId?: string;
+  national_card_images?: string;
 };
 
 export default function UserProfilePage({ params }: IUserProfilePageProps) {
-  const { user, userProfileData, updateUser } = useAuth() as {
+  const { user, updateUser } = useAuth() as {
     user: User | null;
-    userProfileData: UserProfile | null;
     updateUser: (data: any) => void;
   };
-  const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<FormData>({
@@ -62,6 +65,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     gender: user?.gender || 'M',
     nationalId: '',
     avatar: '',
+    national_card_images: [],
   });
 
   const [isUploading, setIsUploading] = useState(false);
@@ -72,10 +76,16 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
   const [scale, setScale] = useState(1);
   const editorRef = useRef<AvatarEditor | null>(null);
 
+  // Add these new state variables after the existing state declarations
+  const [nationalCardPreviews, setNationalCardPreviews] = useState<string[]>([]);
+  const nationalCardInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingNationalCard, setIsUploadingNationalCard] = useState(false);
+  const [nationalCardUploadProgress, setNationalCardUploadProgress] = useState(0);
+
   // Add new state for form errors
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const { 'user-profile': segments = [] } = use(params);
+  const { 'user-profile': _ = [] } = use(params);
 
   useEffect(() => {
     setFormData({
@@ -84,30 +94,21 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
       gender: user?.gender || 'M',
       nationalId: user?.nationalId || '',
       avatar: user?.avatar || '',
+      national_card_images: user?.national_card_images?.map(image => image._id) || [],
     });
   }, [user]);
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: FormData) => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/profile/update`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem(`${process.env.NEXT_PUBLIC_PROJECT_NAME}-access`)}`,
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update profile');
-      }
-
-      return response.json();
-    },
+    mutationFn: completeProfileRequest,
     onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-      updateUser(response);
-      toast.success('پروفایل با موفقیت بروزرسانی شد');
+      if (response) {
+        // eslint-disable-next-line no-console
+        console.log('__response__', response);
+        updateUser(response);
+        toast.success('پروفایل با موفقیت بروزرسانی شد');
+      } else {
+        toast.error('خطا در بروزرسانی پروفایل');
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message || 'خطا در بروزرسانی پروفایل');
@@ -145,7 +146,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
       ...prev,
       [name]: value,
     }));
-    
+
     // Clear error when user starts typing
     setErrors(prev => ({ ...prev, [name]: undefined }));
   };
@@ -241,16 +242,112 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
   // Update form submission to include validation
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate all fields
     const isFirstNameValid = validateField('first_name', formData.first_name);
     const isLastNameValid = validateField('last_name', formData.last_name);
-    
+
     if (!isFirstNameValid || !isLastNameValid) {
       return; // Stop submission if validation fails
     }
 
-    updateProfileMutation.mutate(formData);
+    updateProfileMutation.mutate({
+      userId: user?.id || '',
+      data: {
+        name: formData.first_name,
+        family: formData.last_name,
+        gender: formData.gender,
+        nationalId: formData.nationalId,
+        avatar: formData.avatar,
+        national_card_images: formData.national_card_images,
+      },
+    });
+  };
+    // Add this new handler for national ID card upload
+  const handleNationalCardUpload = async (files: FileList) => {
+    if (formData.national_card_images.length + files.length > 3) {
+      toast.error('حداکثر 3 تصویر می‌توانید آپلود کنید');
+      return;
+    }
+
+    setIsUploadingNationalCard(true);
+    setNationalCardUploadProgress(0);
+
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const formDataNationalCard = new FormData();
+        formDataNationalCard.append('file', file);
+
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/setting/upload`,
+          formDataNationalCard,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${localStorage.getItem(`${process.env.NEXT_PUBLIC_PROJECT_NAME}-access`)}`,
+            },
+            onUploadProgress: (progressEvent) => {
+              const progress = progressEvent.total
+                ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                : 0;
+              setNationalCardUploadProgress(progress);
+            },
+          },
+        );
+
+        if (response.status !== 200 || !response?.data) {
+          throw new Error('خطا در آپلود تصویر کارت ملی');
+        }
+
+        return response.data.uploadedFile._id;
+      });
+
+      const uploadedIds = await Promise.all(uploadPromises);
+
+      setFormData(prev => ({
+        ...prev,
+        national_card_images: [...prev.national_card_images, ...uploadedIds],
+      }));
+
+      toast.success('تصاویر کارت ملی با موفقیت آپلود شدند');
+    } catch (error) {
+      toast.error('خطا در آپلود تصویر کارت ملی');
+      console.error(error);
+    } finally {
+      setIsUploadingNationalCard(false);
+      setNationalCardUploadProgress(0);
+    }
+  };
+
+  // Add this new handler for national ID card file selection
+  const handleNationalCardSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) {
+      return;
+    }
+
+    if (formData.national_card_images.length + files.length > 3) {
+      toast.error('حداکثر 3 تصویر می‌توانید آپلود کنید');
+      return;
+    }
+
+    Array.from(files).forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNationalCardPreviews(prev => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    handleNationalCardUpload(files);
+  };
+
+  const handleRemoveNationalCard = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      national_card_images: prev.national_card_images.filter((_, i) => i !== index),
+    }));
+    setNationalCardPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -305,9 +402,9 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     onChange={handleInputChange}
                     onBlur={handleBlur}
                     className={`rounded-md border p-2 text-sm ${
-                      errors.first_name 
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                      errors.first_name ?
+                        'border-red-500 focus:border-red-500 focus:ring-red-500' :
+                        'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                     }`}
                     required
                   />
@@ -325,9 +422,9 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     onChange={handleInputChange}
                     onBlur={handleBlur}
                     className={`rounded-md border p-2 text-sm ${
-                      errors.last_name 
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                      errors.last_name ?
+                        'border-red-500 focus:border-red-500 focus:ring-red-500' :
+                        'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                     }`}
                     required
                   />
@@ -359,9 +456,9 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     onChange={handleInputChange}
                     onBlur={handleNationalIdBlur}
                     className={`rounded-md border p-2 ${
-                      errors.nationalId 
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                      errors.nationalId ?
+                        'border-red-500 focus:border-red-500 focus:ring-red-500' :
+                        'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                     }`}
                     required
                   />
@@ -397,6 +494,79 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                       </div>
                     </div>
                   )}
+                </div>
+
+                {/* After the avatar upload section, add this new section */}
+                <div className="flex flex-col">
+                  <label className="mb-2 text-sm text-gray-500">تصویر کارت ملی (حداکثر 3 تصویر)</label>
+                  <input
+                    type="file"
+                    ref={nationalCardInputRef}
+                    onChange={handleNationalCardSelect}
+                    className="hidden"
+                    accept="image/*"
+                    multiple
+                  />
+                  <div className="space-y-4">
+                    {formData.national_card_images.length < 3 && (
+                      <button
+                        type="button"
+                        onClick={() => nationalCardInputRef.current?.click()}
+                        className="flex items-center justify-center rounded-md border border-gray-300 p-2 text-xs hover:bg-gray-50"
+                      >
+                        <Upload className="ml-2 size-4" />
+                        انتخاب تصویر کارت ملی
+                      </button>
+                    )}
+
+                    {/* Preview section */}
+                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                      {formData.national_card_images.map((imageId, index) => (
+                        <div key={imageId} className="relative">
+                          <img
+                            src={user?.national_card_images?.find(img => img._id === imageId)?.file_name
+                              ? `${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${user.national_card_images.find(img => img._id === imageId)?.file_name}`
+                              : nationalCardPreviews[index] || ''}
+                            alt={`تصویر کارت ملی ${index + 1}`}
+                            className="h-48 w-full rounded-lg object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveNationalCard(index)}
+                            className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                            aria-label="حذف تصویر"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="size-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Upload progress */}
+                    {isUploadingNationalCard && (
+                      <div className="mt-2">
+                        <div className="h-2 w-full rounded-full bg-gray-200">
+                          <div
+                            className="h-2 rounded-full bg-blue-600 transition-all"
+                            style={{ width: `${nationalCardUploadProgress}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <LoadingButton
