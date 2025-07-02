@@ -1,13 +1,17 @@
+/* eslint-disable ts/ban-ts-comment */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 'use client';
-import LoadingButton from '@/components/LoadingButton';
-import { Card, CardContent } from '@/components/ui/card';
-import useAuth from '@/hooks/useAuth';
-import { validateIranianNationalId } from '@/utils/Helpers';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Upload, UserRound } from 'lucide-react';
-import { use, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
+import AvatarEditor from 'react-avatar-editor';
 import toast from 'react-hot-toast';
+import LoadingButton from '@/components/LoadingButton';
+import { Card, CardContent } from '@/components/ui/card';
+import Modal from '@/components/ui/Modal';
+import useAuth from '@/hooks/useAuth';
+import { validateIranianNationalId } from '@/utils/Helpers';
 
 type User = {
   first_name: string;
@@ -36,6 +40,13 @@ type FormData = {
   avatar: string;
 };
 
+// First, add a type for form errors
+type FormErrors = {
+  first_name?: string;
+  last_name?: string;
+  nationalId?: string;
+};
+
 export default function UserProfilePage({ params }: IUserProfilePageProps) {
   const { user, userProfileData, updateUser } = useAuth() as {
     user: User | null;
@@ -56,7 +67,25 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  const [previewImage, setPreviewImage] = useState<File | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [scale, setScale] = useState(1);
+  const editorRef = useRef<AvatarEditor | null>(null);
+
+  // Add new state for form errors
+  const [errors, setErrors] = useState<FormErrors>({});
+
   const { 'user-profile': segments = [] } = use(params);
+
+  useEffect(() => {
+    setFormData({
+      first_name: user?.first_name || '',
+      last_name: user?.last_name || '',
+      gender: user?.gender || 'M',
+      nationalId: user?.nationalId || '',
+      avatar: user?.avatar || '',
+    });
+  }, [user]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: FormData) => {
@@ -85,39 +114,73 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     },
   });
 
+  // Add validation function
+  const validateField = (name: string, value: string) => {
+    switch (name) {
+      case 'first_name':
+        if (!value.trim()) {
+          setErrors(prev => ({ ...prev, first_name: 'نام نمی‌تواند خالی باشد' }));
+          return false;
+        }
+        setErrors(prev => ({ ...prev, first_name: undefined }));
+        return true;
+
+      case 'last_name':
+        if (!value.trim()) {
+          setErrors(prev => ({ ...prev, last_name: 'نام خانوادگی نمی‌تواند خالی باشد' }));
+          return false;
+        }
+        setErrors(prev => ({ ...prev, last_name: undefined }));
+        return true;
+
+      default:
+        return true;
+    }
+  };
+
+  // Update handleInputChange to include validation
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
-    if (name === 'nationalId' && value) {
-      const isValid = validateIranianNationalId(value);
-      if (!isValid) {
-        toast.error('کد ملی نامعتبر است');
-        return;
-      }
-    }
-
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
+    
+    // Clear error when user starts typing
+    setErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) {
-      return;
-    }
+  // Add blur handler for all fields
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    validateField(name, value);
+  };
 
+  // Update handleNationalIdBlur
+  const handleNationalIdBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    if (value) {
+      const isValid = validateIranianNationalId(value);
+      if (!isValid) {
+        setErrors(prev => ({ ...prev, nationalId: 'کد ملی نامعتبر است' }));
+      } else {
+        setErrors(prev => ({ ...prev, nationalId: undefined }));
+      }
+    }
+  };
+
+  // @ts-expect-error
+  const handleFileUpload = async (file: File) => {
     setIsUploading(true);
     setUploadProgress(0);
 
-    const formData = new FormData();
-    formData.append('file', file);
+    const formDataAvatar = new FormData();
+    formDataAvatar.append('file', file);
 
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/setting/upload`,
-        formData,
+        formDataAvatar,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -132,8 +195,6 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
         },
       );
 
-      console.log(response);
-
       if (response.status !== 200 || !response?.data) {
         toast.error('خطا در آپلود تصویر');
         return false;
@@ -144,20 +205,51 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           ...prev,
           avatar: response.data.uploadedFile._id,
         }));
-        console.log(formData, response.data.uploadedFile._id);
-
         toast.success('تصویر با موفقیت آپلود شد');
       }
     } catch (error) {
       toast.error('خطا در آپلود تصویر');
+      // eslint-disable-next-line no-console
+      console.log(error);
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
     }
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPreviewImage(file);
+      setIsPreviewOpen(true);
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (editorRef.current && previewImage) {
+      const canvas = editorRef.current.getImageScaledToCanvas();
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          const file = new File([blob], previewImage.name, { type: 'image/jpeg' });
+          setIsPreviewOpen(false);
+          await handleFileUpload(file);
+        }
+      }, 'image/jpeg');
+    }
+  };
+
+  // Update form submission to include validation
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate all fields
+    const isFirstNameValid = validateField('first_name', formData.first_name);
+    const isLastNameValid = validateField('last_name', formData.last_name);
+    
+    if (!isFirstNameValid || !isLastNameValid) {
+      return; // Stop submission if validation fails
+    }
+
     updateProfileMutation.mutate(formData);
   };
 
@@ -177,7 +269,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
               <div className="space-y-4">
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500">نام و نام خانوادگی</span>
-                  <span className="font-medium">
+                  <span className="mt-2 font-medium">
                     {user?.first_name}
                     {' '}
                     {user?.last_name}
@@ -185,12 +277,12 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500">شماره موبایل</span>
-                  <span className="font-medium">{user?.mobile}</span>
+                  <span className="mt-2 font-medium">{user?.mobile}</span>
                 </div>
                 {user?.gender && (
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">جنسیت</span>
-                    <span className="font-medium">
+                    <span className="mt-2 font-medium">
                       {user?.gender === 'M' ? 'مرد' : 'زن'}
                     </span>
                   </div>
@@ -211,9 +303,17 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleInputChange}
-                    className="rounded-md border border-gray-300 p-2"
+                    onBlur={handleBlur}
+                    className={`rounded-md border p-2 text-sm ${
+                      errors.first_name 
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    }`}
                     required
                   />
+                  {errors.first_name && (
+                    <span className="mt-1 text-xs text-red-500">{errors.first_name}</span>
+                  )}
                 </div>
 
                 <div className="flex flex-col">
@@ -223,9 +323,17 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
-                    className="rounded-md border border-gray-300 p-2"
+                    onBlur={handleBlur}
+                    className={`rounded-md border p-2 text-sm ${
+                      errors.last_name 
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    }`}
                     required
                   />
+                  {errors.last_name && (
+                    <span className="mt-1 text-xs text-red-500">{errors.last_name}</span>
+                  )}
                 </div>
 
                 <div className="flex flex-col">
@@ -234,7 +342,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     name="gender"
                     value={formData.gender}
                     onChange={handleInputChange}
-                    className="rounded-md border border-gray-300 p-2"
+                    className="rounded-md border border-gray-300 p-2 text-sm"
                     required
                   >
                     <option value="M">مرد</option>
@@ -249,9 +357,17 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     name="nationalId"
                     value={formData.nationalId}
                     onChange={handleInputChange}
-                    className="rounded-md border border-gray-300 p-2"
+                    onBlur={handleNationalIdBlur}
+                    className={`rounded-md border p-2 ${
+                      errors.nationalId 
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    }`}
                     required
                   />
+                  {errors.nationalId && (
+                    <span className="mt-1 text-xs text-red-500">{errors.nationalId}</span>
+                  )}
                 </div>
 
                 <div className="flex flex-col">
@@ -259,17 +375,17 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                   <input
                     type="file"
                     ref={fileInputRef}
-                    onChange={handleFileUpload}
+                    onChange={handleFileSelect}
                     className="hidden"
                     accept="image/*"
                   />
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center justify-center rounded-md border border-gray-300 p-2 hover:bg-gray-50"
+                    className="flex items-center justify-center rounded-md border border-gray-300 p-2 text-xs hover:bg-gray-50"
                   >
-                    <Upload className="mr-2 size-5" />
-                    آپلود تصویر
+                    <Upload className="ml-2 size-4" />
+                    انتخاب تصویر
                   </button>
                   {isUploading && (
                     <div className="mt-2">
@@ -286,15 +402,66 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 <LoadingButton
                   type="submit"
                   isLoading={updateProfileMutation.isPending}
-                  className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                  ذخیره تغییرات
+                  ذخیره
                 </LoadingButton>
               </form>
             </CardContent>
           </Card>
         </div>
       </div>
+
+      {/* Replace the Dialog component with our custom Modal */}
+      <Modal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        title="ویرایش تصویر پروفایل"
+      >
+        <div className="flex flex-col items-center gap-4">
+          {previewImage && (
+            <AvatarEditor
+              ref={editorRef}
+              image={previewImage}
+              width={250}
+              height={250}
+              border={50}
+              borderRadius={125}
+              color={[255, 255, 255, 0.6]}
+              scale={scale}
+              rotate={0}
+            />
+          )}
+          <div className="w-full">
+            <label className="mb-2 block text-sm">بزرگنمایی</label>
+            <input
+              type="range"
+              min="1"
+              max="2"
+              step="0.01"
+              value={scale}
+              onChange={e => setScale(Number.parseFloat(e.target.value))}
+              className="w-full"
+            />
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleSaveEdit}
+              className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            >
+              تایید و آپلود
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsPreviewOpen(false)}
+              className="rounded-md border border-gray-300 px-4 py-2 hover:bg-gray-50"
+            >
+              انصراف
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

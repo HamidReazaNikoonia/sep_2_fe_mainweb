@@ -58,6 +58,7 @@
     "pino-pretty": "^13.0.0",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-advance-jalaali-datepicker": "^1.6.0",
+    "react-avatar-editor": "^13.0.2",
     "react-datepicker2": "^3.3.13",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-hook-form": "^7.53.2",
