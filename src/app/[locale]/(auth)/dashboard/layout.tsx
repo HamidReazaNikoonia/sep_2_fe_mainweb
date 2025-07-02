@@ -67,12 +67,12 @@ export default function DashboardLayout({
       <div className="w-64 border-r bg-white shadow-sm">
         <div className="p-4">
           <div className="mb-8 flex items-center gap-3 p-2">
-            {user?.avatar
+            {user?.avatar?.file_name
               ? (
                   <img
-                    src={user.avatar}
+                    src={`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${user?.avatar?.file_name}`}
                     alt={`${user?.first_name} ${user?.last_name}`}
-                    className="size-12 rounded-full object-cover"
+                    className="size-16 rounded-full object-cover"
                   />
                 )
               : (

@@ -1,4 +1,6 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { getUserProfileRequest } from '@/API/auth';
 
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME || 'sepah_2';
 
@@ -8,6 +10,7 @@ const useAuth = () => {
   const [isUserCompleteProfile, setIsUserCompleteProfile] = useState(false);
   const [userProfileData, setUserProfileData] = useState(null);
   const [selectedCourseSession, setSelectedCourseSession] = useState(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     // Load authentication state from localStorage
@@ -106,6 +109,36 @@ const useAuth = () => {
     setUserProfileData(null);
   };
 
+  // Add the fetchUserFromServer method
+  const fetchUserFromServer = async () => {
+    if (!user?.id) {
+      return;
+    }
+
+    // Invalidate the existing query to force a fresh request
+    // @ts-ignore
+    await queryClient.invalidateQueries(['profile', user.id]);
+
+    // Fetch fresh data
+    const result = await queryClient.fetchQuery({
+      queryKey: ['profile', user.id],
+      queryFn: () => getUserProfileRequest({ userId: user.id }),
+      staleTime: 0, // Ensure we get fresh data
+    });
+
+    if (result?.profile) {
+      // Update profile data
+      updateUserProfile(result.profile);
+
+      // Update user data
+      if (result.profile.user) {
+        updateUser(result.profile.user);
+      }
+    }
+
+    return result;
+  };
+
   return {
     isAuthenticated,
     user,
@@ -117,6 +150,7 @@ const useAuth = () => {
     updateUserProfile,
     selectedCourseSession,
     updateSelectedCourseSession,
+    fetchUserFromServer,
   };
 };
 

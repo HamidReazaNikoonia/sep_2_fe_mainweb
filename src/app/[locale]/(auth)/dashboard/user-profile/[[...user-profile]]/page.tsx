@@ -53,9 +53,10 @@ type FormErrors = {
 };
 
 export default function UserProfilePage({ params }: IUserProfilePageProps) {
-  const { user, updateUser } = useAuth() as {
+  const { user, updateUser, fetchUserFromServer } = useAuth() as {
     user: User | null;
     updateUser: (data: any) => void;
+    fetchUserFromServer: () => void;
   };
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -106,6 +107,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
         console.log('__response__', response);
         updateUser(response);
         toast.success('پروفایل با موفقیت بروزرسانی شد');
+        fetchUserFromServer();
       } else {
         toast.error('خطا در بروزرسانی پروفایل');
       }
@@ -359,8 +361,17 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           <Card className="w-full max-w-2xl shadow-lg">
             <CardContent dir="rtl" className="p-6">
               <div className="mb-6 flex items-center justify-center">
-                <div className="flex size-24 items-center justify-center rounded-full bg-gray-100">
-                  <UserRound size={48} className="text-gray-400" />
+                <div className="flex size-40 items-center justify-center rounded-full bg-gray-100">
+                  {user?.avatar?.file_name ? (
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${user?.avatar?.file_name}`}
+                      alt={`${user?.first_name} ${user?.last_name}`}
+                      className="size-full rounded-full object-cover"
+                    />
+                  )
+                    : (
+                        <UserRound size={48} className="text-gray-400" />
+                      )}
                 </div>
               </div>
               <div className="space-y-4">
