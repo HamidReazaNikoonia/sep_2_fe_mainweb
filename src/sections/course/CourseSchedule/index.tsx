@@ -542,7 +542,7 @@ export default function CourseSchedule({
   };
 
   return (
-    <div className="w-full p-4" dir="rtl">
+    <div className="w-full px-1 py-4" dir="rtl">
       <h2 className="mb-12 text-center text-xs font-semibold md:text-3xl">اساتیدی که این درس را ارایه میکنند</h2>
 
       <div className="z-0 my-12 flex items-center justify-center -space-x-2">
@@ -705,10 +705,10 @@ export default function CourseSchedule({
       </div>
 
       {selectedProgram && (
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex justify-center">
           <button
             type="button"
-            className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
+            className="w-1/2 rounded-md bg-purple-950 px-12 py-2 text-primary-foreground md:w-1/3"
             onClick={handleSubmit}
           >
             تایید انتخاب

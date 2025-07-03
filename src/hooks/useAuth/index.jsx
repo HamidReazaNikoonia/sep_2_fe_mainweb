@@ -5,6 +5,7 @@ import { getUserProfileRequest } from '@/API/auth';
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME || 'sepah_2';
 
 const useAuth = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [isUserCompleteProfile, setIsUserCompleteProfile] = useState(false);
@@ -36,6 +37,7 @@ const useAuth = () => {
       setIsUserCompleteProfile(false);
       setUserProfileData(null);
     }
+    setIsLoading(false);
   }, []);
 
   // Function to log in and store data
@@ -151,6 +153,7 @@ const useAuth = () => {
     selectedCourseSession,
     updateSelectedCourseSession,
     fetchUserFromServer,
+    isLoading,
   };
 };
 

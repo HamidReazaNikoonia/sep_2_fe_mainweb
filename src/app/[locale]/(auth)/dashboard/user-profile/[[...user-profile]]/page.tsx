@@ -358,7 +358,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
         {/* Profile Card */}
         <div className="flex flex-col items-center justify-center ">
           <h1 className="mb-8 text-2xl font-bold">پروفایل کاربری</h1>
-          <Card className="w-full max-w-2xl shadow-lg">
+          <Card className="w-full max-w-4xl shadow-lg">
             <CardContent dir="rtl" className="p-6">
               <div className="mb-6 flex items-center justify-center">
                 <div className="flex size-40 items-center justify-center rounded-full bg-gray-100">
@@ -400,7 +400,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           </Card>
 
           {/* Edit Profile Form Card */}
-          <Card className="mt-8 w-full max-w-2xl shadow-lg">
+          <Card className="mt-8 w-full max-w-4xl shadow-lg">
             <CardContent dir="rtl" className="p-6">
               <h2 className="mb-6 text-xl font-semibold">ویرایش پروفایل</h2>
               <form onSubmit={handleSubmit} className="space-y-4">

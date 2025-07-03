@@ -140,7 +140,7 @@ export default function DashboardLayout({
 
             </div>
             <div className="flex items-center space-x-4">
-              <button type="button" className="rounded-lg p-2 hover:bg-gray-100">
+              <button onClick={() => router.push('/dashboard/user-profile')} type="button" className="rounded-lg p-2 hover:bg-gray-100">
                 <User size={20} className="text-gray-600" />
               </button>
               <button
