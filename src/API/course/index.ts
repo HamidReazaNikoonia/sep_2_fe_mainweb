@@ -158,6 +158,26 @@ export async function getCourseSessionPrograms(courseId: string) {
   return response.json();
 }
 
+export async function getCourseSessionProgramById(programId: string) {
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+    },
+  };
+
+  const response = await fetch(
+    `${API_BASE_URL}/course-session/program/${programId}`,
+    options,
+  );
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+
+  return response.json();
+}
+
 export async function getCoursesRequest(params: FilterParams) {
   const data = await getCourses(params);
   return data;
@@ -168,18 +188,20 @@ export async function getSpecificUserCourseRequest(body: { courseId: string }) {
   return data;
 }
 
+export async function getCourseSessionProgramByIdRequest(body: { programId: string }) {
+  const data = await getCourseSessionProgramById(body.programId);
+  return data;
+}
 
 export async function getCategoriesRequest() {
   const data = await getCategories();
   return data;
 }
 
-
 // export async function getCommentsRequest({page, productId}) {
 //   const data = await getComments(page, productId);
 //   return data;
 // }
-
 
 // export async function submitCommentRequest(commentData) {
 //   const data = await submitComment(commentData);

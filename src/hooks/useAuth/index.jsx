@@ -10,7 +10,7 @@ const useAuth = () => {
   const [user, setUser] = useState(null);
   const [isUserCompleteProfile, setIsUserCompleteProfile] = useState(false);
   const [userProfileData, setUserProfileData] = useState(null);
-  const [selectedCourseSession, setSelectedCourseSession] = useState(null);
+  const [selectedCourseSessionProgram, setSelectedCourseSessionProgram] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -83,12 +83,13 @@ const useAuth = () => {
   };
 
   // New method to updateselectedCourseSession data
-  const updateSelectedCourseSession = (selectedCourseSession) => {
+  // @ts-ignore
+  const updateSelectedCourseSessionProgram = (_selectedCourseSessionProgram) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(`${PROJECT_NAME}-selectedCourseSession`, JSON.stringify(selectedCourseSession));
+      localStorage.setItem(`${PROJECT_NAME}-selectedCourseSessionProgram`, JSON.stringify(_selectedCourseSessionProgram));
     }
 
-    setSelectedCourseSession(selectedCourseSession);
+    setSelectedCourseSessionProgram(_selectedCourseSessionProgram);
   };
 
   // Function to log out and clear data
@@ -150,8 +151,8 @@ const useAuth = () => {
     isUserCompleteProfile,
     userProfileData,
     updateUserProfile,
-    selectedCourseSession,
-    updateSelectedCourseSession,
+    selectedCourseSessionProgram,
+    updateSelectedCourseSessionProgram,
     fetchUserFromServer,
     isLoading,
   };

@@ -6,6 +6,7 @@ import { getCourseSessionPrograms } from '@/API/course';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import useAuth from '@/hooks/useAuth';
 import avatarImage from '@/public/assets/images/avatar.png';
 import { filterPriceNumber, toPersianDigits } from '@/utils/Helpers';
 import { useQuery } from '@tanstack/react-query';
@@ -479,7 +480,7 @@ export default function CourseSchedule({
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
   const router = useRouter();
-
+  const {updateSelectedCourseSessionProgram} = useAuth();
   const { data: programs, isLoading, error } = useQuery({
     queryKey: ['coursePrograms', courseId],
     queryFn: () => getCourseSessionPrograms(courseId),
@@ -531,11 +532,14 @@ export default function CourseSchedule({
     console.log('Selected program:', selectedProgram, 'Selected packages:', selectedPackages);
 
     // validate selected program and packages
-    if (!selectedProgram) {
+    if (!selectedProgram?._id) {
       toast.error('لطفا یک دوره انتخاب کنید');
       return false;
     }
-
+    updateSelectedCourseSessionProgram({
+      programId: selectedProgram?._id,
+      packages: selectedPackages,
+    });
     // navigate user to the course-session checkout process
     router.push(`/course-session/checkout?programId=${selectedProgram._id}&packageIds=${selectedPackages.join(',')}`);
     return false;
