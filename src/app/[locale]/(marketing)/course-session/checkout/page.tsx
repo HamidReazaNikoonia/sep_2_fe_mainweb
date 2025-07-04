@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 import { getCourseSessionProgramByIdRequest } from '@/API/course';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import useAuth from '@/hooks/useAuth';
+import { CourseSessioonProgramHelper } from '@/utils/CourseSession';
+import { toPersianDigits } from '@/utils/Helpers';
 
 export default function CourseSessionCheckout() {
   const router = useRouter();
@@ -70,6 +72,16 @@ export default function CourseSessionCheckout() {
     return basePrice + packagesTotal;
   };
 
+  // Get first session date
+  const firstSessionDate = data ? CourseSessioonProgramHelper(data).getFirstSessionDate() : null;
+
+  const submitOrderAndNavigateToPayment = () => {
+    // eslint-disable-next-line no-console
+    console.log('submitOrderAndNavigateToPayment');
+
+    // we should navigate user to thhe bank
+  };
+
   // If all validations pass, render the checkout content
   return (
     <div className="min-h-screen w-full overflow-hidden bg-black pt-20 text-white" dir="rtl">
@@ -77,7 +89,7 @@ export default function CourseSessionCheckout() {
       {isSuccess && data && (
         <div className="mx-auto my-8 max-w-2xl p-6">
           <div className="rounded-lg bg-gray-800 p-6 shadow-lg">
-            <h2 className="mb-6 text-center text-2xl font-bold">* * سفارش * *</h2>
+            <h2 className="mb-8 text-center text-2xl font-bold text-gray-400">* *  فاکتور سفارش * *</h2>
 
             {/* Course Information */}
             <div className="mb-6 border-b border-gray-600 pb-4">
@@ -94,6 +106,18 @@ export default function CourseSessionCheckout() {
                   )}
             </div>
 
+            {/* First Session Date */}
+            {firstSessionDate && (
+              <div className="mb-6 border-b border-gray-600 pb-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium text-gray-300">شروع دوره از:</h3>
+                  <span style={{ letterSpacing: '2px' }} className="rounded-2xl border border-green-600/20 px-4 py-2 text-lg font-medium text-white">
+                    {toPersianDigits(firstSessionDate)}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Coach Information */}
             <div className="mb-6 border-b border-gray-600 pb-4">
               <h3 className="mb-2 text-lg font-medium">مدرس</h3>
@@ -106,18 +130,18 @@ export default function CourseSessionCheckout() {
               <div className="flex items-center justify-between">
                 <span>قیمت اصلی:</span>
                 <span className={data.price_discounted ? 'text-gray-400 line-through' : ''}>
-                  {data.price_real.toLocaleString()}
+                  {data.price_real.toLocaleString('fa-IR')}
                   {' '}
-                  تومان
+                  ریال
                 </span>
               </div>
               {data.price_discounted && (
                 <div className="mt-2 flex items-center justify-between text-green-400">
                   <span>قیمت با تخفیف:</span>
-                  <span>
-                    {data.price_discounted.toLocaleString()}
+                  <span style={{ letterSpacing: '1px' }}>
+                    {data.price_discounted.toLocaleString('fa-IR')}
                     {' '}
-                    تومان
+                    ریال
                   </span>
                 </div>
               )}
@@ -130,10 +154,10 @@ export default function CourseSessionCheckout() {
                 {data.packages.map((pkg: any) => (
                   <div key={pkg._id} className="mb-2 flex items-center justify-between text-sm md:text-base">
                     <span>{pkg.title}</span>
-                    <span>
-                      {pkg.price.toLocaleString()}
+                    <span style={{ letterSpacing: '1px' }}>
+                      {pkg.price.toLocaleString('fa-IR')}
                       {' '}
-                      تومان
+                      ریال
                     </span>
                   </div>
                 ))}
@@ -144,13 +168,13 @@ export default function CourseSessionCheckout() {
             <div className="mt-6">
               <div className="flex items-center justify-between text-base font-semibold md:text-xl">
                 <span>مجموع قابل پرداخت : </span>
-                <span>
+                <span style={{ letterSpacing: '1px' }} className="rounded-2xl  bg-green-600/20 px-4 py-2">
                   {calculateTotalPrice(
                     data.price_discounted || data.price_real,
                     data.packages,
-                  ).toLocaleString()}
+                  ).toLocaleString('fa-IR')}
                   {' '}
-                  تومان
+                  ریال
                 </span>
               </div>
             </div>
@@ -158,11 +182,8 @@ export default function CourseSessionCheckout() {
             {/* Checkout Button */}
             <button
               type="button"
-              className="mt-12 w-full rounded-lg bg-green-600 px-6 py-3 text-center font-semibold text-white transition hover:bg-green-700"
-              onClick={() => {
-                // Add your checkout navigation logic here
-                // router.push('/checkout/payment');
-              }}
+              className="mt-12 w-full rounded-lg bg-purple-600 px-6 py-3 text-center font-semibold text-white transition hover:bg-purple-700"
+              onClick={submitOrderAndNavigateToPayment}
             >
               ادامه فرآیند پرداخت
             </button>
