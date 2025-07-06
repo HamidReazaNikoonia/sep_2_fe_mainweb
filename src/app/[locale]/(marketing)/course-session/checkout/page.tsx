@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { getCourseSessionProgramByIdRequest } from '@/API/course';
+import { calculateOrderSummaryRequest } from '@/API/order/courseSession';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import useAuth from '@/hooks/useAuth';
 import { CourseSessioonProgramHelper } from '@/utils/CourseSession';
@@ -20,9 +20,17 @@ export default function CourseSessionCheckout() {
   const packageIds = searchParams.get('packageIds')?.split(',');
 
   // Using useQuery directly in the component
-  const { data, isLoading: isProgramLoading, isError: isProgramError, error: programError, isSuccess } = useQuery({
-    queryKey: ['courseSessionProgram', programId],
-    queryFn: programId ? () => getCourseSessionProgramByIdRequest({ programId }) : undefined,
+  // const { data, isLoading: isProgramLoading, isError: isProgramError, error: programError, isSuccess } = useQuery({
+  //   queryKey: ['courseSessionProgram', programId],
+  //   queryFn: programId ? () => getCourseSessionProgramByIdRequest({ programId }) : undefined,
+  //   enabled: !!programId,
+  // });
+
+  const { data: orderSummaryData, isLoading: isOrderSummaryLoading, isSuccess: isOrderSummarySuccess } = useQuery({
+    queryKey: ['orderSummary', programId],
+    queryFn: () => calculateOrderSummaryRequest({
+      classProgramId: programId as string,
+    }),
     enabled: !!programId,
   });
 
@@ -53,18 +61,18 @@ export default function CourseSessionCheckout() {
   }, [isAuthenticated, userProfileData, programId, isUserCompleteProfile, packageIds, router, isLoading]);
 
   // API API
-  useEffect(() => {
-    if (isProgramError) {
-      toast.error('خطا در دریافت اطلاعات برنامه');
-      // eslint-disable-next-line no-console
-      console.log('programError', programError);
-    }
+  // useEffect(() => {
+  //   if (isProgramError) {
+  //     toast.error('خطا در دریافت اطلاعات برنامه');
+  //     // eslint-disable-next-line no-console
+  //     console.log('programError', programError);
+  //   }
 
-    if (isSuccess) {
-      // eslint-disable-next-line no-console
-      console.log('data', data);
-    }
-  }, [isProgramError, isSuccess, data, programError]);
+  //   if (isSuccess) {
+  //     // eslint-disable-next-line no-console
+  //     console.log('data', data);
+  //   }
+  // }, [isProgramError, isSuccess, data, programError]);
 
   // Calculate total price including packages
   const calculateTotalPrice = (basePrice: number, selectedPackages: Array<{ price: number }>) => {
@@ -73,7 +81,9 @@ export default function CourseSessionCheckout() {
   };
 
   // Get first session date
-  const firstSessionDate = data ? CourseSessioonProgramHelper(data).getFirstSessionDate() : null;
+  const firstSessionDate = orderSummaryData?.program ? CourseSessioonProgramHelper(orderSummaryData?.program).getFirstSessionDate() : null;
+
+  const courseProgramData = orderSummaryData?.program;
 
   const submitOrderAndNavigateToPayment = () => {
     // eslint-disable-next-line no-console
@@ -85,8 +95,8 @@ export default function CourseSessionCheckout() {
   // If all validations pass, render the checkout content
   return (
     <div className="min-h-screen w-full overflow-hidden bg-black pt-20 text-white" dir="rtl">
-      {(isLoading || isProgramLoading) && <LoadingSpinner />}
-      {isSuccess && data && (
+      {(isLoading || isOrderSummaryLoading) && <LoadingSpinner />}
+      {isOrderSummarySuccess && orderSummaryData?.program && (
         <div className="mx-auto my-8 max-w-2xl p-6">
           <div className="rounded-lg bg-gray-800 p-6 shadow-lg">
             <h2 className="mb-8 text-center text-2xl font-bold text-gray-400">* *  فاکتور سفارش * *</h2>
@@ -94,11 +104,11 @@ export default function CourseSessionCheckout() {
             {/* Course Information */}
             <div className="mb-6 border-b border-gray-600 pb-4">
               <h3 className="mb-12 text-xl font-semibold">اطلاعات دوره</h3>
-              {data.course
+              {courseProgramData?.course
                 ? (
                     <>
-                      <p className="mb-1 text-lg">{data.course.title}</p>
-                      <p className="text-sm text-gray-400">{data.course.sub_title}</p>
+                      <p className="mb-1 text-lg">{courseProgramData?.course?.title}</p>
+                      <p className="text-sm text-gray-400">{courseProgramData?.course?.sub_title}</p>
                     </>
                   )
                 : (
@@ -121,7 +131,7 @@ export default function CourseSessionCheckout() {
             {/* Coach Information */}
             <div className="mb-6 border-b border-gray-600 pb-4">
               <h3 className="mb-2 text-lg font-medium">مدرس</h3>
-              <p className="text-lg">{`${data.coach.first_name} ${data.coach.last_name}`}</p>
+              <p className="text-lg">{`${courseProgramData?.coach?.first_name} ${courseProgramData?.coach?.last_name}`}</p>
             </div>
 
             {/* Price Information */}
@@ -129,18 +139,17 @@ export default function CourseSessionCheckout() {
               <h3 className="mb-4 text-lg font-medium">قیمت دوره</h3>
               <div className="flex items-center justify-between">
                 <span>قیمت اصلی:</span>
-                <span className={data.price_discounted ? 'text-gray-400 line-through' : ''}>
-                  {data.price_real.toLocaleString('fa-IR')}
+                <span className={courseProgramData?.price_discounted ? 'text-gray-400 line-through' : ''}>
+                  {courseProgramData?.price_real.toLocaleString('fa-IR')}
                   {' '}
                   ریال
                 </span>
               </div>
-              {data.price_discounted && (
+              {courseProgramData?.price_discounted && (
                 <div className="mt-2 flex items-center justify-between text-green-400">
                   <span>قیمت با تخفیف:</span>
                   <span style={{ letterSpacing: '1px' }}>
-                    {data.price_discounted.toLocaleString('fa-IR')}
-                    {' '}
+                    {courseProgramData?.price_discounted.toLocaleString('fa-IR')}
                     ریال
                   </span>
                 </div>
@@ -148,10 +157,10 @@ export default function CourseSessionCheckout() {
             </div>
 
             {/* Packages Information */}
-            {data.packages && data.packages.length > 0 && (
+            {courseProgramData?.packages && courseProgramData?.packages.length > 0 && (
               <div className="mb-6 border-b border-gray-600 pb-4">
                 <h3 className="mb-4 text-xl font-medium">پکیج‌های انتخاب شده</h3>
-                {data.packages.map((pkg: any) => (
+                {courseProgramData?.packages.map((pkg: any) => (
                   <div key={pkg._id} className="mb-2 flex items-center justify-between text-sm md:text-base">
                     <span>{pkg.title}</span>
                     <span style={{ letterSpacing: '1px' }}>
@@ -170,8 +179,8 @@ export default function CourseSessionCheckout() {
                 <span>مجموع قابل پرداخت : </span>
                 <span style={{ letterSpacing: '1px' }} className="rounded-2xl  bg-green-600/20 px-4 py-2">
                   {calculateTotalPrice(
-                    data.price_discounted || data.price_real,
-                    data.packages,
+                    courseProgramData?.price_discounted || courseProgramData?.price_real,
+                    courseProgramData?.packages,
                   ).toLocaleString('fa-IR')}
                   {' '}
                   ریال
