@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable regexp/prefer-character-class */
+import moment from 'moment-jalaali';
 import { AppConfig } from './AppConfig';
 
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME || 'sepah';
@@ -135,6 +136,28 @@ export const validateIranianNationalId = (nationalId: string) => {
   const checkDigit = remainder < 2 ? remainder : 11 - remainder;
 
   return Number.parseInt(nationalId[9], 10) === checkDigit;
+};
+
+/**
+ * Converts MongoDB date string to Persian (Jalali) date format
+ * @param mongoDate MongoDB date string
+ * @param format Optional format string (default: 'jYYYY/jMM/jDD')
+ * @returns Formatted Persian date string
+ */
+export const convertDateToPersian = (mongoDate: string, format: string = 'jYYYY/jMM/jDD'): string => {
+  if (!mongoDate) {
+    return '';
+  }
+
+  try {
+    const jalaliDateFormat = moment(mongoDate).format(format);
+    if (jalaliDateFormat) {
+      return toPersianDigits(jalaliDateFormat);
+    }
+  } catch (error) {
+    console.error('Error converting date:', error);
+    return '';
+  }
 };
 
 // const mobileReg = /(0|\+98)?([ ]|-|[()]){0,2}9[1|2|3|4]([ ]|-|[()]){0,2}(?:[0-9]([ ]|-|[()]){0,2}){8}/ig,

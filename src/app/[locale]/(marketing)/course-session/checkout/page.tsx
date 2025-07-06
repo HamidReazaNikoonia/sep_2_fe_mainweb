@@ -8,7 +8,7 @@ import { calculateOrderSummaryRequest } from '@/API/order/courseSession';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import useAuth from '@/hooks/useAuth';
 import { CourseSessioonProgramHelper } from '@/utils/CourseSession';
-import { toPersianDigits } from '@/utils/Helpers';
+import { convertDateToPersian } from '@/utils/Helpers';
 
 export default function CourseSessionCheckout() {
   const router = useRouter();
@@ -17,7 +17,8 @@ export default function CourseSessionCheckout() {
 
   // Get query parameters
   const programId = searchParams.get('programId');
-  const packageIds = searchParams.get('packageIds')?.split(',');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const packageIds = searchParams.get('packageIds')?.split(',') || [];
 
   // Using useQuery directly in the component
   // const { data, isLoading: isProgramLoading, isError: isProgramError, error: programError, isSuccess } = useQuery({
@@ -30,8 +31,10 @@ export default function CourseSessionCheckout() {
     queryKey: ['orderSummary', programId],
     queryFn: () => calculateOrderSummaryRequest({
       classProgramId: programId as string,
+      packages: packageIds,
     }),
     enabled: !!programId,
+    staleTime: 0,
   });
 
   useEffect(() => {
@@ -107,7 +110,7 @@ export default function CourseSessionCheckout() {
               {courseProgramData?.course
                 ? (
                     <>
-                      <p className="mb-1 text-lg">{courseProgramData?.course?.title}</p>
+                      <p className="mb-1 text-lg text-gray-300">{courseProgramData?.course?.title}</p>
                       <p className="text-sm text-gray-400">{courseProgramData?.course?.sub_title}</p>
                     </>
                   )
@@ -122,7 +125,7 @@ export default function CourseSessionCheckout() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium text-gray-300">شروع دوره از:</h3>
                   <span style={{ letterSpacing: '2px' }} className="rounded-2xl border border-green-600/20 px-4 py-2 text-lg font-medium text-white">
-                    {toPersianDigits(firstSessionDate)}
+                    {convertDateToPersian(firstSessionDate)}
                   </span>
                 </div>
               </div>
@@ -131,7 +134,7 @@ export default function CourseSessionCheckout() {
             {/* Coach Information */}
             <div className="mb-6 border-b border-gray-600 pb-4">
               <h3 className="mb-2 text-lg font-medium">مدرس</h3>
-              <p className="text-lg">{`${courseProgramData?.coach?.first_name} ${courseProgramData?.coach?.last_name}`}</p>
+              <p className="text-base text-gray-300">{`${courseProgramData?.coach?.first_name} ${courseProgramData?.coach?.last_name}`}</p>
             </div>
 
             {/* Price Information */}
@@ -175,16 +178,61 @@ export default function CourseSessionCheckout() {
 
             {/* Total Price */}
             <div className="mt-6">
-              <div className="flex items-center justify-between text-base font-semibold md:text-xl">
-                <span>مجموع قابل پرداخت : </span>
-                <span style={{ letterSpacing: '1px' }} className="rounded-2xl  bg-green-600/20 px-4 py-2">
-                  {calculateTotalPrice(
-                    courseProgramData?.price_discounted || courseProgramData?.price_real,
-                    courseProgramData?.packages,
-                  ).toLocaleString('fa-IR')}
-                  {' '}
-                  ریال
-                </span>
+              <div className="flex flex-col items-center justify-between text-base font-normal md:text-xl">
+                <div className="mb-4 flex w-full flex-col gap-2">
+                  <div className="flex items-center justify-between text-sm text-gray-300">
+                    <span>قیمت نهایی دوره:</span>
+                    <span style={{ letterSpacing: '1px' }}>
+                      {orderSummaryData.summary?.originalAmount.toLocaleString('fa-IR')}
+                      {' '}
+                      ریال
+                    </span>
+                  </div>
+                  {orderSummaryData.summary?.totalPackagePrice > 0 && (
+                    <div className="flex items-center justify-between text-sm text-gray-300">
+                      <span>  جمع پکیج ها:</span>
+                      <span style={{ letterSpacing: '1px' }}>
+                        {orderSummaryData.summary?.totalPackagePrice.toLocaleString('fa-IR')}
+                        {' '}
+                        ریال
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between text-sm text-red-400">
+                    <span>جمع تخفیف‌ها:</span>
+                    <span style={{ letterSpacing: '1px' }}>
+                      {orderSummaryData?.summary?.totalDiscount.toLocaleString('fa-IR')}
+                      {' '}
+                      ریال
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-gray-300">
+                    <span>مالیات:</span>
+                    <span style={{ letterSpacing: '1px' }}>
+                      {orderSummaryData?.summary?.tax.toLocaleString('fa-IR')}
+                      {' '}
+                      ریال
+                    </span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-base font-medium text-green-400">
+                    <span>جمع کل:</span>
+                    <span style={{ letterSpacing: '1px' }}>
+                      {orderSummaryData?.summary?.finalAmount.toLocaleString('fa-IR')}
+                      {' '}
+                      ریال
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex w-full items-center justify-between border-t border-gray-600 pt-6 text-base font-semibold md:text-xl">
+                  <span>مجموع قابل پرداخت : </span>
+                  <span style={{ letterSpacing: '1px' }} className="rounded-2xl  bg-green-600/20 px-4 py-2">
+                    {orderSummaryData?.summary?.finalAmount.toLocaleString('fa-IR')}
+                    {' '}
+                    ریال
+                  </span>
+                </div>
               </div>
             </div>
 
