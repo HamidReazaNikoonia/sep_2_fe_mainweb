@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { calculateOrderSummaryRequest } from '@/API/order/courseSession';
+import CouponInput from '@/components/CouponInput';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import useAuth from '@/hooks/useAuth';
 import { CourseSessioonProgramHelper } from '@/utils/CourseSession';
@@ -79,16 +80,37 @@ export default function CourseSessionCheckout() {
   //   }
   // }, [isProgramError, isSuccess, data, programError]);
 
-  // Calculate total price including packages
-  const calculateTotalPrice = (basePrice: number, selectedPackages: Array<{ price: number }>) => {
-    const packagesTotal = selectedPackages.reduce((sum, pkg) => sum + pkg.price, 0);
-    return basePrice + packagesTotal;
-  };
-
   // Get first session date
   const firstSessionDate = orderSummaryData?.program ? CourseSessioonProgramHelper(orderSummaryData?.program).getFirstSessionDate() : null;
 
   const courseProgramData = orderSummaryData?.program;
+
+  const applyCouponCodeHandler = async (code: string): Promise<boolean> => {
+    try {
+      // eslint-disable-next-line no-console
+      console.log('Applying coupon code:', code);
+
+      // TODO: Replace with actual API call
+      // const response = await applyCouponRequest({ code, orderId: ... });
+
+      // Simulating API call for now
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Mock success/failure based on code
+      if (code === 'DISCOUNT10' || code === 'SAVE20') {
+        toast.success('کد تخفیف با موفقیت اعمال شد');
+        return true;
+      } else {
+        toast.error('کد تخفیف نامعتبر است');
+        return false;
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error applying coupon:', error);
+      toast.error('خطا در اعمال کد تخفیف');
+      return false;
+    }
+  };
 
   const submitOrderAndNavigateToPayment = () => {
     // eslint-disable-next-line no-console
@@ -246,6 +268,9 @@ export default function CourseSessionCheckout() {
                 </div>
               </div>
             </div>
+
+            {/* Coupon Input Section */}
+            <CouponInput onApplyCoupon={applyCouponCodeHandler} />
 
             {/* Checkout Button */}
             <button
