@@ -1,6 +1,8 @@
+/* eslint-disable style/jsx-one-expression-per-line */
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { Book, Calendar, User } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
@@ -40,7 +42,7 @@ export default function CourseSessionCheckout() {
   useEffect(() => {
     // console.log('programId', userProfileData);
     // Validate query parameters
-    if (!programId || !packageIds?.length) {
+    if (!programId) {
       toast.error('مشکلی پیش اومده');
       router.push('/');
       return;
@@ -106,7 +108,10 @@ export default function CourseSessionCheckout() {
 
             {/* Course Information */}
             <div className="mb-6 border-b border-gray-600 pb-4">
-              <h3 className="mb-12 text-xl font-semibold">اطلاعات دوره</h3>
+              <h3 className="mb-12 flex items-center gap-2 text-xl font-semibold">
+                <Book className="size-6" />
+                اطلاعات دوره
+              </h3>
               {courseProgramData?.course
                 ? (
                     <>
@@ -123,7 +128,10 @@ export default function CourseSessionCheckout() {
             {firstSessionDate && (
               <div className="mb-6 border-b border-gray-600 pb-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-300">شروع دوره از:</h3>
+                  <h3 className="flex items-center gap-2 text-lg font-medium text-gray-300">
+                    <Calendar className="size-6" />
+                    شروع دوره از:
+                  </h3>
                   <span style={{ letterSpacing: '2px' }} className="rounded-2xl border border-green-600/20 px-4 py-2 text-lg font-medium text-white">
                     {convertDateToPersian(firstSessionDate)}
                   </span>
@@ -133,7 +141,10 @@ export default function CourseSessionCheckout() {
 
             {/* Coach Information */}
             <div className="mb-6 border-b border-gray-600 pb-4">
-              <h3 className="mb-2 text-lg font-medium">مدرس</h3>
+              <h3 className="mb-2 flex items-center gap-2 text-lg font-medium">
+                <User className="size-6" />
+                مدرس
+              </h3>
               <p className="text-base text-gray-300">{`${courseProgramData?.coach?.first_name} ${courseProgramData?.coach?.last_name}`}</p>
             </div>
 
@@ -160,12 +171,12 @@ export default function CourseSessionCheckout() {
             </div>
 
             {/* Packages Information */}
-            {courseProgramData?.packages && courseProgramData?.packages.length > 0 && (
+            {orderSummaryData?.packages && orderSummaryData?.packages.length > 0 && (
               <div className="mb-6 border-b border-gray-600 pb-4">
                 <h3 className="mb-4 text-xl font-medium">پکیج‌های انتخاب شده</h3>
-                {courseProgramData?.packages.map((pkg: any) => (
+                {orderSummaryData?.packages.map((pkg: any) => (
                   <div key={pkg._id} className="mb-2 flex items-center justify-between text-sm md:text-base">
-                    <span>{pkg.title}</span>
+                    <span>* {pkg.title}</span>
                     <span style={{ letterSpacing: '1px' }}>
                       {pkg.price.toLocaleString('fa-IR')}
                       {' '}
