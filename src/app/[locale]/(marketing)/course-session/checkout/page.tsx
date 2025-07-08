@@ -4,7 +4,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Book, Calendar, User } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { calculateOrderSummaryRequest } from '@/API/order/courseSession';
 import CouponInput from '@/components/CouponInput';
@@ -23,25 +23,21 @@ export default function CourseSessionCheckout() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const packageIds = searchParams.get('packageIds')?.split(',') || [];
 
-  // Using useQuery directly in the component
-  // const { data, isLoading: isProgramLoading, isError: isProgramError, error: programError, isSuccess } = useQuery({
-  //   queryKey: ['courseSessionProgram', programId],
-  //   queryFn: programId ? () => getCourseSessionProgramByIdRequest({ programId }) : undefined,
-  //   enabled: !!programId,
-  // });
+  // State for applied coupon codes
+  const [appliedCouponCodes, setAppliedCouponCodes] = useState<string[]>([]);
 
-  const { data: orderSummaryData, isLoading: isOrderSummaryLoading, isSuccess: isOrderSummarySuccess } = useQuery({
-    queryKey: ['orderSummary', programId],
+  const { data: orderSummaryData, isLoading: isOrderSummaryLoading, isSuccess: isOrderSummarySuccess, refetch } = useQuery({
+    queryKey: ['orderSummary', programId, appliedCouponCodes],
     queryFn: () => calculateOrderSummaryRequest({
       classProgramId: programId as string,
       packages: packageIds,
+      couponCodes: appliedCouponCodes,
     }),
     enabled: !!programId,
     staleTime: 0,
   });
 
   useEffect(() => {
-    // console.log('programId', userProfileData);
     // Validate query parameters
     if (!programId) {
       toast.error('مشکلی پیش اومده');
@@ -62,52 +58,76 @@ export default function CourseSessionCheckout() {
         router.push('/dashboard/user-profile');
       }
     }
-
-    // Check user profile completion
   }, [isAuthenticated, userProfileData, programId, isUserCompleteProfile, packageIds, router, isLoading]);
-
-  // API API
-  // useEffect(() => {
-  //   if (isProgramError) {
-  //     toast.error('خطا در دریافت اطلاعات برنامه');
-  //     // eslint-disable-next-line no-console
-  //     console.log('programError', programError);
-  //   }
-
-  //   if (isSuccess) {
-  //     // eslint-disable-next-line no-console
-  //     console.log('data', data);
-  //   }
-  // }, [isProgramError, isSuccess, data, programError]);
 
   // Get first session date
   const firstSessionDate = orderSummaryData?.program ? CourseSessioonProgramHelper(orderSummaryData?.program).getFirstSessionDate() : null;
 
   const courseProgramData = orderSummaryData?.program;
 
+  // Validate coupon code format (English letters, numbers, and hyphens)
+  const validateCouponFormat = (code: string): boolean => {
+    const englishFormatRegex = /^[A-Za-z0-9-]+$/;
+    return englishFormatRegex.test(code);
+  };
+
   const applyCouponCodeHandler = async (code: string): Promise<boolean> => {
     try {
+      // Validate coupon code format
+      if (!validateCouponFormat(code)) {
+        toast.error('کد تخفیف باید شامل حروف انگلیسی، اعداد و خط تیره باشد');
+        return false;
+      }
+
+      // Check if coupon is already applied
+      if (appliedCouponCodes.includes(code)) {
+        toast.error('این کد تخفیف قبلاً اعمال شده است');
+        return false;
+      }
+
       // eslint-disable-next-line no-console
       console.log('Applying coupon code:', code);
 
-      // TODO: Replace with actual API call
-      // const response = await applyCouponRequest({ code, orderId: ... });
+      // Add coupon code to applied codes and trigger refetch
+      setAppliedCouponCodes(prev => [...prev, code]);
 
-      // Simulating API call for now
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Wait a bit for the state to update and then refetch
+      const refetchResult = await new Promise<boolean>((resolve) => {
+        setTimeout(async () => {
+          const result = await refetch();
+          // eslint-disable-next-line no-console
+          console.log('result', result);
+          const coupons = result?.data?.coupons;
+          
+          // Check if the coupon was valid based on server response
+          const isValid = coupons?.valid?.some((validCoupon: any) => validCoupon.code === code);
+          const isInvalid = coupons?.invalid?.some((invalidCoupon: any) => invalidCoupon.code === code);
+          console.log('isValid', isValid);
+          console.log('isInvalid', isInvalid);
+          if (isValid) {
+            toast.success('کد تخفیف با موفقیت اعمال شد');
+            resolve(true);
+          } else if (isInvalid) {
+            toast.error('کد تخفیف نامعتبر است');
+            // Remove the invalid coupon from applied codes
+            setAppliedCouponCodes(prev => prev.filter(c => c !== code));
+            resolve(false);
+          } else {
+            // Fallback for unexpected cases
+            toast.error('خطا در اعمال کد تخفیف');
+            setAppliedCouponCodes(prev => prev.filter(c => c !== code));
+            resolve(false);
+          }
+        }, 100);
+      });
 
-      // Mock success/failure based on code
-      if (code === 'DISCOUNT10' || code === 'SAVE20') {
-        toast.success('کد تخفیف با موفقیت اعمال شد');
-        return true;
-      } else {
-        toast.error('کد تخفیف نامعتبر است');
-        return false;
-      }
+      return refetchResult;
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error applying coupon:', error);
       toast.error('خطا در اعمال کد تخفیف');
+      // Remove the coupon from applied codes on error
+      setAppliedCouponCodes(prev => prev.filter(c => c !== code));
       return false;
     }
   };
@@ -209,6 +229,15 @@ export default function CourseSessionCheckout() {
               </div>
             )}
 
+
+             {/* Coupon Input Section */}
+            <div className='my-6 border border-gray-700 rounded-lg px-6 py-4'>
+            <CouponInput 
+              onApplyCoupon={applyCouponCodeHandler} 
+              couponResult={orderSummaryData?.coupons}
+            />
+            </div>
+
             {/* Total Price */}
             <div className="mt-6">
               <div className="flex flex-col items-center justify-between text-base font-normal md:text-xl">
@@ -268,9 +297,6 @@ export default function CourseSessionCheckout() {
                 </div>
               </div>
             </div>
-
-            {/* Coupon Input Section */}
-            <CouponInput onApplyCoupon={applyCouponCodeHandler} />
 
             {/* Checkout Button */}
             <button

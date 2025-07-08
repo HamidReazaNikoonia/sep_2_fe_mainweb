@@ -1,22 +1,65 @@
 'use client';
 
-import { Check, Plus, X } from 'lucide-react';
-import { useState } from 'react';
+import { AlertCircle, Check, Plus, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+type ValidCoupon = {
+  couponId: string;
+  discountAmount: number;
+  code: string;
+};
+
+type InvalidCoupon = {
+  code: string;
+  reason?: string;
+};
+
+type CouponResult = {
+  valid: ValidCoupon[];
+  invalid: InvalidCoupon[];
+};
 
 type CouponInputProps = {
   onApplyCoupon: (code: string) => Promise<boolean>;
+  couponResult?: CouponResult;
 };
 
 type CouponState = {
   id: string;
   code: string;
   status: 'idle' | 'success' | 'error';
+  discountAmount?: number;
 };
 
-export default function CouponInput({ onApplyCoupon }: CouponInputProps) {
+export default function CouponInput({ onApplyCoupon, couponResult }: CouponInputProps) {
   const [coupons, setCoupons] = useState<CouponState[]>([
     { id: '1', code: '', status: 'idle' },
   ]);
+
+  // Update coupon states based on server response
+  useEffect(() => {
+    if (couponResult) {
+      setCoupons(prev => prev.map(coupon => {
+        // Check if this coupon is in the valid list
+        const validCoupon = couponResult.valid?.find(v => v.code === coupon.code);
+        if (validCoupon) {
+          return { 
+            ...coupon, 
+            status: 'success' as const,
+            discountAmount: validCoupon.discountAmount 
+          };
+        }
+
+        // Check if this coupon is in the invalid list
+        const invalidCoupon = couponResult.invalid?.find(i => i.code === coupon.code);
+        if (invalidCoupon) {
+          return { ...coupon, status: 'error' as const };
+        }
+
+        return coupon;
+      }));
+    }
+  }, [couponResult]);
 
   const handleInputChange = (id: string, value: string) => {
     setCoupons(prev => prev.map(coupon =>
@@ -33,12 +76,8 @@ export default function CouponInput({ onApplyCoupon }: CouponInputProps) {
     }
 
     try {
-      const success = await onApplyCoupon(coupon.code);
-      setCoupons(prev => prev.map(c =>
-        c.id === id
-          ? { ...c, status: success ? 'success' : 'error' }
-          : c,
-      ));
+      await onApplyCoupon(coupon.code);
+      // Note: The status will be updated via the useEffect when couponResult changes
     } catch {
       setCoupons(prev => prev.map(c =>
         c.id === id
@@ -59,67 +98,141 @@ export default function CouponInput({ onApplyCoupon }: CouponInputProps) {
     }
   };
 
+  // Check if there are any applied coupons to display
+  const hasAppliedCoupons = couponResult && 
+    (couponResult.valid?.length > 0 || couponResult.invalid?.length > 0);
+
   return (
-    <div className="mb-6 border-b border-gray-600 pb-4">
+    <div className="mb-6">
       <h3 className="mb-4 text-lg font-medium">کد تخفیف</h3>
 
-      {coupons.map(coupon => (
-        <div key={coupon.id} className="mb-4 flex items-center gap-2">
-          <div className="flex flex-1 items-center gap-2">
-            <input
-              type="text"
-              value={coupon.code}
-              onChange={e => handleInputChange(coupon.id, e.target.value)}
-              placeholder="کد تخفیف را وارد کنید"
-              className={`flex-1 rounded-lg border px-3 py-2 text-black ${
-                coupon.status === 'error'
-                  ? 'border-red-500'
-                  : coupon.status === 'success'
-                    ? 'border-green-500'
-                    : 'border-gray-300'
-              }`}
-              disabled={coupon.status === 'success'}
-            />
-
-            {coupon.status === 'success'
-              ? (
-                  <div className="flex items-center gap-2">
-                    <Check className="size-5 text-green-500" />
-                    <span className="text-sm text-green-500">اعمال شد</span>
+      {/* Applied Coupons Display Section */}
+      {hasAppliedCoupons && (
+        <div className="mb-6">
+          <h4 className="mb-3 text-sm font-medium text-gray-300">کدهای تخفیف اعمال شده:</h4>
+          <div className="space-y-2">
+            {/* Valid Coupons */}
+            {couponResult?.valid?.map((validCoupon) => (
+              <div
+                key={validCoupon.couponId}
+                className="flex items-center justify-between rounded-lg bg-green-600/20 border border-green-600/30 px-4 py-3"
+              >
+                <div className="flex items-center gap-3">
+                  <Check className="size-5 text-green-400" />
+                  <div className="flex flex-col">
+                    <span className="font-medium text-green-300" style={{ letterSpacing: '1px' }}>
+                      {validCoupon.code}
+                    </span>
+                    <span className="text-sm text-green-400">
+                      تخفیف: {validCoupon.discountAmount.toLocaleString('fa-IR')} ریال
+                    </span>
                   </div>
-                )
-              : (
-                  <button
-                    type="button"
-                    onClick={() => handleApplyCoupon(coupon.id)}
-                    disabled={!coupon.code.trim()}
-                    className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:bg-gray-400"
-                  >
-                    اعمال
-                  </button>
-                )}
+                </div>
+                <span className="rounded-full bg-green-600/30 px-3 py-1 text-xs font-medium text-green-300">
+                  معتبر
+                </span>
+              </div>
+            ))}
+
+            {/* Invalid Coupons */}
+            {couponResult?.invalid?.map((invalidCoupon, index) => (
+              <div
+                key={`invalid-${invalidCoupon.code}-${index}`}
+                className="flex items-center justify-between rounded-lg bg-red-600/20 border border-red-600/30 px-4 py-3"
+              >
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="size-5 text-red-400" />
+                  <div className="flex flex-col">
+                    <span className="font-medium text-red-300" style={{ letterSpacing: '1px' }}>
+                      {invalidCoupon.code}
+                    </span>
+                    {invalidCoupon.reason && (
+                      <span className="text-sm text-red-400">
+                        {invalidCoupon.reason}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <span className="rounded-full bg-red-600/30 px-3 py-1 text-xs font-medium text-red-300">
+                  نامعتبر
+                </span>
+              </div>
+            ))}
           </div>
-
-          {coupons.length > 1 && (
-            <button
-              type="button"
-              onClick={() => removeCouponInput(coupon.id)}
-              className="text-red-500 hover:text-red-700"
-            >
-              <X className="size-5" />
-            </button>
-          )}
         </div>
-      ))}
+      )}
 
-      <button
-        type="button"
-        onClick={addNewCouponInput}
-        className="mt-2 flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300"
-      >
-        <Plus className="size-4" />
-        افزودن کد تخفیف دیگر
-      </button>
+      {/* Coupon Input Form Section */}
+      <div>
+        <h4 className="mb-3 text-sm font-medium text-gray-300">افزودن کد تخفیف جدید:</h4>
+        
+        {coupons.map(coupon => (
+          <div key={coupon.id} className="mb-4 flex items-center gap-2">
+            <div className="flex flex-1 items-center gap-2">
+              <input
+                type="text"
+                value={coupon.code}
+                onChange={e => handleInputChange(coupon.id, e.target.value)}
+                placeholder="کد تخفیف را وارد کنید"
+                className={`flex-1 rounded-lg border px-3 py-2 text-black ${
+                  coupon.status === 'error'
+                    ? 'border-red-500'
+                    : coupon.status === 'success'
+                      ? 'border-green-500'
+                      : 'border-gray-300'
+                }`}
+                disabled={coupon.status === 'success'}
+              />
+
+              {coupon.status === 'success'
+                ? (
+                    <div className="flex items-center gap-2">
+                      <Check className="size-5 text-green-500" />
+                      <div className="flex flex-col text-sm text-green-500">
+                        <span>اعمال شد</span>
+                        {coupon.discountAmount && (
+                          <span className="text-xs">
+                            تخفیف: {coupon.discountAmount.toLocaleString('fa-IR')} ریال
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )
+                : (
+                    <button
+                      type="button"
+                      onClick={() => handleApplyCoupon(coupon.id)}
+                      disabled={!coupon.code.trim()}
+                      className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:bg-gray-400"
+                    >
+                      اعمال
+                    </button>
+                  )}
+            </div>
+
+            {coupons.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeCouponInput(coupon.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <X className="size-5" />
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
+
+/**
+ * <button
+          type="button"
+          onClick={addNewCouponInput}
+          className="mt-2 flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300"
+        >
+          <Plus className="size-4" />
+          افزودن کد تخفیف دیگر
+        </button>
+ */
