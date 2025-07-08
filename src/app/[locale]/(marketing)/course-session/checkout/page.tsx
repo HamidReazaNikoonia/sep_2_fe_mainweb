@@ -2,6 +2,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
 import { Book, Calendar, User } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -67,6 +68,7 @@ export default function CourseSessionCheckout() {
 
   // Validate coupon code format (English letters, numbers, and hyphens)
   const validateCouponFormat = (code: string): boolean => {
+    // eslint-disable-next-line regexp/use-ignore-case
     const englishFormatRegex = /^[A-Za-z0-9-]+$/;
     return englishFormatRegex.test(code);
   };
@@ -98,12 +100,11 @@ export default function CourseSessionCheckout() {
           // eslint-disable-next-line no-console
           console.log('result', result);
           const coupons = result?.data?.coupons;
-          
           // Check if the coupon was valid based on server response
           const isValid = coupons?.valid?.some((validCoupon: any) => validCoupon.code === code);
           const isInvalid = coupons?.invalid?.some((invalidCoupon: any) => invalidCoupon.code === code);
-          console.log('isValid', isValid);
-          console.log('isInvalid', isInvalid);
+          // console.log('isValid', isValid);
+          // console.log('isInvalid', isInvalid);
           if (isValid) {
             toast.success('کد تخفیف با موفقیت اعمال شد');
             resolve(true);
@@ -144,8 +145,8 @@ export default function CourseSessionCheckout() {
     <div className="min-h-screen w-full overflow-hidden bg-black pt-20 text-white" dir="rtl">
       {(isLoading || isOrderSummaryLoading) && <LoadingSpinner />}
       {isOrderSummarySuccess && orderSummaryData?.program && (
-        <div className="mx-auto my-8 max-w-2xl p-6">
-          <div className="rounded-lg bg-gray-800 p-6 shadow-lg">
+        <div className="mx-auto my-8 max-w-4xl px-3 py-2 md:px-6">
+          <div className="rounded-lg bg-gray-800 px-4 py-6 shadow-lg md:px-6">
             <h2 className="mb-8 text-center text-2xl font-bold text-gray-400">* *  فاکتور سفارش * *</h2>
 
             {/* Course Information */}
@@ -170,11 +171,11 @@ export default function CourseSessionCheckout() {
             {firstSessionDate && (
               <div className="mb-6 border-b border-gray-600 pb-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="flex items-center gap-2 text-lg font-medium text-gray-300">
-                    <Calendar className="size-6" />
+                  <h3 className="flex items-center gap-2 text-sm font-medium text-gray-300 md:text-lg">
+                    <Calendar className="size-5 md:size-6" />
                     شروع دوره از:
                   </h3>
-                  <span style={{ letterSpacing: '2px' }} className="rounded-2xl border border-green-600/20 px-4 py-2 text-lg font-medium text-white">
+                  <span style={{ letterSpacing: '2px' }} className="rounded-2xl border border-green-600/20 px-4 py-2 text-sm font-medium text-white md:text-lg">
                     {convertDateToPersian(firstSessionDate)}
                   </span>
                 </div>
@@ -183,19 +184,19 @@ export default function CourseSessionCheckout() {
 
             {/* Coach Information */}
             <div className="mb-6 border-b border-gray-600 pb-4">
-              <h3 className="mb-2 flex items-center gap-2 text-lg font-medium">
-                <User className="size-6" />
+              <h3 className="mb-2 flex items-center gap-2 text-base font-medium md:text-lg">
+                <User className="size-5 md:size-6" />
                 مدرس
               </h3>
-              <p className="text-base text-gray-300">{`${courseProgramData?.coach?.first_name} ${courseProgramData?.coach?.last_name}`}</p>
+              <p className="text-sm text-gray-300 md:text-base">{`${courseProgramData?.coach?.first_name} ${courseProgramData?.coach?.last_name}`}</p>
             </div>
 
             {/* Price Information */}
             <div className="mb-6 border-b border-gray-600 pb-4">
-              <h3 className="mb-4 text-lg font-medium">قیمت دوره</h3>
+              <h3 className="mb-4 text-sm font-medium md:text-lg">قیمت دوره</h3>
               <div className="flex items-center justify-between">
-                <span>قیمت اصلی:</span>
-                <span className={courseProgramData?.price_discounted ? 'text-gray-400 line-through' : ''}>
+                <span className="text-sm md:text-base">قیمت اصلی:</span>
+                <span className={clsx(courseProgramData?.price_discounted ? 'text-gray-400 line-through' : '', 'text-sm md:text-lg')}>
                   {courseProgramData?.price_real.toLocaleString('fa-IR')}
                   {' '}
                   ریال
@@ -203,8 +204,8 @@ export default function CourseSessionCheckout() {
               </div>
               {courseProgramData?.price_discounted && (
                 <div className="mt-2 flex items-center justify-between text-green-400">
-                  <span>قیمت با تخفیف:</span>
-                  <span style={{ letterSpacing: '1px' }}>
+                  <span className="text-sm md:text-lg">قیمت با تخفیف:</span>
+                  <span className="text-base md:text-lg" style={{ letterSpacing: '1px' }}>
                     {courseProgramData?.price_discounted.toLocaleString('fa-IR')}
                     ریال
                   </span>
@@ -229,13 +230,12 @@ export default function CourseSessionCheckout() {
               </div>
             )}
 
-
-             {/* Coupon Input Section */}
-            <div className='my-6 border border-gray-700 rounded-lg px-6 py-4'>
-            <CouponInput 
-              onApplyCoupon={applyCouponCodeHandler} 
-              couponResult={orderSummaryData?.coupons}
-            />
+            {/* Coupon Input Section */}
+            <div className="my-6 rounded-lg border border-gray-700 px-6 py-4 md:px-6">
+              <CouponInput
+                onApplyCoupon={applyCouponCodeHandler}
+                couponResult={orderSummaryData?.coupons}
+              />
             </div>
 
             {/* Total Price */}
@@ -251,7 +251,7 @@ export default function CourseSessionCheckout() {
                     </span>
                   </div>
                   {orderSummaryData.summary?.totalPackagePrice > 0 && (
-                    <div className="flex items-center justify-between text-sm text-gray-300">
+                    <div className="flex border-dashed pt-4 pb-2 border-gray-600 border-t items-center justify-between text-sm text-gray-300">
                       <span>  جمع پکیج ها:</span>
                       <span style={{ letterSpacing: '1px' }}>
                         {orderSummaryData.summary?.totalPackagePrice.toLocaleString('fa-IR')}
@@ -261,7 +261,7 @@ export default function CourseSessionCheckout() {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between text-sm text-red-400">
+                  <div className="flex border-dashed pt-4 pb-2 border-gray-600 border-t items-center justify-between text-sm text-red-400">
                     <span>جمع تخفیف‌ها:</span>
                     <span style={{ letterSpacing: '1px' }}>
                       {orderSummaryData?.summary?.totalDiscount.toLocaleString('fa-IR')}
@@ -269,7 +269,7 @@ export default function CourseSessionCheckout() {
                       ریال
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-gray-300">
+                  <div className="flex border-dashed pt-4 border-gray-600 border-t items-center justify-between text-sm text-gray-300">
                     <span>مالیات:</span>
                     <span style={{ letterSpacing: '1px' }}>
                       {orderSummaryData?.summary?.tax.toLocaleString('fa-IR')}
@@ -277,7 +277,7 @@ export default function CourseSessionCheckout() {
                       ریال
                     </span>
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-base font-medium text-green-400">
+                  <div className="mt-2 flex items-center border-dashed pt-4 border-gray-600 border-t justify-between text-base md:text-lg font-medium text-green-400">
                     <span>جمع کل:</span>
                     <span style={{ letterSpacing: '1px' }}>
                       {orderSummaryData?.summary?.finalAmount.toLocaleString('fa-IR')}
@@ -287,9 +287,9 @@ export default function CourseSessionCheckout() {
                   </div>
                 </div>
 
-                <div className="mt-6 flex w-full items-center justify-between border-t border-gray-600 pt-6 text-base font-semibold md:text-xl">
-                  <span>مجموع قابل پرداخت : </span>
-                  <span style={{ letterSpacing: '1px' }} className="rounded-2xl  bg-green-600/20 px-4 py-2">
+                <div className="mt-6 flex flex-col space-y-4 md:space-y-0 md:flex-row  w-full items-center justify-between border-t border-gray-600 pt-6 font-semibold">
+                  <span className="text-lg md:text-xl">مجموع قابل پرداخت : </span>
+                  <span style={{ letterSpacing: '1px' }} className="rounded-2xl  bg-green-600/20 px-4 py-2 text-lg md:text-xl">
                     {orderSummaryData?.summary?.finalAmount.toLocaleString('fa-IR')}
                     {' '}
                     ریال
