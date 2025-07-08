@@ -91,10 +91,10 @@ export default function CouponInput({ onApplyCoupon, couponResult }: CouponInput
     }
   };
 
-  const addNewCouponInput = () => {
-    const newId = (coupons.length + 1).toString();
-    setCoupons(prev => [...prev, { id: newId, code: '', status: 'idle' }]);
-  };
+  // const addNewCouponInput = () => {
+  //   const newId = (coupons.length + 1).toString();
+  //   setCoupons(prev => [...prev, { id: newId, code: '', status: 'idle' }]);
+  // };
 
   const removeCouponInput = (id: string) => {
     if (coupons.length > 1) {
@@ -119,15 +119,15 @@ export default function CouponInput({ onApplyCoupon, couponResult }: CouponInput
             {couponResult?.valid?.map(validCoupon => (
               <div
                 key={validCoupon.couponId}
-                className="flex items-center justify-between rounded-lg border border-green-600/30 bg-green-600/20 px-4 py-3"
+                className="relative flex items-center justify-between rounded-lg border border-green-600/30 bg-green-600/20 px-4 py-3"
               >
                 <div className="flex items-center gap-3">
-                  <Check className="size-5 text-green-400" />
+                  <Check className="size-4 text-green-400 md:size-6" />
                   <div className="flex flex-col">
-                    <span className="font-medium text-green-300" style={{ letterSpacing: '1px' }}>
+                    <span className="text-xs font-medium text-green-300 md:text-base" style={{ letterSpacing: '1px' }}>
                       {validCoupon.code}
                     </span>
-                    <span className="text-sm text-green-400">
+                    <span className="text-xs text-green-400 md:text-base">
                       تخفیف:
                       {' '}
                       {validCoupon.discountAmount.toLocaleString('fa-IR')}
@@ -136,7 +136,7 @@ export default function CouponInput({ onApplyCoupon, couponResult }: CouponInput
                     </span>
                   </div>
                 </div>
-                <span className="rounded-full bg-green-600/30 px-3 py-1 text-xs font-medium text-green-300">
+                <span className=" absolute left-[-10px]  top-[-10px]  rounded-full bg-green-600/80 px-3 py-1 text-[10px] font-medium text-green-300 md:static md:text-base">
                   معتبر
                 </span>
               </div>

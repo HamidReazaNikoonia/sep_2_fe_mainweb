@@ -124,7 +124,6 @@ export default function CourseSessionCheckout() {
 
       return refetchResult;
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error applying coupon:', error);
       toast.error('خطا در اعمال کد تخفیف');
       // Remove the coupon from applied codes on error
@@ -251,7 +250,7 @@ export default function CourseSessionCheckout() {
                     </span>
                   </div>
                   {orderSummaryData.summary?.totalPackagePrice > 0 && (
-                    <div className="flex border-dashed pt-4 pb-2 border-gray-600 border-t items-center justify-between text-sm text-gray-300">
+                    <div className="flex items-center justify-between border-t border-dashed border-gray-600 pb-2 pt-4 text-sm text-gray-300">
                       <span>  جمع پکیج ها:</span>
                       <span style={{ letterSpacing: '1px' }}>
                         {orderSummaryData.summary?.totalPackagePrice.toLocaleString('fa-IR')}
@@ -261,7 +260,7 @@ export default function CourseSessionCheckout() {
                     </div>
                   )}
 
-                  <div className="flex border-dashed pt-4 pb-2 border-gray-600 border-t items-center justify-between text-sm text-red-400">
+                  <div className="flex items-center justify-between border-t border-dashed border-gray-600 pb-2 pt-4 text-sm text-red-400">
                     <span>جمع تخفیف‌ها:</span>
                     <span style={{ letterSpacing: '1px' }}>
                       {orderSummaryData?.summary?.totalDiscount.toLocaleString('fa-IR')}
@@ -269,7 +268,7 @@ export default function CourseSessionCheckout() {
                       ریال
                     </span>
                   </div>
-                  <div className="flex border-dashed pt-4 border-gray-600 border-t items-center justify-between text-sm text-gray-300">
+                  <div className="flex items-center justify-between border-t border-dashed border-gray-600 pt-4 text-sm text-gray-300">
                     <span>مالیات:</span>
                     <span style={{ letterSpacing: '1px' }}>
                       {orderSummaryData?.summary?.tax.toLocaleString('fa-IR')}
@@ -277,7 +276,7 @@ export default function CourseSessionCheckout() {
                       ریال
                     </span>
                   </div>
-                  <div className="mt-2 flex items-center border-dashed pt-4 border-gray-600 border-t justify-between text-base md:text-lg font-medium text-green-400">
+                  <div className="mt-2 flex items-center justify-between border-t border-dashed border-gray-600 pt-4 text-base font-medium text-green-400 md:text-lg">
                     <span>جمع کل:</span>
                     <span style={{ letterSpacing: '1px' }}>
                       {orderSummaryData?.summary?.finalAmount.toLocaleString('fa-IR')}
@@ -287,7 +286,7 @@ export default function CourseSessionCheckout() {
                   </div>
                 </div>
 
-                <div className="mt-6 flex flex-col space-y-4 md:space-y-0 md:flex-row  w-full items-center justify-between border-t border-gray-600 pt-6 font-semibold">
+                <div className="mt-6 flex w-full flex-col items-center justify-between  space-y-4 border-t border-gray-600 pt-6 font-semibold md:flex-row md:space-y-0">
                   <span className="text-lg md:text-xl">مجموع قابل پرداخت : </span>
                   <span style={{ letterSpacing: '1px' }} className="rounded-2xl  bg-green-600/20 px-4 py-2 text-lg md:text-xl">
                     {orderSummaryData?.summary?.finalAmount.toLocaleString('fa-IR')}
