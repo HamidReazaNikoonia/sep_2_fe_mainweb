@@ -244,7 +244,7 @@ export default function CourseSessionCheckout() {
                   <div className="flex items-center justify-between text-sm text-gray-300">
                     <span>قیمت نهایی دوره:</span>
                     <span style={{ letterSpacing: '1px' }}>
-                      {orderSummaryData.summary?.originalAmount.toLocaleString('fa-IR')}
+                      {orderSummaryData.summary?.ProgramOriginalAmount.toLocaleString('fa-IR')}
                       {' '}
                       ریال
                     </span>
