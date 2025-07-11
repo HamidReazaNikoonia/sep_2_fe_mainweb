@@ -1,18 +1,19 @@
 /* eslint-disable style/jsx-one-expression-per-line */
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Book, Calendar, User } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { calculateOrderSummaryRequest } from '@/API/order/courseSession';
+import { calculateOrderSummaryRequest, createOrderRequest } from '@/API/order/courseSession';
 import CouponInput from '@/components/CouponInput';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import useAuth from '@/hooks/useAuth';
 import { CourseSessioonProgramHelper } from '@/utils/CourseSession';
 import { convertDateToPersian } from '@/utils/Helpers';
+import LoadingButton from '@/components/LoadingButton';
 
 export default function CourseSessionCheckout() {
   const router = useRouter();
@@ -36,6 +37,37 @@ export default function CourseSessionCheckout() {
     }),
     enabled: !!programId,
     staleTime: 0,
+  });
+
+  const { mutate: createOrder, isPending: isCreatingOrderPending } = useMutation({
+    mutationFn: () => createOrderRequest({
+      classProgramId: programId as string,
+      packages: packageIds,
+      couponCodes: appliedCouponCodes,
+    }),
+    onSuccess: (data) => {
+      // Handle successful order creation
+      toast.success('سفارش با موفقیت ثبت شد');
+      // eslint-disable-next-line no-console
+      console.log('data', data);
+      // validate Response data
+      if (data?.payment) {
+        // redirect to payment page
+        if (data?.payment?.url) {
+          toast.success('در حال انتقال به صفحه پرداخت');
+          window.location.href = data?.payment?.url;
+        } else {
+          toast.error('خطا در انتقال به صفحه پرداخت');
+        }
+      } else {
+        toast.error('خطا در ثبت سفارش');
+      }
+      // You may want to redirect to a success page or order details page
+    },
+    onError: (error) => {
+      toast.error('خطا در ثبت سفارش');
+      console.error('Order creation error:', error);
+    },
   });
 
   useEffect(() => {
@@ -136,6 +168,11 @@ export default function CourseSessionCheckout() {
     // eslint-disable-next-line no-console
     console.log('submitOrderAndNavigateToPayment');
 
+    // classProgramId
+    // couponCodes
+    // packages
+    console.log({ programId, packageIds, appliedCouponCodes });
+    createOrder({ programId, packageIds, appliedCouponCodes });
     // we should navigate user to thhe bank
   };
 
@@ -298,13 +335,20 @@ export default function CourseSessionCheckout() {
             </div>
 
             {/* Checkout Button */}
-            <button
+            {/* <button
               type="button"
               className="mt-12 w-full rounded-lg bg-purple-600 px-6 py-3 text-center font-semibold text-white transition hover:bg-purple-700"
               onClick={submitOrderAndNavigateToPayment}
             >
               ادامه فرآیند پرداخت
-            </button>
+            </button> */}
+            <LoadingButton
+              isLoading={isCreatingOrderPending}
+              className="mt-12 w-full rounded-lg bg-purple-600 px-6 py-3 text-center font-semibold text-white transition hover:bg-purple-700"
+              onClick={submitOrderAndNavigateToPayment}
+            >
+              ادامه فرآیند پرداخت
+            </LoadingButton>
           </div>
         </div>
       )}

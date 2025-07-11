@@ -4,7 +4,7 @@ const API_BASE_URL = SERVER_API_URL;
 // const API_TOKEN = SERVER_API_TOKEN;
 
 async function calculateOrderSummary({ classProgramId, couponCodes, packages }: { classProgramId: string; couponCodes?: string[]; packages?: string[] }) {
-  console.log({ classProgramId, couponCodes, packages });
+  // console.log({ classProgramId, couponCodes, packages });
   const options = {
     method: 'POST',
     headers: {
@@ -18,6 +18,43 @@ async function calculateOrderSummary({ classProgramId, couponCodes, packages }: 
 
   const response = fetch(
     `${API_BASE_URL}/course-session/calculate-order-summary`,
+    options,
+  )
+    .then(response => response.json())
+    .catch(err => console.error(err));
+
+  return response;
+}
+
+async function createOrder({ classProgramId, couponCodes, packages }: { classProgramId: string; couponCodes?: string[]; packages?: string[] }) {
+  const requestBody: {
+    classProgramId: string;
+    couponCodes?: string[];
+    packages?: string[];
+  } = {
+    classProgramId,
+  };
+
+  if (couponCodes?.length) {
+    requestBody.couponCodes = couponCodes;
+  }
+
+  if (packages?.length) {
+    requestBody.packages = packages;
+  }
+
+  const options = {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getAuthToken()}`,
+    },
+    body: JSON.stringify(requestBody),
+  };
+
+  const response = fetch(
+    `${API_BASE_URL}/course-session/order`,
     options,
   )
     .then(response => response.json())
@@ -103,6 +140,11 @@ async function calculateOrderSummary({ classProgramId, couponCodes, packages }: 
 
 export async function calculateOrderSummaryRequest(body: { classProgramId: string; couponCodes?: string[]; packages?: string[] }) {
   const data = await calculateOrderSummary(body);
+  return data;
+}
+
+export async function createOrderRequest(body: { classProgramId: string; couponCodes?: string[]; packages?: string[] }) {
+  const data = await createOrder(body);
   return data;
 }
 
