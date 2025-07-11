@@ -63,6 +63,26 @@ async function createOrder({ classProgramId, couponCodes, packages }: { classPro
   return response;
 }
 
+// Get Order By Id
+async function getOrderById(orderId: string) {
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+  };
+
+  const response = fetch(
+    `${API_BASE_URL}/course-session/order/${orderId}`,
+    options,
+  )
+    .then(response => response.json())
+    .catch(err => console.error(err));
+
+  return response;
+}
+
 // async function getProducts(params: FilterParams = {}): Promise<ProductsResponse> {
 //   const options = {
 //     method: "GET",
@@ -145,6 +165,11 @@ export async function calculateOrderSummaryRequest(body: { classProgramId: strin
 
 export async function createOrderRequest(body: { classProgramId: string; couponCodes?: string[]; packages?: string[] }) {
   const data = await createOrder(body);
+  return data;
+}
+
+export async function getOrderByIdRequest(orderId: string) {
+  const data = await getOrderById(orderId);
   return data;
 }
 
