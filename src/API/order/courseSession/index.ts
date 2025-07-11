@@ -83,6 +83,26 @@ async function getOrderById(orderId: string) {
   return response;
 }
 
+// Retry Checkout Processs
+async function retryCheckoutOrder(orderId: string) {
+  const options = {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+  };
+
+  const response = fetch(
+    `${API_BASE_URL}/course-session/order/${orderId}/retry`,
+    options,
+  )
+    .then(response => response.json())
+    .catch(err => console.error(err));
+
+  return response;
+}
+
 // async function getProducts(params: FilterParams = {}): Promise<ProductsResponse> {
 //   const options = {
 //     method: "GET",
@@ -170,6 +190,11 @@ export async function createOrderRequest(body: { classProgramId: string; couponC
 
 export async function getOrderByIdRequest(orderId: string) {
   const data = await getOrderById(orderId);
+  return data;
+}
+
+export async function retryCheckoutOrderRequest(orderId: string) {
+  const data = await retryCheckoutOrder(orderId);
   return data;
 }
 

@@ -1,11 +1,13 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { CheckCircle2, XCircle } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getOrderByIdRequest } from '@/API/order/courseSession';
+import toast from 'react-hot-toast';
+import { getOrderByIdRequest, retryCheckoutOrderRequest } from '@/API/order/courseSession';
+import Button from '@/components/LoadingButton';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
@@ -14,6 +16,8 @@ type PaymentStatus = 'paid' | 'unpaid' | 'false';
 const PaymentResultPage = () => {
   const searchParams = useSearchParams();
   const [paymentStatusState, setPaymentStatusState] = useState<PaymentStatus>('unpaid');
+
+  const router = useRouter();
 
   // Get query parameters
   const orderId = searchParams.get('order_id');
@@ -26,6 +30,28 @@ const PaymentResultPage = () => {
     enabled: !!orderId,
   });
 
+  // Mutation for retrying checkout
+  const { mutate: retryCheckout, isPending: isRetryCheckoutPending } = useMutation({
+    mutationFn: () => retryCheckoutOrderRequest(orderId!),
+    onSuccess: (data) => {
+      // Redirect to payment URL if available
+      if (data?.payment?.url) {
+        window.location.href = data.payment.url;
+      } else {
+        toast.error('درگاه پرداخت یافت نشد');
+        toast.error('لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید');
+      }
+    },
+    onError: (error) => {
+      console.error('Retry checkout error:', error);
+      toast.error('مشکلی در درگاه پرداخت رخ داده است');
+      toast.error('لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید');
+    },
+    onMutate: () => {
+      toast.loading('در حال رفتن به درگاه پرداخت...');
+    },
+  });
+
   useEffect(() => {
     if (data && isSuccess) {
       if (data?.paymentStatus) {
@@ -33,6 +59,13 @@ const PaymentResultPage = () => {
       }
     }
   }, [data, isSuccess]);
+
+  // retry checkout order handler
+  const retryCheckoutOrderHandler = () => {
+    if (orderId) {
+      retryCheckout();
+    }
+  };
 
   // Extract required data from response
   // const paymentStatus = data?.paymentStatus;
@@ -156,25 +189,26 @@ const PaymentResultPage = () => {
                   <button
                     type="button"
                     className="w-full rounded-lg bg-green-600 px-4 py-3 font-medium text-white transition-colors hover:bg-green-700"
-                    onClick={() => window.location.href = '/dashboard/courses'}
+                    onClick={() => router.push('/dashboard/courses')}
                   >
                     مشاهده دوره‌های من
                   </button>
                 )
               : (
-                  <button
-                    type="button"
+                  <Button
+                    onClick={retryCheckoutOrderHandler}
+                    isLoading={isRetryCheckoutPending}
+                    disabled={isRetryCheckoutPending}
                     className="w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-700"
-                    onClick={() => window.history.back()}
                   >
                     تلاش مجدد
-                  </button>
+                  </Button>
                 )}
 
             <button
               type="button"
               className="w-full rounded-lg border border-gray-300 px-4 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
-              onClick={() => window.location.href = '/'}
+              onClick={() => router.push('/')}
             >
               بازگشت به صفحه اصلی
             </button>
