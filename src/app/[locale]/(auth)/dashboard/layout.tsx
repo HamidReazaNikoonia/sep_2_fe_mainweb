@@ -2,7 +2,7 @@
 'use client';
 
 import type React from 'react';
-import { BarChart2, BookOpenCheck, Calendar, GraduationCap, Heart, Home, LogOut, Menu, ShoppingBag, User, Users } from 'lucide-react';
+import { BarChart2, BookOpenCheck, Calendar, GraduationCap, Heart, Home, House, LogOut, Menu, ShoppingBag, User, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -45,17 +45,17 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
       <div className="mb-8 flex items-center gap-3 p-2">
         {user?.avatar?.file_name
           ? (
-              <img
-                src={`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${user?.avatar?.file_name}`}
-                alt={`${user?.first_name} ${user?.last_name}`}
-                className="size-16 rounded-full object-cover"
-              />
-            )
+            <img
+              src={`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${user?.avatar?.file_name}`}
+              alt={`${user?.first_name} ${user?.last_name}`}
+              className="size-16 rounded-full object-cover"
+            />
+          )
           : (
-              <div className="flex size-12 items-center justify-center rounded-full bg-[#E6E6FF]">
-                <User size={24} className="text-[#4338CA]" />
-              </div>
-            )}
+            <div className="flex size-12 items-center justify-center rounded-full bg-[#E6E6FF]">
+              <User size={24} className="text-[#4338CA]" />
+            </div>
+          )}
         <div className="flex flex-col">
           <h2 className="font-semibold text-gray-900">
             {user?.first_name}
@@ -184,6 +184,13 @@ export default function DashboardLayout({
             </div>
 
             <div className="flex items-center space-x-4">
+              <button
+                type="button"
+                onClick={() => router.push('/')}
+                className="rounded-lg p-2 transition-colors hover:bg-gray-100"
+              >
+                <House size={20} className="text-gray-600" />
+              </button>
               <button
                 onClick={() => router.push('/dashboard/user-profile')}
                 type="button"
