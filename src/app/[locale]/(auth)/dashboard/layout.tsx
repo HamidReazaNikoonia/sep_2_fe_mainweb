@@ -2,7 +2,7 @@
 'use client';
 
 import type React from 'react';
-import { BarChart2, Calendar, GraduationCap, Heart, Home, LogOut, Menu, Settings, ShoppingBag, User, Users } from 'lucide-react';
+import { BarChart2, Calendar, GraduationCap, Heart, Home, LogOut, Menu, ShoppingBag, User, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -40,8 +40,8 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
   pathname: string;
   onLinkClick?: () => void;
 }) => (
-  <div className="h-full flex flex-col">
-    <div className="p-4 flex-1">
+  <div className="flex h-full flex-col">
+    <div className="flex-1 p-4">
       <div className="mb-8 flex items-center gap-3 p-2">
         {user?.avatar?.file_name
           ? (
@@ -142,14 +142,14 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Desktop Sidebar - Hidden on mobile */}
-      <div className="hidden lg:block w-64 border-r bg-white shadow-sm">
+      <div className="hidden w-64 border-r bg-white shadow-sm lg:block">
         <SidebarContent user={user} pathname={pathname} />
       </div>
 
       {/* Mobile Drawer */}
-      <Drawer 
-        isOpen={isDrawerOpen} 
-        onClose={closeDrawer} 
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={closeDrawer}
         title="منو"
         width="w-80"
       >
@@ -159,30 +159,31 @@ export default function DashboardLayout({
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
         <header className="bg-white shadow-sm">
-          <div className="flex items-center justify-between px-4 lg:px-6 py-4">
+          <div className="flex items-center justify-between p-4 lg:px-6">
             <div className="flex items-center space-x-4">
               {/* Mobile Hamburger Menu */}
-              <button 
+              <button
+                type="button"
                 onClick={openDrawer}
-                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="rounded-lg p-2 transition-colors hover:bg-gray-100 lg:hidden"
                 aria-label="Open menu"
               >
                 <Menu size={24} className="text-gray-600" />
               </button>
             </div>
-            
+
             <div className="flex items-center space-x-4">
-              <button 
-                onClick={() => router.push('/dashboard/user-profile')} 
-                type="button" 
-                className="rounded-lg p-2 hover:bg-gray-100 transition-colors"
+              <button
+                onClick={() => router.push('/dashboard/user-profile')}
+                type="button"
+                className="rounded-lg p-2 transition-colors hover:bg-gray-100"
               >
                 <User size={20} className="text-gray-600" />
               </button>
               <button
                 type="button"
                 onClick={() => router.push('/sign-in')}
-                className="rounded-lg p-2 hover:bg-gray-100 transition-colors"
+                className="rounded-lg p-2 transition-colors hover:bg-gray-100"
               >
                 <LogOut size={20} className="text-gray-600" />
               </button>
