@@ -189,7 +189,7 @@ const PaymentResultPage = () => {
                   <button
                     type="button"
                     className="w-full rounded-lg bg-green-600 px-4 py-3 font-medium text-white transition-colors hover:bg-green-700"
-                    onClick={() => router.push('/dashboard/courses')}
+                    onClick={() => router.push('/dashboard/course-session')}
                   >
                     مشاهده دوره‌های من
                   </button>

@@ -2,7 +2,7 @@
 'use client';
 
 import type React from 'react';
-import { BarChart2, Calendar, GraduationCap, Heart, Home, LogOut, Menu, ShoppingBag, User, Users } from 'lucide-react';
+import { BarChart2, Calendar, GraduationCap, Heart, Home, LogOut, Menu, ShoppingBag, User, Users, BookOpenCheck } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -78,6 +78,9 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
         </SidebarLink>
         <SidebarLink href="/dashboard/courses" icon={GraduationCap} isActive={pathname === '/dashboard/courses'} onClick={onLinkClick}>
           دوره‌ها
+        </SidebarLink>
+        <SidebarLink href="/dashboard/course-session" icon={BookOpenCheck} isActive={pathname === '/dashboard/course-session'} onClick={onLinkClick}>
+          کلاس ها
         </SidebarLink>
         <SidebarLink href="/dashboard/statistics" icon={BarChart2} isActive={pathname === '/dashboard/statistics'} onClick={onLinkClick}>
           آمار
