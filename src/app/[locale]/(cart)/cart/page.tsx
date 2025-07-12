@@ -340,7 +340,7 @@ export default function ShoppingCart() {
                     
                   </div>
                   <p className="text-xl text-gray-100 mb-12 mt-6">سبد شما خالی میباشد</p>
-                  <Link href="/product">
+                  <Link href="/">
                     <button className="w-60 cursor-pointer  bg-purple-900 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
                       ادامه خرید
                     </button>

@@ -51,9 +51,28 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
   const addToCartMutation = useMutation({
     mutationFn: addProductToCartRequest,
-    onSuccess: () => {
+    onSuccess: (response) => {
       // @ts-expect-error
       queryClient.invalidateQueries("cart");
+
+      console.log('response', response);
+
+      if (!response) {
+        toast.error('خطایی رخ داده است');
+        return false;
+      }
+
+      if (response?.code === 208) {
+        toast.error('این دوره در سبد خرید شما موجود است');
+        return false;
+      }
+
+
+      if (response?._id) {
+        toast.success('محصول به سبد خرید شما اضافه شد');
+        return true;
+      }
+      
     },
   });
 
@@ -111,15 +130,21 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
 
   const attToBasketHandler = () => {
+    console.log('attToBasketHandler', dataFromServer);
+
+    if (!dataFromServer?.id) {
+      toast.error('متاسفانه محصوصل در دسترس نمیباشد');
+      return false;
+    }
+
     if (dataFromServer) {
       // addToCart(dataFromServer);
-      toast.success('محصول به سبد خرید شما اضافه شد'); // Displays a success message
        // if user authenticated, add product to cart in database
     // Send a request to the server to add the product to the cart
     if (isAuthenticated) {
       console.log('Add course to cart in database');
       console.log({dataFromServer, isAuthenticated})
-      addToCartMutation.mutate({ courseId: dataFromServer._id, quantity: 1 });
+      addToCartMutation.mutate({ courseId: dataFromServer.id, quantity: 1 });
     } else {
       // Add product to cart in local storage
       addToCartInLocalStorage(dataFromServer);
@@ -130,7 +155,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
     toast.error('متاسفانه محصوصل در دسترس نمیباشد')
     return false
-  }
+  };
 
   return (
     <div className=" mt-12">

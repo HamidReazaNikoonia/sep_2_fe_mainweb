@@ -40,6 +40,8 @@ const Navbar = () => {
       setproductCountBadge(data?.cartItem?.length || 0);
     } else if (data?.length === 0) {
       setproductCountBadge(0);
+    } else if (data?.code === 404) {
+      setproductCountBadge(0)
     } else if (cart) {
       if (Array.isArray(cart) && cart.length !== 0) {
         // @ts-ignore

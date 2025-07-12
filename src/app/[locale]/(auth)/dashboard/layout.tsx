@@ -6,6 +6,7 @@ import { BarChart2, BookOpenCheck, Calendar, GraduationCap, Heart, Home, House, 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import Drawer from '@/components/Drawer';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import useAuth from '@/hooks/useAuth';
@@ -45,17 +46,17 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
       <div className="mb-8 flex items-center gap-3 p-2">
         {user?.avatar?.file_name
           ? (
-            <img
-              src={`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${user?.avatar?.file_name}`}
-              alt={`${user?.first_name} ${user?.last_name}`}
-              className="size-16 rounded-full object-cover"
-            />
-          )
+              <img
+                src={`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${user?.avatar?.file_name}`}
+                alt={`${user?.first_name} ${user?.last_name}`}
+                className="size-16 rounded-full object-cover"
+              />
+            )
           : (
-            <div className="flex size-12 items-center justify-center rounded-full bg-[#E6E6FF]">
-              <User size={24} className="text-[#4338CA]" />
-            </div>
-          )}
+              <div className="flex size-12 items-center justify-center rounded-full bg-[#E6E6FF]">
+                <User size={24} className="text-[#4338CA]" />
+              </div>
+            )}
         <div className="flex flex-col">
           <h2 className="font-semibold text-gray-900">
             {user?.first_name}
@@ -127,7 +128,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const { isOpen: isDrawerOpen, openDrawer, closeDrawer } = useDrawer();
 
@@ -149,6 +150,12 @@ export default function DashboardLayout({
       </div>
     );
   }
+
+  const logoutUserHandler = () => {
+    logout();
+    toast.success('خروج با موفقیت انجام شد');
+    router.push('/sign-in');
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -200,7 +207,7 @@ export default function DashboardLayout({
               </button>
               <button
                 type="button"
-                onClick={() => router.push('/sign-in')}
+                onClick={logoutUserHandler}
                 className="rounded-lg p-2 transition-colors hover:bg-gray-100"
               >
                 <LogOut size={20} className="text-gray-600" />

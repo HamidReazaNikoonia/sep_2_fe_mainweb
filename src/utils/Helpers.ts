@@ -42,6 +42,9 @@ export const isEmpty = function (string: string | null) {
 };
 
 export const filterPriceNumber = (priceNumber: number) => {
+  if (!priceNumber) {
+    return 0;
+  }
   return priceNumber.toLocaleString('fa-IR');
 };
 
