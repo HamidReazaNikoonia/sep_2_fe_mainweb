@@ -2,7 +2,7 @@
 'use client';
 
 import type React from 'react';
-import { BarChart2, Calendar, GraduationCap, Heart, Home, LogOut, Menu, ShoppingBag, User, Users, BookOpenCheck } from 'lucide-react';
+import { BarChart2, BookOpenCheck, Calendar, GraduationCap, Heart, Home, LogOut, Menu, ShoppingBag, User, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -95,17 +95,25 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
     </div>
 
     <div className="border-t p-4">
-      <div className="flex items-center space-x-3">
-        <div className="flex size-10 items-center justify-center rounded-full bg-gray-200">
+      <div className="flex items-center">
+        {/* <div className="flex size-10 items-center justify-center rounded-full bg-gray-200">
           {user?.first_name?.[0]}
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <p className="text-sm font-medium text-gray-900">
             {user?.first_name}
             {' '}
             {user?.last_name}
           </p>
           <p className="text-sm text-gray-500">کاربر</p>
+        </div> */}
+        <div className="mt-2 flex w-full flex-col items-center justify-center">
+          <span className="pb-2 text-sm text-gray-500">موجودی کیف پول شما</span>
+          <span className="w-full border-t pt-2 text-center text-sm font-medium text-gray-900">
+            {user?.wallet?.amount ? user?.wallet?.amount?.toLocaleString('fa-IR') : (0).toLocaleString('fa-IR')}
+            {' '}
+            تومان
+          </span>
         </div>
       </div>
     </div>
