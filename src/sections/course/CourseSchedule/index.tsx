@@ -647,7 +647,7 @@ export default function CourseSchedule({
             <div className="space-y-3">
               {/* Program Price */}
               <div className="flex justify-between border-b pb-2">
-                <span className="font-medium">قیمت دوره:</span>
+                <span className="font-medium">شهریه دوره:</span>
                 <span className="font-medium">
                   {selectedProgram.price_discounted !== undefined && selectedProgram.price_discounted !== selectedProgram.price_real
                     ? `${filterPriceNumber(selectedProgram.price_discounted)} ریال`

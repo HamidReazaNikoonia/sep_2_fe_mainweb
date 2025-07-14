@@ -320,7 +320,7 @@ export default function ShoppingCart() {
   // )
   const tax = totalPriceValue * 0.08 // Assuming 8% tax rate
   const shippingFee = 5000
-  const total = totalPriceValue + tax + shippingFee
+  const total = totalPriceValue + tax;
 
   const isDataExist = isSuccess && data && cartItemFiltered;
   const isAddressDataExist = addressIsSuccess && addressData && Array.isArray(addressData);
@@ -397,14 +397,14 @@ export default function ShoppingCart() {
                           </span>
                           <span className=''> مالیات</span>
                         </div>
-                        <div className="flex justify-between">
+                        {/* <div className="flex justify-between">
                           <span>
                             <div dir='rtl' className="flex items-center">
                               {filterPriceNumber(shippingFee)}<span className="text-sm mr-1">تومان</span>
                             </div>
                           </span>
                           <span className=''>هزینه ارسال</span>
-                        </div>
+                        </div> */}
                         <div className="border-t pt-2 mt-2">
                           <div className="flex justify-between font-semibold text-lg text-[#137f3b]">
                             <span>

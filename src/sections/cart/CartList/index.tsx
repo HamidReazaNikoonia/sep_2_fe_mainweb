@@ -33,7 +33,7 @@ const CartItemComponent: React.FC<{
   return (
     <div className={clsx(wrapperClasess, (!isItemAvailabel && "opacity-50"))}>
       <div className="flex-shrink-0 w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
-        <CustomImage fileName={item?.thumbnail?.file_name} className="object-cover" src={''} alt={''} />
+        <CustomImage fileName={item?.tumbnail_image?.file_name} className="object-cover" src={''} alt={''} />
       </div>
       <div className="flex-grow leading-10">
         <h3 className="text-sm font-semibold text-gray-800">{item.title}</h3>

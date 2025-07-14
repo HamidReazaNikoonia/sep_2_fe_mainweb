@@ -3,7 +3,7 @@ import { getAuthToken, SERVER_API_URL } from '../../config';
 const API_BASE_URL = SERVER_API_URL;
 // const API_TOKEN = SERVER_API_TOKEN;
 
-async function calculateOrderSummary({ classProgramId, couponCodes, packages }: { classProgramId: string; couponCodes?: string[]; packages?: string[] }) {
+async function calculateOrderSummary({ classProgramId, couponCodes, packages, useUserWallet }: { classProgramId: string; couponCodes?: string[]; packages?: string[]; useUserWallet?: boolean }) {
   // console.log({ classProgramId, couponCodes, packages });
   const options = {
     method: 'POST',
@@ -13,7 +13,7 @@ async function calculateOrderSummary({ classProgramId, couponCodes, packages }: 
       'Authorization':
         `Bearer ${getAuthToken()}`,
     },
-    body: JSON.stringify({ classProgramId, couponCodes, packages }),
+    body: JSON.stringify({ classProgramId, couponCodes, packages, useUserWallet }),
   };
 
   const response = fetch(
@@ -178,7 +178,7 @@ async function retryCheckoutOrder(orderId: string) {
 //   return data;
 // }
 
-export async function calculateOrderSummaryRequest(body: { classProgramId: string; couponCodes?: string[]; packages?: string[] }) {
+export async function calculateOrderSummaryRequest(body: { classProgramId: string; couponCodes?: string[]; packages?: string[]; useUserWallet?: boolean }) {
   const data = await calculateOrderSummary(body);
   return data;
 }

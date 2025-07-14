@@ -9,16 +9,19 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { calculateOrderSummaryRequest, createOrderRequest } from '@/API/order/courseSession';
 import CouponInput from '@/components/CouponInput';
+import LoadingButton from '@/components/LoadingButton';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import useAuth from '@/hooks/useAuth';
 import { CourseSessioonProgramHelper } from '@/utils/CourseSession';
 import { convertDateToPersian } from '@/utils/Helpers';
-import LoadingButton from '@/components/LoadingButton';
 
 export default function CourseSessionCheckout() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isAuthenticated, userProfileData, isLoading, isUserCompleteProfile } = useAuth();
+  const { isAuthenticated, userProfileData, isLoading, isUserCompleteProfile, fetchUserFromServer } = useAuth();
+
+  // Add this useState hook
+  const [useWallet, setUseWallet] = useState(false);
 
   // Get query parameters
   const programId = searchParams.get('programId');
@@ -34,6 +37,7 @@ export default function CourseSessionCheckout() {
       classProgramId: programId as string,
       packages: packageIds,
       couponCodes: appliedCouponCodes,
+      useUserWallet: useWallet,
     }),
     enabled: !!programId,
     staleTime: 0,
@@ -92,6 +96,10 @@ export default function CourseSessionCheckout() {
       }
     }
   }, [isAuthenticated, userProfileData, programId, isUserCompleteProfile, packageIds, router, isLoading]);
+
+  useEffect(() => {
+    fetchUserFromServer();
+  }, []);
 
   // Get first session date
   const firstSessionDate = orderSummaryData?.program ? CourseSessioonProgramHelper(orderSummaryData?.program).getFirstSessionDate() : null;
@@ -175,6 +183,15 @@ export default function CourseSessionCheckout() {
     createOrder({ programId, packageIds, appliedCouponCodes });
     // we should navigate user to thhe bank
   };
+
+  const handleWalletCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = e.target.checked;
+    setUseWallet(isChecked);
+    // Refetch order summary whenever checkbox state changes
+    refetch();
+  };
+
+  const userWalletAmount = userProfileData?.user?.wallet?.amount;
 
   // If all validations pass, render the checkout content
   return (
@@ -331,6 +348,34 @@ export default function CourseSessionCheckout() {
                     ریال
                   </span>
                 </div>
+
+                {userWalletAmount > 0 && (
+                  <div className="mt-6 flex w-full flex-col items-center justify-between border-t border-gray-600 pt-6">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs md:text-sm">موجودی کیف پول : </span>
+                      <span style={{ letterSpacing: '1px' }} className="mr-4 rounded-2xl  bg-green-600/20 px-4 py-2 text-sm md:text-lg">
+                        {userWalletAmount.toLocaleString('fa-IR')}
+                        {' '}
+                        ریال
+                      </span>
+                    </div>
+
+                    {/* INPUT */}
+                    <div className="mt-4 flex items-center border-gray-600">
+                      <input
+                        type="checkbox"
+                        id="useWallet"
+                        checked={useWallet}
+                        onChange={handleWalletCheckboxChange}
+                        className="size-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                      />
+                      <label htmlFor="useWallet" className="pr-4 text-sm font-medium text-gray-300">
+                        پرداخت از کیف پول
+                      </label>
+                    </div>
+                  </div>
+                )}
+
               </div>
             </div>
 
