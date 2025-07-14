@@ -98,23 +98,7 @@ const CourseSessionCard: React.FC<CourseSessionCardProps> = ({ data }) => {
             </div>
 
             {/* Bottom Side */}
-            <div className="flex w-full items-center justify-between">
-              {/* Coach */}
-              <div className="mt-6 flex items-center gap-2">
-                <Image
-                  src={coach?.avatar?.file_name 
-                    ? `${NEXT_PUBLIC_SERVER_FILES_URL}/${coach.avatar.file_name}`
-                    : avatarImage}
-                  alt="coach"
-                  width={30}
-                  height={30}
-                  className="rounded-full"
-                />
-                <span className="text-xs font-medium text-gray-800 md:text-sm">
-                  {coach ? `${coach.first_name} ${coach.last_name}` : 'بدون مربی'}
-                </span>
-              </div>
-            </div>
+            {/* sched */}
           </div>
         </div>
       </div>
