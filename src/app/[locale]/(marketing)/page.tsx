@@ -46,7 +46,7 @@ export default async function Index(props: IIndexProps) {
     <div className=" overflow-hidden bg-black pt-16">
 
       {/* Main Slider In md Screen */}
-      <div className="mt-6 hidden flex-col px-4 md:mt-0 md:block md:px-0">
+      <div className=" flex-col">
         <MainSwiper />
       </div>
 
