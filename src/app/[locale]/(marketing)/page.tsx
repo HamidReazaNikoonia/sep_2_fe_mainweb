@@ -16,6 +16,7 @@ import CourseHotBanner from '@/sections/home/CourseHotBanner';
 
 import ToturialsSwiperCardSection from '@/sections/home/ToturialsSwiperCardSection';
 import ThumbsSwiperImageGallery from '../../../sections/home/ThumbsSwiperImageGallery';
+import ServicesNavBar from '@/sections/home/ServicesNavBar';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
@@ -49,6 +50,10 @@ export default async function Index(props: IIndexProps) {
       <div className=" flex-col">
         <MainSwiper />
       </div>
+
+      <section>
+        <ServicesNavBar />
+      </section>
 
       {/* Service Card Item */}
       <div className="container mx-auto py-20">
