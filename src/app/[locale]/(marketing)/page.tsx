@@ -1,22 +1,22 @@
-/* eslint-disable tailwindcss/no-contradicting-classname */
-import ServiceCardItem from '@/components/Card/ServiceCardItem';
-import MainSwiper from '@/components/swiper/MainSwiper';
-
 // import { Sponsors } from '@/components/Sponsors';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
+import ServiceCardItem from '@/components/Card/ServiceCardItem';
 
-// import CategoriesBannerSlider from '../../../components/CategoriesBannerSlider';
-// sections
-import CoursesCardSection from '../../../sections/home/CoursesCardSection';
-import FAQSection from '../../../sections/home/FAQ';
-import MultimediaTabsPortfolio from '../../../sections/home/MultimediaTabsPortfolio';
+import CourseSessionCategory from '@/components/CourseSessionCategory';
+
+import MainSwiper from '@/components/swiper/MainSwiper';
+// import MultimediaTabsPortfolio from '../../../sections/home/MultimediaTabsPortfolio';
 // import ServiceSwiper from '../../../sections/home/ServiceCardSection';
 
-import CourseHotBanner from '@/sections/home/CourseHotBanner';
+// import CourseHotBanner from '@/sections/home/CourseHotBanner';
 
-import ToturialsSwiperCardSection from '@/sections/home/ToturialsSwiperCardSection';
-import ThumbsSwiperImageGallery from '../../../sections/home/ThumbsSwiperImageGallery';
+// import ToturialsSwiperCardSection from '@/sections/home/ToturialsSwiperCardSection';
+// import ThumbsSwiperImageGallery from '../../../sections/home/ThumbsSwiperImageGallery';
 import ServicesNavBar from '@/sections/home/ServicesNavBar';
+// import CategoriesBannerSlider from '../../../components/CategoriesBannerSlider';
+// sections
+// import CoursesCardSection from '../../../sections/home/CoursesCardSection';
+import FAQSection from '../../../sections/home/FAQ';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
@@ -35,7 +35,7 @@ export async function generateMetadata(props: IIndexProps) {
   };
 }
 
-export default async function Index(props: IIndexProps) {
+export default async function Index() {
   // const { locale } = await props.params;
   // setRequestLocale(locale);
   // const t = await getTranslations({
@@ -53,6 +53,10 @@ export default async function Index(props: IIndexProps) {
 
       <section>
         <ServicesNavBar />
+      </section>
+
+      <section className="w-full">
+        <CourseSessionCategory />
       </section>
 
       {/* Service Card Item */}
@@ -129,9 +133,9 @@ export default async function Index(props: IIndexProps) {
       </div> */}
 
       {/* Image Gallery Section */}
-      <div className="container mx-auto py-20">
+      {/* <div className="container mx-auto py-20">
         <ThumbsSwiperImageGallery />
-      </div>
+      </div> */}
 
       {/* Multimedia Video Tabs Section */}
       {/* <div className="container mx-auto py-20">
