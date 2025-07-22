@@ -17,6 +17,7 @@ import ServicesNavBar from '@/sections/home/ServicesNavBar';
 // sections
 // import CoursesCardSection from '../../../sections/home/CoursesCardSection';
 import FAQSection from '../../../sections/home/FAQ';
+import CourseSessionSwiperRow from '@/sections/home/v2/CourseSessionSwiperRow';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
@@ -44,7 +45,7 @@ export default async function Index() {
   // });
 
   return (
-    <div className=" overflow-hidden bg-black pt-16">
+    <div className=" overflow-hidden bg-gray-200 pt-16">
 
       {/* Main Slider In md Screen */}
       <div className=" flex-col">
@@ -95,6 +96,11 @@ export default async function Index() {
           />
 
         </div>
+      </div>
+
+
+      <div className='w-full md:container md:mx-auto border px-0 md:px-4 py-12'>
+        <CourseSessionSwiperRow />
       </div>
 
       {/* <div className='py-12 bg-white'>

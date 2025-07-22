@@ -40,15 +40,15 @@ export default function CardItem({ title, subtitle, backgroundImage, buttonText,
   };
 
   return (
-    <div className="w-full max-w-3xl">
+    <div className="w-full max-w-3xl bg-gray-200">
       <div
         className="group relative h-48 w-full overflow-hidden rounded-lg p-10 shadow-lg"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={tiltStyle}
       >
-        <h3 className="translate-z-20 relative z-10 text-right text-2xl font-bold text-white">{title}</h3>
-        <p className="translate-z-20 relative z-10 mt-2 text-right text-white">{subtitle}</p>
+        <h3 className="translate-z-20 relative z-10 text-right text-2xl font-bold text-black">{title}</h3>
+        <p className="translate-z-20 relative z-10 mt-2 text-right text-black">{subtitle}</p>
         <div
           className="absolute inset-0 z-0 bg-cover bg-center brightness-100 contrast-100 saturate-200 transition-transform duration-300 ease-out group-hover:scale-110"
           style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -61,7 +61,7 @@ export default function CardItem({ title, subtitle, backgroundImage, buttonText,
           {buttonText}
           <ArrowLeftIcon className="ml-2 inline-block size-4" />
         </a>
-        <div className="translate-z-50 absolute inset-5 z-10 rounded-md border-2 border-white"></div>
+        <div className="translate-z-50 absolute inset-5 z-10 rounded-md border-2 border-black"></div>
       </div>
     </div>
   );
