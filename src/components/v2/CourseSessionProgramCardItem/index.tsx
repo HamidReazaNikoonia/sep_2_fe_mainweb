@@ -80,6 +80,7 @@ const CourseSessionProgramCardItem: React.FC<CourseSessionProgramCardItemProps> 
       {/* Second Section - Course Details */}
       <div dir="rtl" className="items-center flex flex-col gap-2 items-end md:min-w-[200px] md:border-r md:pr-4 pt-4 md:pt-0 border-t md:border-t-0">
         {/* Price */}
+        <div className='w-full flex flex-row md:flex-col justify-between md:justify-center items-center'>
         <div className='text-xs text-gray-600'>
           شروع قیمت از
         </div>
@@ -87,17 +88,16 @@ const CourseSessionProgramCardItem: React.FC<CourseSessionProgramCardItemProps> 
           <span className="text-lg text-center font-bold">{price.toLocaleString('fa-IR')}</span>
           <span className="text-sm">تومان</span>
         </div>
+        </div>
 
-        {/* Start Date */}
-        <div className="text-xs text-gray-600">
+       <div className='w-full flex flex-row md:flex-col justify-between md:justify-center md:items-center'>
+        <div className='text-xs text-gray-600'>
           شروع دوره: {startDate}
         </div>
-
-        {/* Duration */}
-        <div className="text-xs text-gray-600">
+        <div className='text-xs text-gray-600'>
           مدت دوره: {duration}
         </div>
-
+        </div>
         {/* Course Type Badge */}
         {isPresential && (
           <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">

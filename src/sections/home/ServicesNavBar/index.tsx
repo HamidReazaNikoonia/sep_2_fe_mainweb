@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable @next/next/no-img-element */
+import Link from 'next/link';
 import React from 'react';
 
 export default function ServicesNavBar() {
@@ -7,11 +8,11 @@ export default function ServicesNavBar() {
     <section dir="rtl" id="site-info">
       <div className="container mx-auto" style={{ zIndex: 10, position: 'relative' }}>
         <div className="relative flex -translate-y-1/3 flex-wrap rounded-xl bg-white p-4 text-center shadow md:divide-x-2 md:divide-x-reverse md:divide-solid md:divide-slate-200 md:rounded-3xl">
-          <a href="" className="mb-0 block  w-1/4 sm:mb-0 sm:w-1/4">
+          <Link href="/course-session-v2" className="mb-0 block  w-1/4 sm:mb-0 sm:w-1/4">
             <img alt="calendar" decoding="async" src="https://www.aryatehran.com/wp-content/uploads/2024/12/calendar.png" className="w-10 h-10 md:w-12 md:h-12  lazyloaded mx-auto" data-lazy-src="https://www.aryatehran.com/wp-content/uploads/2024/12/calendar.png" data-ll-status="loaded" />
 
             <div className=" mt-2 text-xs text-slate-950 md:text-base ">تقویم آموزشی</div>
-          </a>
+          </Link>
           <a href="" className="mb-0 block w-1/4 sm:mb-0 sm:w-1/4">
             <img alt="courses" decoding="async" src="https://www.aryatehran.com/wp-content/uploads/2024/12/online-learning.png" className="w-10 h-10 md:w-12 md:h-12  lazyloaded mx-auto" data-lazy-src="https://www.aryatehran.com/wp-content/uploads/2024/12/online-learning.png" data-ll-status="loaded" />
 
