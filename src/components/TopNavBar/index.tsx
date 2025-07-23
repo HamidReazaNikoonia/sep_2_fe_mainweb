@@ -4,12 +4,10 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { X, Search, ShoppingBasket, Menu, ChevronDown } from 'lucide-react';
-
+import { X, Search, ShoppingBasket, Menu, ChevronDown, ChevronRight, ChevronLeft } from 'lucide-react';
 
 import { useCartStore } from '@/_store/Cart';
 import { getUserCartRequest } from "@/API/cart";
-
 
 import useAuth from "@/hooks/useAuth";
 import UserAvatar from "@/components/UserAvatar";
@@ -19,21 +17,67 @@ const Navbar = () => {
   const [productCountBadge, setproductCountBadge] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  
+  // New states for courses dropdown
+  const [coursesDropdownOpen, setCoursesDropdownOpen] = useState(false);
+  const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [hoveredSubCategory, setHoveredSubCategory] = useState(null);
 
   const { isAuthenticated, user, logout } = useAuth();
 
-
+  // Sample categories data (you can replace this with your actual data)
+  const categories = [
+    {
+      title: 'برنامه نویسی',
+      query: 'programming',
+      children: [
+        {
+          title: 'فرانت اند',
+          query: 'frontend',
+          children: [
+            { title: 'React', query: 'react' },
+            { title: 'Vue.js', query: 'vue' },
+            { title: 'Angular', query: 'angular' }
+          ]
+        },
+        {
+          title: 'بک اند',
+          query: 'backend',
+          children: [
+            { title: 'Node.js', query: 'nodejs' },
+            { title: 'Python', query: 'python' },
+            { title: 'PHP', query: 'php' }
+          ]
+        }
+      ]
+    },
+    {
+      title: 'طراحی سایت',
+      query: 'web-design',
+      children: [
+        {
+          title: 'UI/UX',
+          query: 'uiux',
+          children: [
+            { title: 'Figma', query: 'figma' },
+            { title: 'Adobe XD', query: 'adobe-xd' }
+          ]
+        }
+      ]
+    },
+    {
+      title: 'مدیریت کسب و کار',
+      query: 'business',
+      children: []
+    }
+  ];
 
   const { data } = useQuery({
     queryFn: async () => getUserCartRequest(),
-    queryKey: ["cart"], //Array according to Documentation
+    queryKey: ["cart"],
   });
 
-
-
-
   const cart = useCartStore(state => state.cart);
-
 
   useEffect(() => {
     if (data?.cartItem) {
@@ -44,17 +88,13 @@ const Navbar = () => {
       setproductCountBadge(0)
     } else if (cart) {
       if (Array.isArray(cart) && cart.length !== 0) {
-        // @ts-ignore
         setproductCountBadge(cart.length ? cart.length : 0);
       }
     }
   }, [data]);
 
-
-  /**
-   * @type {string | number | NodeJS.Timeout | undefined}
-   */
   let dropdownTimeout;
+  let coursesDropdownTimeout;
 
   const handleMouseEnter = () => {
     clearTimeout(dropdownTimeout);
@@ -67,6 +107,28 @@ const Navbar = () => {
     }, 200);
   };
 
+  const handleCoursesMouseEnter = () => {
+    clearTimeout(coursesDropdownTimeout);
+    setCoursesDropdownOpen(true);
+  };
+
+  const handleCoursesMouseLeave = () => {
+    coursesDropdownTimeout = setTimeout(() => {
+      setCoursesDropdownOpen(false);
+      setHoveredCategory(null);
+      setHoveredSubCategory(null);
+    }, 200);
+  };
+
+  const handleCategoryHover = (category, index) => {
+    setHoveredCategory(index);
+    setHoveredSubCategory(null);
+  };
+
+  const handleSubCategoryHover = (subCategory, index) => {
+    setHoveredSubCategory(index);
+  };
+
   const handleSearchToggle = () => {
     setIsSearching(!isSearching);
   };
@@ -77,17 +139,14 @@ const Navbar = () => {
         {/* Search Mode */}
         {isSearching ? (
           <div className="flex items-center justify-between w-full animate-fade-in-down">
-            {/* Search Button */}
             <button className="bg-purple-800 hover:bg-blue-600 px-4 py-2 rounded mr-2 text-sm">
               <Search />
             </button>
-            {/* Search Input */}
             <input
               type="text"
               placeholder="جستجو کنید"
               className="flex-grow bg-gray-700 text-white px-4 py-2 rounded focus:outline-none"
             />
-            {/* Close Icon */}
             <button
               className="text-white ml-2"
               onClick={handleSearchToggle}
@@ -107,12 +166,8 @@ const Navbar = () => {
               </button>
 
               <div className="relative inline-flex">
-                <Link href='/cart'
-                  // @ts-ignore
-                  alt="go to cart items" >
-                  <button
-                    className="bg-purple-800 hover:bg-blue-600 px-4 py-2 rounded text-sm"
-                  >
+                <Link href='/cart' alt="go to cart items">
+                  <button className="bg-purple-800 hover:bg-blue-600 px-4 py-2 rounded text-sm">
                     <ShoppingBasket />
                   </button>
                 </Link>
@@ -121,55 +176,115 @@ const Navbar = () => {
                     {productCountBadge}
                   </span>
                 )}
-
               </div>
 
-
-        {isAuthenticated ? (
-          <>
-            <UserAvatar user={user} logOut={logout} />
-          </>
-        ) : (
-          <Link href='/sign-in'>
-            <button className="bg-purple-800 hover:bg-blue-600 px-4 py-2 rounded text-sm">
-              ورود | ثبت‌نام
-            </button>
-          </Link>
-        )}
-
-
-              
+              {isAuthenticated ? (
+                <>
+                  <UserAvatar user={user} logOut={logout} />
+                </>
+              ) : (
+                <Link href='/sign-in'>
+                  <button className="bg-purple-800 hover:bg-blue-600 px-4 py-2 rounded text-sm">
+                    ورود | ثبت‌نام
+                  </button>
+                </Link>
+              )}
             </div>
 
             {/* Right Side: Logo and Menu */}
             <div className="flex items-center">
-
-
               {/* Desktop Menu */}
               <ul className="hidden md:flex space-x-6 relative text-sm">
                 <li className="hover:text-gray-300">تماس با ما</li>
-                {/* <li
+
+                {/* Courses Dropdown */}
+                <li 
                   className="hover:text-gray-300 relative"
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
+                  onMouseEnter={handleCoursesMouseEnter}
+                  onMouseLeave={handleCoursesMouseLeave}
                 >
-                  <span className=" inline-block text-xs">
-                    <ChevronDown className=" w-3 h-3 mr-1" />
+                  <span className="flex items-center cursor-pointer">
+                    <ChevronDown className="w-3 h-3 mr-1" />
+                    دوره ها
                   </span>
-                  خدمات
 
-                  <ul
-                    className={`absolute left-0 mt-2 bg-gray-700 rounded shadow-lg w-40 transition-opacity duration-200 ${dropdownOpen ? "opacity-100 visible" : "opacity-0 invisible"
-                      }`}
-                  >
-                    <li className="px-4 py-2 hover:bg-gray-600">خدمات</li>
-                    <li className="px-4 py-2 hover:bg-gray-600">خدمات</li>
-                  </ul>
-                </li> */}
+                  {/* Multi-level Dropdown - RTL Layout */}
+                  {coursesDropdownOpen && (
+                    <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-50">
+                      {/* RTL Flex Container */}
+                      <div className="flex flex-row text-xs">
+                        {/* Third Level Categories Column (Leftmost in RTL) */}
+                        {hoveredCategory !== null && 
+                         hoveredSubCategory !== null &&
+                         categories[hoveredCategory]?.children?.[hoveredSubCategory]?.children &&
+                         categories[hoveredCategory].children[hoveredSubCategory].children.length > 0 && (
+                          <div className="w-56 bg-gray-100 border-r border-gray-200">
+                            {categories[hoveredCategory].children[hoveredSubCategory].children.map((thirdCategory, thirdIndex) => (
+                              <div
+                                key={thirdIndex}
+                                className="px-4 py-3 text-gray-700 hover:bg-gray-200 cursor-pointer border-b border-gray-200 last:border-b-0 text-right"
+                              >
+                                <Link href={`/course-session?${thirdCategory.query}=true`}>
+                                  {thirdCategory.title}
+                                </Link>
+                              </div>
+                            ))}
+                          </div>
+                        )}
 
-                <Link href="/course-session">
-                  <li className="hover:text-gray-300">دوره ها</li>
-                </Link> 
+                        {/* Sub Categories Column (Middle in RTL) */}
+                        {hoveredCategory !== null && 
+                         categories[hoveredCategory]?.children && 
+                         categories[hoveredCategory].children.length > 0 && (
+                          <div className="w-56 bg-gray-50 border-r border-gray-200">
+                            {categories[hoveredCategory].children.map((subCategory, subIndex) => (
+                              <div
+                                key={subIndex}
+                                className={`px-4 py-3 text-gray-700 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0 flex items-center justify-between ${
+                                  hoveredSubCategory === subIndex ? 'bg-gray-100' : ''
+                                }`}
+                                onMouseEnter={() => handleSubCategoryHover(subCategory, subIndex)}
+                              >
+                                {subCategory.children && subCategory.children.length > 0 && (
+                                  <ChevronLeft className="w-4 h-4 text-gray-400" />
+                                )}
+                                <Link 
+                                  href={`/course-session?${subCategory.query}=true`}
+                                  className="flex-1 text-right"
+                                >
+                                  {subCategory.title}
+                                </Link>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Main Categories Column (Rightmost in RTL) */}
+                        <div className="w-56 bg-white">
+                          {categories.map((category, index) => (
+                            <div
+                              key={index}
+                              className={`px-4 py-3 text-gray-700 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 flex items-center justify-between ${
+                                hoveredCategory === index ? 'bg-gray-50' : ''
+                              }`}
+                              onMouseEnter={() => handleCategoryHover(category, index)}
+                            >
+                              {category.children && category.children.length > 0 && (
+                                <ChevronLeft className="w-4 h-4 text-gray-400" />
+                              )}
+                              <Link 
+                                href={`/course-session?${category.query}=true`}
+                                className="flex-1 text-right"
+                              >
+                                {category.title}
+                              </Link>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </li>
 
                 <Link href="/course">
                   <li className="hover:text-gray-300">فیلم آموزشی</li>
@@ -219,32 +334,18 @@ const Navbar = () => {
           </button>
           <ul className="mt-12 space-y-6 px-6 pt-9 text-sm text-right">
             <li className="hover:text-gray-300">خانه</li>
-            {/* <li
-              className="hover:text-gray-300 cursor-pointer"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              خدمات
-              <ul
-                className={`pl-4 mt-2 space-y-2 text-sm ${dropdownOpen ? "block" : "hidden"
-                  }`}
-              >
-                <li className="hover:text-gray-400">خدمات</li>
-                <li className="hover:text-gray-400">خدمات</li>
-              </ul>
-            </li> */}
             
-                  <li className="hover:text-gray-300">
-                  <Link href="/course-session">
-                    دوره ها
-                  </Link>
-                  </li>
-                
+            <li className="hover:text-gray-300">
+              <Link href="/course-session">
+                دوره ها
+              </Link>
+            </li>
 
-                <li className="hover:text-gray-300">
-                  <Link href="/course">
-                    فیلم آموزشی
-                  </Link>
-                </li>    
+            <li className="hover:text-gray-300">
+              <Link href="/course">
+                فیلم آموزشی
+              </Link>
+            </li>    
             <li className="hover:text-gray-300">آکادمی آموزشی</li>
             <li className="hover:text-gray-300">تماس با ما</li>
           </ul>
