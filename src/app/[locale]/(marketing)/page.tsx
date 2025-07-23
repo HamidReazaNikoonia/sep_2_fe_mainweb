@@ -18,7 +18,8 @@ import ServicesNavBar from '@/sections/home/ServicesNavBar';
 // import CoursesCardSection from '../../../sections/home/CoursesCardSection';
 import FAQSection from '../../../sections/home/FAQ';
 import CourseSessionSwiperRow from '@/sections/home/v2/CourseSessionSwiperRow';
-import CourseSessionProgramCardItem from '@/components/v2/CourseSessionProgramCardItem';
+import CourseSessionProgramCategorySection from '@/sections/home/CourseSessionProgramCategorySection';
+// import CourseSessionProgramCardItem from '@/components/v2/CourseSessionProgramCardItem';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
@@ -62,7 +63,7 @@ export default async function Index() {
       </section>
 
       {/* Service Card Item */}
-      <div className="container mx-auto py-20">
+      {/* <div className="container mx-auto py-20">
         <div className="grid grid-cols-1 gap-16 md:grid-cols-2">
           <ServiceCardItem
             title="پژوهشکده هوش مصنوعی"
@@ -97,25 +98,17 @@ export default async function Index() {
           />
 
         </div>
-      </div>
+      </div> */}
 
 
       <div className='w-full md:container md:mx-auto border px-0 md:px-4 py-12'>
         <CourseSessionSwiperRow />
       </div>
 
-
-      <div className='w-full'>
-      <CourseSessionProgramCardItem
-  title="دوره ایلوستریتور"
-  startDate="21 آذر 1404"
-  endDate="15 دی 17"
-  price={2600000}
-  duration="1.5 ماه"
-  isPresential={true}
-  imageUrl="https://www.aryatehran.com/wp-content/uploads/2019/08/Comprehensive-ICDL.jpg"
-/>
-      </div>
+        <div>
+        <CourseSessionProgramCategorySection />
+        </div>
+    
 
       {/* <div className='py-12 bg-white'>
         <CategoriesBannerSlider />

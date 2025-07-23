@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Star } from 'lucide-react';
+import { Star, MessageCircle } from 'lucide-react';
 
 interface CourseSessionProgramCardItemProps {
   title: string;
@@ -17,8 +17,8 @@ interface CourseSessionProgramCardItemProps {
 
 const CourseSessionProgramCardItem: React.FC<CourseSessionProgramCardItemProps> = ({
   title,
-  score,
-  description,
+  score = 5,
+  description = "توضیحات: نرم افزار ایلوستریتور نیازی اساسی در طراحی گرافیکی می باشد، به کمک نرم افزار",
   startDate,
   price,
   duration,
@@ -31,49 +31,60 @@ const CourseSessionProgramCardItem: React.FC<CourseSessionProgramCardItemProps> 
       {/* First Section - Image and Course Info */}
       <div className="flex flex-row gap-4 md:flex-grow">
         {/* Right Section - Image */}
-        <div className="relative h-32 w-32 shrink-0">
+        <div className="relative w-[30%] h-auto shrink-0">
           <Image
             src={imageUrl}
             alt={title}
             fill
-            className="object-cover rounded-lg"
+            className="object-cover rounded-lg border shadow"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
 
         {/* Middle Section - Course Info */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 pt-2">
           {/* Title */}
           <h3 className="text-lg font-bold text-gray-800">{title}</h3>
 
-          {/* Score */}
+          <div className="flex flex-row gap-2">
+            {/* Score */}
           <div className="flex items-center gap-1">
-            <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm text-gray-600">{score}</span>
+            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+            <span className="text-xs text-gray-600">{score.toLocaleString('fa-IR')}</span>
+          </div>
+
+          {/* Comments */}
+          <div className="flex items-center gap-1">
+            <MessageCircle className="w-4 h-4 fill-gray-400 text-gray-200" />
+            <span className="text-xs text-gray-600">{32}</span>
+          </div>
           </div>
 
           {/* Description */}
-          <p className="text-sm text-gray-600 line-clamp-2">
+          <p className=" text-[10px] md:text-xs text-gray-600 line-clamp-2">
             {description}
           </p>
         </div>
       </div>
 
       {/* Second Section - Course Details */}
-      <div className="flex flex-col gap-3 items-end md:min-w-[200px] md:border-r md:pr-4 pt-4 md:pt-0 border-t md:border-t-0">
+      <div dir="rtl" className="items-center flex flex-col gap-2 items-end md:min-w-[200px] md:border-r md:pr-4 pt-4 md:pt-0 border-t md:border-t-0">
         {/* Price */}
+        <div className='text-xs text-gray-600'>
+          شروع قیمت از
+        </div>
         <div className="flex items-center gap-1">
-          <span className="text-lg font-bold">{price.toLocaleString()}</span>
+          <span className="text-lg text-center font-bold">{price.toLocaleString()}</span>
           <span className="text-sm">تومان</span>
         </div>
 
         {/* Start Date */}
-        <div className="text-sm text-gray-600">
+        <div className="text-xs text-gray-600">
           شروع دوره: {startDate}
         </div>
 
         {/* Duration */}
-        <div className="text-sm text-gray-600">
+        <div className="text-xs text-gray-600">
           مدت دوره: {duration}
         </div>
 
