@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Star, MessageCircle } from 'lucide-react';
+import { Star, MessageCircle, Phone } from 'lucide-react';
 
 interface CourseSessionProgramCardItemProps {
   title: string;
@@ -32,6 +32,16 @@ const CourseSessionProgramCardItem: React.FC<CourseSessionProgramCardItemProps> 
       <div className="flex flex-row gap-4 md:flex-grow">
         {/* Right Section - Image */}
         <div className="relative w-[30%] h-auto shrink-0">
+          <div className="hidden md:block absolute bottom-2 left-5 z-10">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="bg-white/80 backdrop-blur-sm border-pink-500 text-[10px] text-pink-500 hover:bg-pink-50 shadow-sm"
+            >
+              <Phone className="ml-1 size-3" />
+              مشاوره
+            </Button>
+          </div>
           <Image
             src={imageUrl}
             alt={title}
@@ -74,7 +84,7 @@ const CourseSessionProgramCardItem: React.FC<CourseSessionProgramCardItemProps> 
           شروع قیمت از
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-lg text-center font-bold">{price.toLocaleString()}</span>
+          <span className="text-lg text-center font-bold">{price.toLocaleString('fa-IR')}</span>
           <span className="text-sm">تومان</span>
         </div>
 
@@ -98,7 +108,7 @@ const CourseSessionProgramCardItem: React.FC<CourseSessionProgramCardItemProps> 
         {/* Register Button */}
         <Button
           onClick={onRegister}
-          className="w-full bg-green-500 hover:bg-green-600 text-white mt-2"
+          className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-xs hover:from-pink-600 hover:to-purple-700 text-white mt-2"
         >
           ثبت نام
         </Button>

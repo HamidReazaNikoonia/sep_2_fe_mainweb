@@ -72,7 +72,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 text-white fixed z-20 w-dvw">
+    <nav className="bg-gray-700 text-white fixed z-20 w-dvw">
       <div className="container mx-auto py-4 px-6">
         {/* Search Mode */}
         {isSearching ? (
