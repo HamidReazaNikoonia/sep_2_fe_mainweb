@@ -1,21 +1,18 @@
 /* eslint-disable tailwindcss/no-custom-classname */
-/* eslint-disable @next/next/no-img-element */
+
 'use client';
 
 import {
-  Award,
-  CheckCircle,
   FileText,
   ImageIcon,
   Mail,
   MessageCircle,
   MessageSquare,
   Phone,
-  Star,
-  Target,
   Users,
 } from 'lucide-react';
 import React from 'react';
+import MediaItem from '@/components/MediaItem';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +20,13 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AccordionView from '../AccordionViewDetail';
 import TabularView from '../TabularViewDetail';
+
+type SampleMedia = {
+  url_address: string;
+  media_title: string;
+  file?: { file_name: string };
+  media_type: 'VIDEO' | 'IMAGE' | 'AUDIO';
+};
 
 type TabularSectionProps = {
   courseData?: {
@@ -34,6 +38,7 @@ type TabularSectionProps = {
       bio: string;
       experience: string;
     };
+    sample_media?: SampleMedia[];
   };
 };
 
@@ -88,26 +93,42 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
         'عضویت در جامعه حرفه‌ای',
       ],
     },
+    sample_media: [
+      {
+        url_address: '/api/placeholder/300/200',
+        media_title: 'نمونه کار 1',
+        media_type: 'IMAGE',
+      },
+      {
+        url_address: '/api/placeholder/300/200',
+        media_title: 'نمونه کار 2',
+        media_type: 'VIDEO',
+      },
+      {
+        url_address: '/api/placeholder/300/200',
+        media_title: 'نمونه کار 3',
+        media_type: 'AUDIO',
+      },
+    ],
   };
-
 
   const mockContent = [
     {
       title: 'اهداف',
-      content: '<p>آشنایی کامل با مفاهیم طراحی وب و تسلط بر WordPress و ابزارهای آن. همچنین ایجاد قالب‌های حرفه‌ای و واکنش‌گرا و بهینه‌سازی سایت برای موتورهای جستجو.</p><ul><li>یادگیری طراحی واکنش‌گرا</li><li>تسلط بر WordPress</li><li>بهینه‌سازی SEO</li></ul>'
+      content: '<p>آشنایی کامل با مفاهیم طراحی وب و تسلط بر WordPress و ابزارهای آن. همچنین ایجاد قالب‌های حرفه‌ای و واکنش‌گرا و بهینه‌سازی سایت برای موتورهای جستجو.</p><ul><li>یادگیری طراحی واکنش‌گرا</li><li>تسلط بر WordPress</li><li>بهینه‌سازی SEO</li></ul>',
     },
     {
       title: 'پیش‌نیازها',
-      content: '<p>برای شرکت در این دوره نیاز به آشنایی با مفاهیم پایه رایانه و علاقه به یادگیری طراحی وب دارید.</p><p><strong>الزامات فنی:</strong></p><ul><li>دسترسی به اینترنت پایدار</li><li>رایانه شخصی یا لپ‌تاپ</li><li>نصب نرم‌افزارهای مورد نیاز</li></ul>'
+      content: '<p>برای شرکت در این دوره نیاز به آشنایی با مفاهیم پایه رایانه و علاقه به یادگیری طراحی وب دارید.</p><p><strong>الزامات فنی:</strong></p><ul><li>دسترسی به اینترنت پایدار</li><li>رایانه شخصی یا لپ‌تاپ</li><li>نصب نرم‌افزارهای مورد نیاز</li></ul>',
     },
     {
       title: 'ویژگی‌ها',
-      content: '<p>این دوره شامل ویژگی‌های منحصر به فردی است که تجربه یادگیری شما را بهبود می‌بخشد:</p><ul><li><strong>پشتیبانی 24 ساعته:</strong> در تمام ساعات شبانه‌روز</li><li><strong>گواهینامه معتبر:</strong> پس از اتمام موفقیت‌آمیز دوره</li><li><strong>پروژه‌های عملی:</strong> کار بر روی پروژه‌های واقعی</li><li><strong>منتورشیپ تخصصی:</strong> راهنمایی مستقیم از اساتید</li></ul>'
+      content: '<p>این دوره شامل ویژگی‌های منحصر به فردی است که تجربه یادگیری شما را بهبود می‌بخشد:</p><ul><li><strong>پشتیبانی 24 ساعته:</strong> در تمام ساعات شبانه‌روز</li><li><strong>گواهینامه معتبر:</strong> پس از اتمام موفقیت‌آمیز دوره</li><li><strong>پروژه‌های عملی:</strong> کار بر روی پروژه‌های واقعی</li><li><strong>منتورشیپ تخصصی:</strong> راهنمایی مستقیم از اساتید</li></ul>',
     },
     {
       title: 'مزایا',
-      content: '<p>شرکت در این دوره مزایای فراوانی برای آینده شغلی شما دارد:</p><blockquote><p>با تکمیل این دوره، مهارت‌های لازم برای ورود به بازار کار را کسب خواهید کرد.</p></blockquote><ul><li>افزایش مهارت‌های فنی و عملی</li><li>فرصت‌های شغلی بهتر در حوزه IT</li><li>امکان درآمدزایی از طریق فریلنسری</li><li>قابلیت ایجاد کسب‌وکار آنلاین</li><li>عضویت در جامعه حرفه‌ای طراحان وب</li></ul>'
-    }
+      content: '<p>شرکت در این دوره مزایای فراوانی برای آینده شغلی شما دارد:</p><blockquote><p>با تکمیل این دوره، مهارت‌های لازم برای ورود به بازار کار را کسب خواهید کرد.</p></blockquote><ul><li>افزایش مهارت‌های فنی و عملی</li><li>فرصت‌های شغلی بهتر در حوزه IT</li><li>امکان درآمدزایی از طریق فریلنسری</li><li>قابلیت ایجاد کسب‌وکار آنلاین</li><li>عضویت در جامعه حرفه‌ای طراحان وب</li></ul>',
+    },
   ];
 
   const data = courseData || mockData;
@@ -125,7 +146,7 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
               </TabsTrigger>
               <TabsTrigger value="images" className="flex items-center gap-2 text-sm">
                 <ImageIcon className="size-4" />
-                تصاویر دوره
+                نمونه کار برای دوره
               </TabsTrigger>
               <TabsTrigger value="description" className="flex items-center gap-2 text-sm">
                 <FileText className="size-4" />
@@ -137,38 +158,41 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
               <Card className="border-0 shadow-none">
                 {/* Show TabularView on medium and larger screens */}
                 <div className="hidden md:block">
-                        <TabularView content={mockContent} />
-                      </div>
-                      
-                      {/* Show AccordionView on mobile screens */}
-                      <div className="block md:hidden">
-                        <AccordionView content={mockContent} />
-                      </div>
+                  <TabularView content={mockContent} />
+                </div>
+
+                {/* Show AccordionView on mobile screens */}
+                <div className="block md:hidden">
+                  <AccordionView content={mockContent} />
+                </div>
               </Card>
             </TabsContent>
 
-            <TabsContent value="images" className="mt-0">
-              <Card className="border-0 shadow-none">
+            <TabsContent value="images" className="mt-4">
+              <Card dir="rtl" className="border-0 shadow-none">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <ImageIcon className="size-5" />
-                    گالری تصاویر
+                    نمونه کار
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {data.images.map((image, index) => (
-                      <div key={index} className="rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 p-[2px]">
-                        <div className="relative aspect-video overflow-hidden rounded-lg">
-                          <img
-                            src={image}
-                            alt={`تصویر دوره ${index + 1}`}
-                            className="size-full object-cover transition-transform duration-300 hover:scale-105"
-                          />
+                  {data.sample_media && data.sample_media.length > 0
+                    ? (
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                          {data.sample_media.map((media, index) => (
+                            <div key={index} className="space-y-2">
+                              <MediaItem media={media} />
+                            </div>
+                          ))}
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      )
+                    : (
+                        <div className="py-12 text-center">
+                          <ImageIcon className="mx-auto mb-4 size-12 text-gray-400" />
+                          <p className="text-gray-500">هیچ رسانه‌ای برای نمایش وجود ندارد</p>
+                        </div>
+                      )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -176,12 +200,12 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
             <TabsContent value="support" className="mt-0">
               <Card className="border-0 shadow-none">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle dir='rtl' className="flex items-center gap-2">
                     <MessageCircle className="size-5" />
                     راه‌های ارتباطی و پشتیبانی
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent dir='rtl' className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 p-[2px]">
                       <div className="flex items-center gap-3 rounded-lg bg-blue-50 p-4">
