@@ -1,7 +1,12 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable style/multiline-ternary */
+/* eslint-disable tailwindcss/migration-from-tailwind-2 */
 /* eslint-disable tailwindcss/no-custom-classname */
 
 'use client';
 
+import clsx from 'clsx';
 import {
   FileText,
   ImageIcon,
@@ -11,7 +16,7 @@ import {
   Phone,
   Users,
 } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import MediaItem from '@/components/MediaItem';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,6 +45,132 @@ type TabularSectionProps = {
     };
     sample_media?: SampleMedia[];
   };
+};
+
+// Update the MobileTabsUICards component to handle both mobile and md layouts
+const CardStyleTabs = ({ activeTab, onTabChange, layout = 'column' }: {
+  activeTab: string;
+  onTabChange: (value: string) => void;
+  layout?: 'column' | 'row';
+}) => {
+  const tabs = [
+    {
+      value: 'description',
+      label: 'توضیحات',
+      icon: <FileText className="size-6" />,
+      description: 'اطلاعات کامل دوره',
+      gradient: 'from-blue-400 to-blue-500',
+    },
+    {
+      value: 'images',
+      label: 'نمونه کارها',
+      icon: <ImageIcon className="size-6" />,
+      description: 'تصاویر و ویدیوهای دوره',
+      gradient: 'from-purple-500 to-purple-600',
+    },
+    {
+      value: 'support',
+      label: 'پشتیبانی',
+      icon: <MessageCircle className="size-6" />,
+      description: 'راه‌های ارتباطی',
+      gradient: 'from-purple-600 to-purple-700',
+    },
+  ];
+
+  return (
+    <div className={clsx(
+      'gap-4 p-4',
+      {
+        'flex flex-col md:flex-row-reverse': layout === 'row',
+        'grid grid-cols-1': layout === 'column',
+      },
+    )}
+    >
+      {tabs.map(tab => (
+        <div
+          key={tab.value}
+          onClick={() => onTabChange(tab.value)}
+          className={clsx(
+            'relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02]',
+            {
+              'md:flex-1': layout === 'row',
+              'ring-4 ring-pink-200': activeTab === tab.value,
+            },
+          )}
+        >
+          <div className={clsx(
+            `bg-gradient-to-r ${tab.gradient} relative text-white`,
+            {
+              'p-4': layout === 'row',
+              'p-6': layout === 'column',
+            },
+          )}
+          >
+            {/* Background pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute right-0 top-0 size-32 -translate-y-16 translate-x-16 rounded-full bg-white" />
+              <div className="absolute bottom-0 left-0 size-24 -translate-x-12 translate-y-12 rounded-full bg-white" />
+            </div>
+
+            <div className="relative z-10">
+              {layout === 'row' ? (
+                // Row layout for medium screens
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <div className="rounded-xl bg-white bg-opacity-20 p-3 backdrop-blur-sm">
+                    {tab.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold">{tab.label}</h3>
+                    <p className="text-sm opacity-90">{tab.description}</p>
+                  </div>
+                  {/* Selection indicator */}
+                  <div className={clsx(
+                    'absolute right-0 top-0 flex size-6 items-center justify-center rounded-full border-2 border-white transition-all duration-300',
+                    {
+                      'bg-white': activeTab === tab.value,
+                      'bg-transparent': activeTab !== tab.value,
+                    },
+                  )}
+                  >
+                    {activeTab === tab.value && (
+                      <div className={`size-3 rounded-full bg-gradient-to-r ${tab.gradient}`} />
+                    )}
+                  </div>
+                </div>
+              ) : (
+                // Column layout for mobile
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-xl bg-white bg-opacity-20 p-3 backdrop-blur-sm">
+                      {tab.icon}
+                    </div>
+                    <div className="text-right">
+                      <h3 className="text-lg font-bold">{tab.label}</h3>
+                      <p className="text-sm opacity-90">{tab.description}</p>
+                    </div>
+                  </div>
+
+                  {/* Selection indicator */}
+                  <div className={clsx(
+                    'flex size-6 items-center justify-center rounded-full border-2 border-white transition-all duration-300',
+                    {
+                      'bg-white': activeTab === tab.value,
+                      'bg-transparent': activeTab !== tab.value,
+                    },
+                  )}
+                  >
+                    {activeTab === tab.value && (
+                      <div className={`size-3 rounded-full bg-gradient-to-r ${tab.gradient}`} />
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 };
 
 export default function TabularSection({ courseData }: TabularSectionProps) {
@@ -133,28 +264,53 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
 
   const data = courseData || mockData;
 
-  return (
-    <div dir="ltr" className="w-full space-y-6">
-      {/* Main Tabs Section with Gradient Border */}
-      <div className="rounded-xl  p-1">
-        <div className="rounded-lg bg-white">
-          <Tabs defaultValue="description" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="support" className="flex items-center gap-2 text-sm">
-                <MessageCircle className="size-4" />
-                پشتیبانی
-              </TabsTrigger>
-              <TabsTrigger value="images" className="flex items-center gap-2 text-sm">
-                <ImageIcon className="size-4" />
-                نمونه کار برای دوره
-              </TabsTrigger>
-              <TabsTrigger value="description" className="flex items-center gap-2 text-sm">
-                <FileText className="size-4" />
-                توضیحات
-              </TabsTrigger>
-            </TabsList>
+  // Add this state for mobile tab handling
+  const [activeMobileTab, setActiveMobileTab] = useState('description');
 
-            <TabsContent value="description" className="mt-0">
+  return (
+    <div dir="ltr" className="w-full space-y-6 shadow-lg">
+      {/* Main Tabs Section with Gradient Border */}
+      <div className="rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 p-1">
+        <div className="rounded-lg bg-white">
+          <Tabs value={activeMobileTab} onValueChange={setActiveMobileTab} className="w-full">
+            {/* Desktop Tabs - Standard horizontal tabs for large screens */}
+            <div className="hidden">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="description" className="flex items-center gap-2 text-sm">
+                  <FileText className="size-4" />
+                  توضیحات
+                </TabsTrigger>
+                <TabsTrigger value="images" className="flex items-center gap-2 text-sm">
+                  <ImageIcon className="size-4" />
+                  نمونه کار برای دوره
+                </TabsTrigger>
+                <TabsTrigger value="support" className="flex items-center gap-2 text-sm">
+                  <MessageCircle className="size-4" />
+                  پشتیبانی
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            {/* Medium Screen Card Tabs - Row layout (md to xl) */}
+            <div className="hidden md:block">
+              <CardStyleTabs
+                activeTab={activeMobileTab}
+                onTabChange={setActiveMobileTab}
+                layout="row"
+              />
+            </div>
+
+            {/* Mobile Card Tabs - Column layout (below md) */}
+            <div className="block md:hidden">
+              <CardStyleTabs
+                activeTab={activeMobileTab}
+                onTabChange={setActiveMobileTab}
+                layout="column"
+              />
+            </div>
+
+            {/* Tab Contents */}
+            <TabsContent value="description" className="mt-6">
               <Card className="border-0 shadow-none">
                 {/* Show TabularView on medium and larger screens */}
                 <div className="hidden md:block">
@@ -168,7 +324,7 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
               </Card>
             </TabsContent>
 
-            <TabsContent value="images" className="mt-4">
+            <TabsContent value="images" className="mt-6">
               <Card dir="rtl" className="border-0 shadow-none">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -197,22 +353,22 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
               </Card>
             </TabsContent>
 
-            <TabsContent value="support" className="mt-0">
+            <TabsContent value="support" className="mt-6">
               <Card className="border-0 shadow-none">
                 <CardHeader>
-                  <CardTitle dir='rtl' className="flex items-center gap-2">
+                  <CardTitle dir="rtl" className="flex items-center gap-2">
                     <MessageCircle className="size-5" />
                     راه‌های ارتباطی و پشتیبانی
                   </CardTitle>
                 </CardHeader>
-                <CardContent dir='rtl' className="space-y-4">
+                <CardContent dir="rtl" className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 p-[2px]">
                       <div className="flex items-center gap-3 rounded-lg bg-blue-50 p-4">
                         <Phone className="size-5 text-blue-600" />
                         <div>
                           <p className="font-medium">تماس تلفنی</p>
-                          <p className="text-sm text-gray-600">021-12345678</p>
+                          <p className="text-sm text-gray-600">{('021-12345678').toLocaleString('fa-IR')}</p>
                         </div>
                       </div>
                     </div>

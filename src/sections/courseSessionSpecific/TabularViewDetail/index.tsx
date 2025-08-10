@@ -30,7 +30,7 @@ export default function TabularView({ content }: TabularViewProps) {
                   value={`tab-${index}`}
                   className="h-auto w-full justify-start py-3 text-xs data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white"
                 >
-                  <span className="text-right">{item.title}</span>
+                  <span className="text-right text-base">{item.title}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
