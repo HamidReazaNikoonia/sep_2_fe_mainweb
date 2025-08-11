@@ -14,7 +14,7 @@ import {
   Clock,
   MapPin,
   Play,
-  Star,
+  Scroll,
   Users,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -61,26 +61,26 @@ type Program = {
 // Timeline Components
 const SessionTimeline = ({ sessions }: { sessions: Session[] }) => (
   <div className="relative">
-    <div className="absolute right-6 inset-y-0 w-0.5 bg-gradient-to-b from-primary to-primary/30"></div>
-    <div className="space-y-6">
+    {/* <div className="absolute right-6 inset-y-0 w-0.5 bg-gradient-to-b from-primary to-primary/30"></div> */}
+    <div className="grid gap-x-4 grid-cols-1 md:grid-cols-2">
       {sessions.map((session, index) => (
-        <div key={session._id} className="relative flex items-start space-x-4 space-x-reverse">
-          <div className={`relative z-10 size-3 rounded-full ${session.status === 'scheduled' ? 'bg-primary' : 'bg-green-500'
+        <div key={session._id} className="relative mb-3 flex items-start space-x-4 space-x-reverse">
+          {/* <div className={`relative z-10 size-3 rounded-full ${session.status === 'scheduled' ? 'bg-primary' : 'bg-green-500'
           }`}
           >
             <div className={`absolute -inset-1 rounded-full animate-pulse ${session.status === 'scheduled' ? 'bg-primary/20' : 'bg-green-500/20'
             }`}
             >
             </div>
-          </div>
+          </div> */}
 
-          <div className="flex-1 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+          <div className="flex justify-between items-center  bg-yellow-500 rounded-lg border border-gray-200 p-4 shadow-sm w-full">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-2 space-x-reverse">
                 <Calendar className="size-4 text-primary" />
                 <span className="font-medium">{toPersianDigits(session.date)}</span>
               </div>
-              <Badge variant={session.status === 'scheduled' ? 'default' : 'secondary'}>
+              <Badge className="mx-3 hidden md:block" variant={session.status === 'scheduled' ? 'default' : 'secondary'}>
                 جلسه
                 {' '}
                 {index + 1}
@@ -107,9 +107,9 @@ const SessionTimeline = ({ sessions }: { sessions: Session[] }) => (
 );
 
 const MediaShowcase = ({ media }: { media: any[] }) => (
-  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-    {media.map((item, index) => (
-      <div key={item._id || index} className="group relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+  <div className="flex flex-wrap gap-4">
+    {[...media, ...media].map((item, index) => (
+      <div key={item._id || index} className="group max-w-28 border-2 border-gray-500 shadow-lg md:max-w-48 relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
         {item.media_type === 'IMAGE'
           ? (
               <img
@@ -171,14 +171,14 @@ const ProgramGrid = ({
 
   return (
     <div
-      className={`relative rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer h-[500px] flex flex-col ${isSelected
+      className={`relative rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer h-[700px] md:h-[500px] flex flex-col ${isSelected
         ? 'ring-4 ring-primary/30 shadow-2xl scale-[1.02]'
         : 'shadow-lg hover:shadow-xl hover:scale-[1.01]'
       }`}
       onClick={onSelect}
     >
       {/* Header with gradient - Fixed height */}
-      <div className="relative  bg-gradient-to-r from-pink-500 to-purple-600   text-white p-6 shrink-0">
+      <div className="relative bg-gradient-to-r from-pink-500 to-purple-600 text-white p-6 shrink-0">
         {isSelected && (
           <div className="absolute left-4 top-4 size-8 bg-white rounded-full flex items-center justify-center">
             <CheckCircle className="size-6 text-primary" />
@@ -191,11 +191,11 @@ const ProgramGrid = ({
                 <img
                   src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${program.coach.avatar.file_name}`}
                   alt={`${program.coach.first_name} ${program.coach.last_name}`}
-                  className="size-16 rounded-full border-4 border-white/30 object-cover"
+                  className="size-20 md:size-28 rounded-full border-4 border-white/30 object-cover"
                 />
               )
             : (
-                <div className="size-16 rounded-full border-4 border-white/30 bg-white/20 flex items-center justify-center text-2xl font-bold">
+                <div className="size-20 md:size-28 rounded-full border-4 border-white/30 bg-white/20 flex items-center justify-center text-2xl font-bold">
                   {program.coach.first_name.charAt(0)}
                 </div>
               )}
@@ -233,28 +233,28 @@ const ProgramGrid = ({
         {/* Price */}
         <div className="mt-4 flex flex-row-reverse justify-between">
           <div>
-          {hasDiscount
-            ? (
-                <div>
-                  <div className="text-white/70 line-through text-sm">
+            {hasDiscount
+              ? (
+                  <div>
+                    <div className="text-white/70 line-through text-sm">
+                      {filterPriceNumber(program.price_real)}
+                      {' '}
+                      تومان
+                    </div>
+                    <div className="text-2xl font-bold">
+                      {filterPriceNumber(program.price_discounted)}
+                      {' '}
+                      تومان
+                    </div>
+                  </div>
+                )
+              : (
+                  <div className="text-2xl font-bold">
                     {filterPriceNumber(program.price_real)}
                     {' '}
                     تومان
                   </div>
-                  <div className="text-2xl font-bold">
-                    {filterPriceNumber(program.price_discounted)}
-                    {' '}
-                    تومان
-                  </div>
-                </div>
-              )
-            : (
-                <div className="text-2xl font-bold">
-                  {filterPriceNumber(program.price_real)}
-                  {' '}
-                  تومان
-                </div>
-              )}
+                )}
           </div>
 
           <div className="block md:hidden">
@@ -278,22 +278,26 @@ const ProgramGrid = ({
       <div className="bg-white flex-1 flex flex-col overflow-hidden">
         {/* Tabs - Fixed height */}
         <div className="border-b border-gray-200 shrink-0">
-          <div className="flex">
+          <div className="flex md:flex-row flex-col">
             {[
-              { key: 'sessions', label: 'جلسات', icon: Calendar },
-              { key: 'media', label: 'نمونه‌کارها', icon: Play },
               { key: 'subjects', label: 'سرفصل‌ها', icon: Award },
+              { key: 'sessions', label: 'جلسات', icon: Calendar },
+              { key: 'certificates', label: 'گواهینامه و سایر خدمات', icon: Scroll },
+              { key: 'media', label: 'نمونه‌کارها', icon: Play },
             ].map(({ key, label, icon: Icon }) => (
               <button
+                type="button"
                 key={key}
                 onClick={(e) => {
                   e.stopPropagation();
                   setActiveTab(key as any);
                 }}
-                className={`flex-1 flex items-center justify-center space-x-2 space-x-reverse py-4 text-sm font-medium transition-colors ${activeTab === key
-                  ? 'text-primary border-b-2 border-primary bg-primary/5'
-                  : 'text-gray-500 hover:text-gray-700'
-                }`}
+                className={`flex flex-1 items-center justify-center space-x-2 space-x-reverse py-3 text-sm font-medium transition-colors
+                  ${activeTab === key
+                ? 'text-primary border-primary bg-primary/5 md:border-b-2 border-r-4 md:border-r-0'
+                : 'text-gray-500 hover:text-gray-700'
+              }
+                `}
               >
                 <Icon className="size-4" />
                 <span>{label}</span>
