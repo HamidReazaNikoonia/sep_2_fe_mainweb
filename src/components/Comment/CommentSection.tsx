@@ -64,7 +64,7 @@ const CommentSection: React.FC<Iprops> = ({ productId, type }: Iprops) => {
   }
 
   return (
-    <div className="mx-14 rounded-lg bg-gray-300 p-6 px-12 shadow-lg">
+    <div className="mx-0 md:mx-14 rounded-lg bg-gray-300 py-6 px-2 md:px-6 shadow-lg">
       <h2 className="mb-6 text-xl font-medium text-gray-900"> دیدگاه های شما {data?.totalReviews && `(${parseInt(data?.totalReviews || 0).toLocaleString('ar-EG')})`}  </h2>
       {/* <button
         onClick={toggleUser}

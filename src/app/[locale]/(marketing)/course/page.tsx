@@ -43,7 +43,7 @@ export default async function Portfolio(props: IPortfolioProps) {
 
   const coursesData = await fetchRepo();
   // eslint-disable-next-line no-console
-  console.log({ coursesData: coursesData.data.courses });
+  console.log({ coursesData: coursesData.courses });
 
   return (
     <div className="min-h-screen overflow-hidden bg-black pt-16 text-white">
@@ -61,7 +61,7 @@ export default async function Portfolio(props: IPortfolioProps) {
 
       <div className=" container mx-auto mb-24">
 
-        <CourseList data={coursesData.data} />
+        <CourseList data={coursesData} />
 
       </div>
     </div>
