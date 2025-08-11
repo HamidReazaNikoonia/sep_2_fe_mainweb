@@ -11,12 +11,17 @@
 /* eslint-disable tailwindcss/no-custom-classname */
 /* eslint-disable style/jsx-one-expression-per-line */
 'use client';
+import type { ICourseTypes } from '@/types/Course';
 import { CirclePause, CirclePlay, Headset, Phone } from 'lucide-react';
 import Image from 'next/image';
-import React, { useRef, useState } from 'react';
 
+import React, { useEffect, useRef, useState } from 'react';
+import { SERVER_API_URL } from '@/API/config';
 import { Button } from '@/components/ui/button';
 import testPosterImg from '@/public/assets/images/webmaster-course-cover-1.png';
+import CourseScheduleV1 from '@/sections/course/CourseSchedule/CourseScheduleV1';
+import CourseScheduleV2 from '@/sections/course/CourseSchedule/CourseScheduleV2';
+import CourseScheduleV3 from '@/sections/course/CourseSchedule/CourseScheduleV3';
 import TabularSection from '@/sections/courseSessionSpecific/TabularSection';
 import { truncateDescription } from '@/utils/Helpers';
 
@@ -59,6 +64,9 @@ export default function page() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [showVideo, setShowVideo] = useState(false);
 
+  const [dataFromServer, setDataFromServer] = useState<ICourseTypes | null>(null);
+
+
   const formatPrice = (price: number) => {
     return price.toLocaleString('fa-IR');
   };
@@ -89,6 +97,27 @@ export default function page() {
       }
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${SERVER_API_URL}/course-session/6843d2f6c8b36b2417f1334e`, {
+          next: { revalidate: 60 },
+        });
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const data = await res.json();
+        setDataFromServer(data);
+      } catch (error) {
+        console.error('Error fetching course data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div dir="rtl" className="w-full bg-gray-200">
@@ -209,8 +238,8 @@ export default function page() {
 
                             )
                               : (
-                                  <img src="https://png.pngtree.com/png-vector/20240910/ourmid/pngtree-business-women-avatar-png-image_13805764.png" className="rounded-full" />
-                                )}
+                                <img src="https://png.pngtree.com/png-vector/20240910/ourmid/pngtree-business-women-avatar-png-image_13805764.png" className="rounded-full" />
+                              )}
                           </div>
                         </div>
 
@@ -273,6 +302,14 @@ export default function page() {
       <div className="container mx-auto pb-20">
         <TabularSection />
       </div>
+
+      {/* CourseSchedule */}
+      <div className='w-full mt-12 py-8 bg-gray-300'>
+        <div className='w-full  container mx-auto '>
+          <CourseScheduleV3 courseId={dataFromServer?.id} />
+        </div>
+      </div>
+
     </div>
   );
 }
