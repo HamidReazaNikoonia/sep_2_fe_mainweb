@@ -1,9 +1,8 @@
 import { SERVER_API_URL } from '@/API/config';
-// import CourseList from '@/sections/course/CourseList';
+import CourseList from '@/sections/course/CourseList';
 // import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import HeroSwiperSection from '@/sections/course/HeroSwiperSection';
-import CourseListPage from '@/sections/course/v2/CourseList';
 
 type IPortfolioProps = {
   params: Promise<{ locale: string }>;
@@ -47,7 +46,7 @@ export default async function Portfolio(props: IPortfolioProps) {
   console.log({ coursesData: coursesData.courses });
 
   return (
-    <div className="min-h-screen overflow-hidden pt-16 text-black">
+    <div className="min-h-screen overflow-hidden bg-black pt-16 text-white">
       {/* <div className="container mx-auto pt-20">
         <CourseListHeader />
       </div> */}
@@ -62,7 +61,7 @@ export default async function Portfolio(props: IPortfolioProps) {
 
       <div className=" container mx-auto mb-24">
 
-        <CourseListPage />
+        <CourseList data={coursesData} />
 
       </div>
     </div>
