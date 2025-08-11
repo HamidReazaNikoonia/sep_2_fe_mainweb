@@ -24,6 +24,7 @@ import CourseScheduleV2 from '@/sections/course/CourseSchedule/CourseScheduleV2'
 import CourseScheduleV3 from '@/sections/course/CourseSchedule/CourseScheduleV3';
 import TabularSection from '@/sections/courseSessionSpecific/TabularSection';
 import { truncateDescription } from '@/utils/Helpers';
+import CommentLayout from '@/components/Comment';
 
 const courseSessionData = {
   title: 'دوره وبمستر',
@@ -238,8 +239,8 @@ export default function page() {
 
                             )
                               : (
-                                <img src="https://png.pngtree.com/png-vector/20240910/ourmid/pngtree-business-women-avatar-png-image_13805764.png" className="rounded-full" />
-                              )}
+                                  <img src="https://png.pngtree.com/png-vector/20240910/ourmid/pngtree-business-women-avatar-png-image_13805764.png" className="rounded-full" />
+                                )}
                           </div>
                         </div>
 
@@ -304,10 +305,15 @@ export default function page() {
       </div>
 
       {/* CourseSchedule */}
-      <div className='w-full mt-12 py-8 bg-gray-300'>
-        <div className='w-full  container mx-auto '>
+      <div className="w-full mt-12 py-8 bg-gray-300">
+        <div className="w-full  container mx-auto ">
           <CourseScheduleV3 courseId={dataFromServer?.id} />
         </div>
+      </div>
+
+      <div className="w-full bg-gray-300">
+        {/* Comment Section */}
+        <CommentLayout type="product" productId={dataFromServer?.id} />
       </div>
 
     </div>

@@ -492,19 +492,19 @@ export default function TimelineGridLayout({
 
       {/* Final Invoice */}
       {selectedProgram && (
-        <div className="bg-white rounded-2xl border-2 border-dashed border-primary/30 p-8 mb-8">
+        <div className="bg-white rounded-2xl border-2 border-dashed border-primary/30 p-8 mb-8 w-full">
           <div className="flex items-center justify-center mb-6">
             <div className="size-12 bg-primary/10 rounded-full flex items-center justify-center">
               <CheckCircle className="size-6 text-primary" />
             </div>
           </div>
 
-          <h3 className="text-2xl font-bold text-center mb-6">صورت‌حساب نهایی</h3>
+          <h3 className="text-lg md:text-2xl font-bold text-center mb-6">صورت‌ حساب نهایی</h3>
 
-          <div className="space-y-4 max-w-md mx-auto">
+          <div className="space-y-4 max-w-2xl mx-auto">
             <div className="flex justify-between py-3 border-b">
-              <span className="font-medium">دوره انتخابی:</span>
-              <span className="font-bold">
+              <span className="font-medium text-sm md:text-base ">دوره انتخابی:</span>
+              <span className="font-bold text-sm md:text-base">
                 {selectedProgram.price_discounted && selectedProgram.price_discounted !== selectedProgram.price_real
                   ? `${filterPriceNumber(selectedProgram.price_discounted)} ریال`
                   : `${filterPriceNumber(selectedProgram.price_real)} ریال`}
@@ -515,7 +515,7 @@ export default function TimelineGridLayout({
               const pkg = selectedProgram.packages.find((p: any) => p._id === packageId);
               return pkg
                 ? (
-                    <div key={pkg._id} className="flex justify-between py-2 text-gray-600">
+                    <div key={pkg._id} className="flex justify-between py-2 text-gray-600 text-sm md:text-base">
                       <span>{pkg.title}</span>
                       <span>
                         {filterPriceNumber(pkg.price)}
@@ -527,7 +527,7 @@ export default function TimelineGridLayout({
                 : null;
             })}
 
-            <div className="flex justify-between py-4 border-t-2 border-primary/20 text-xl font-bold">
+            <div className="flex items-center justify-between py-4 border-t-2 border-primary/20 text-sm md:text-xl font-bold">
               <span>مجموع کل:</span>
               <span className="bg-primary text-white px-4 py-2 rounded-lg">
                 {(() => {
@@ -548,8 +548,9 @@ export default function TimelineGridLayout({
       {selectedProgram && (
         <div className="text-center">
           <button
+            type="button"
             onClick={handleSubmit}
-            className="inline-flex items-center space-x-3 space-x-reverse bg-gradient-to-r from-primary to-primary/80 text-white px-12 py-4 rounded-2xl text-lg font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+            className="inline-flex items-center space-x-3 space-x-reverse bg-gradient-to-r from-primary to-primary/80 text-white px-12 py-4 rounded-2xl text-sm md:text-lg font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105"
           >
             <CheckCircle className="size-6" />
             <span>تایید نهایی و ادامه خرید</span>

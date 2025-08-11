@@ -28,7 +28,7 @@ const Pagination: React.FC<PaginationProps> = ({
               onClick={() => paginate(number)}
               className={`px-3 py-1 text-center rounded-md ${
                 currentPage === number
-                  ? 'green-gradient-bg text-white'
+                  ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >

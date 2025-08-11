@@ -22,7 +22,7 @@ type Iprops = {
   productId: string;
   type: string;
 }
-const CommentSection: React.FC<Iprops> = ({productId, type}: Iprops) => {
+const CommentSection: React.FC<Iprops> = ({ productId, type }: Iprops) => {
   const [user, setUser] = useState<{ username: string; avatar: string; isAdmin: boolean } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const commentsPerPage = 10;
@@ -64,8 +64,8 @@ const CommentSection: React.FC<Iprops> = ({productId, type}: Iprops) => {
   }
 
   return (
-    <div className="max-w-screen-lg mx-auto p-6 bg-gray-800 rounded-lg shadow-lg">
-      <h2 className="text-xl font-medium mb-6 text-gray-100"> دیدگاه های شما {data?.totalReviews && `(${parseInt(data?.totalReviews || 0).toLocaleString('ar-EG')})`}  </h2>
+    <div className="mx-14 rounded-lg bg-gray-300 p-6 px-12 shadow-lg">
+      <h2 className="mb-6 text-xl font-medium text-gray-900"> دیدگاه های شما {data?.totalReviews && `(${parseInt(data?.totalReviews || 0).toLocaleString('ar-EG')})`}  </h2>
       {/* <button
         onClick={toggleUser}
         className="mb-6 px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors duration-300 shadow-md"

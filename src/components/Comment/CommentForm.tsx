@@ -42,13 +42,13 @@ const CommentForm: React.FC<CommentFormProps> = ({ user, productId }) => {
   return (
     <form onSubmit={handleSubmit} className="mb-8">
       {!user && (
-        <input onChange={(e) => setName(e.target.value)} value={name} placeholder='نام خود را وارد کنید' className='w-full md:w-1/3 mb-4 text-sm p-3 bg-gray-700 text-gray-100 border-b-2 border-gray-600 rounded-t-md resize-none focus:outline-none focus:border-purple-500 transition-colors duration-300' />
+        <input onChange={(e) => setName(e.target.value)} value={name} placeholder='نام خود را وارد کنید' className='w-full md:w-1/3 mb-4 text-sm p-3 bg-gray-100 text-gray-700 border-b-2 border-gray-600 rounded-t-md resize-none focus:outline-none focus:border-purple-500 transition-colors duration-300' />
       )}
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder={user ? "نظر خود را بنویسید..." : "به عنوان ناشناس نظر دهید..."}
-        className="w-full text-sm p-3 bg-gray-700 text-gray-100 border-b-2 border-gray-600 rounded-t-md resize-none focus:outline-none focus:border-purple-500 transition-colors duration-300"
+        className="w-full text-sm p-3 bg-gray-100 text-gray-700 border-b-2 border-gray-600 rounded-t-md resize-none focus:outline-none focus:border-purple-500 transition-colors duration-300"
         rows={4}
       />
       <div className='flex mt-4 justify-end'>
@@ -97,7 +97,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ user, productId }) => {
       <button
         type="submit"
         disabled={mutation.isLoading}
-        className="mt-2 px-6 py-2 green-gradient-bg text-white rounded-full hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-colors duration-300 shadow-md disabled:opacity-50"
+        className="mt-2 px-14 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-colors duration-300 shadow-md disabled:opacity-50"
       >
         {mutation.isLoading ? 'در حال ارسال...' : 'ارسال نظر'}
       </button>
