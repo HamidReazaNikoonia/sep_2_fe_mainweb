@@ -5,9 +5,9 @@ import { SERVER_API_URL } from '@/API/config';
 import HeroSwiperSection from '@/sections/course/HeroSwiperSection';
 import CourseListPage from '@/sections/course/v2/CourseList';
 
-type IPortfolioProps = {
-  params: Promise<{ locale: string }>;
-};
+// type IPortfolioProps = {
+//   params: Promise<{ locale: string }>;
+// };
 
 // export async function generateMetadata(props: IPortfolioProps) {
 //   const { locale } = await props.params;
@@ -34,7 +34,7 @@ const fetchRepo = async () => {
   return res.json();
 };
 
-export default async function Portfolio(props: IPortfolioProps) {
+export default async function Portfolio() {
   // const { locale } = await props.params;
   // setRequestLocale(locale);
   // const t = await getTranslations({
@@ -60,7 +60,7 @@ export default async function Portfolio(props: IPortfolioProps) {
         <CourseCategoryCardSection />
       </div> */}
 
-      <div className=" container mx-auto mb-24">
+      <div className="mb-24 w-full">
 
         <CourseListPage />
 

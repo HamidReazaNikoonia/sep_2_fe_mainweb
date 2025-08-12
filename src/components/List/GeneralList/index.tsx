@@ -1,13 +1,13 @@
+/* eslint-disable style/multiline-ternary */
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Search, Filter, X, Loader2 } from 'lucide-react';
-import PriceRangeSlider from '@/components/PriceRangeSlider';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { Filter, Loader2, Search, X } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CategorySelector from '@/components/CategorySelector';
+import PriceRangeSlider from '@/components/PriceRangeSlider';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 
 // Custom debounce hook
 const useDebounce = (value: any, delay: number) => {
@@ -27,7 +27,7 @@ const useDebounce = (value: any, delay: number) => {
 };
 
 // Types
-interface FilterConfig {
+type FilterConfig = {
   search?: {
     placeholder?: string;
     label?: string;
@@ -45,9 +45,9 @@ interface FilterConfig {
     type: 'checkbox' | 'select' | 'date';
     options?: Array<{ value: string; label: string }>;
   }>;
-}
+};
 
-interface UseDataHook {
+type UseDataHook = {
   (params: Record<string, any>): {
     data: any;
     fetchNextPage: () => void;
@@ -57,9 +57,9 @@ interface UseDataHook {
     isError: boolean;
     error: any;
   };
-}
+};
 
-interface ListWithFiltersAndPaginationProps {
+type ListWithFiltersAndPaginationProps = {
   // Required props
   useDataHook: UseDataHook;
   renderItem: (item: any, index: number) => React.ReactNode;
@@ -81,7 +81,7 @@ interface ListWithFiltersAndPaginationProps {
   loadingComponent?: React.ReactNode;
   errorComponent?: React.ReactNode;
   emptyComponent?: React.ReactNode;
-}
+};
 
 const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> = ({
   useDataHook,
@@ -100,16 +100,16 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  
+
   // State for filters
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || searchParams.get('search') || '');
   const [priceRange, setPriceRange] = useState<[number, number]>([
-    parseInt(searchParams.get('price_from') || filterConfig.priceRange?.min?.toString() || '0'),
-    parseInt(searchParams.get('price_to') || filterConfig.priceRange?.max?.toString() || '1000000')
+    Number.parseInt(searchParams.get('price_from') || filterConfig.priceRange?.min?.toString() || '0'),
+    Number.parseInt(searchParams.get('price_to') || filterConfig.priceRange?.max?.toString() || '1000000'),
   ]);
   const [customFilters, setCustomFilters] = useState<Record<string, any>>(() => {
     const filters: Record<string, any> = {};
-    filterConfig.customFilters?.forEach(filter => {
+    filterConfig.customFilters?.forEach((filter) => {
       const paramValue = searchParams.get(filter.key);
       if (paramValue) {
         if (filter.type === 'checkbox') {
@@ -134,8 +134,10 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
   // Memoize filter params for API to prevent unnecessary recalculations
   const filterParams = useMemo(() => {
     const params: Record<string, any> = {};
-    
-    if (debouncedSearchQuery.trim()) params.q = debouncedSearchQuery.trim();
+
+    if (debouncedSearchQuery.trim()) {
+      params.q = debouncedSearchQuery.trim();
+    }
     if (filterConfig.priceRange) {
       // Only include price range if it's different from the default range
       if (debouncedPriceRange[0] > filterConfig.priceRange.min || debouncedPriceRange[1] < filterConfig.priceRange.max) {
@@ -143,7 +145,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
         params.price_to = debouncedPriceRange[1];
       }
     }
-    
+
     Object.entries(customFilters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
         if (key === 'is_fire_sale' && Array.isArray(value) && value.length > 0) {
@@ -156,20 +158,20 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
         }
       }
     });
-    
+
     return params;
   }, [debouncedSearchQuery, debouncedPriceRange, customFilters, filterConfig.priceRange]);
 
   // Update URL query parameters (no additional debouncing needed here)
   const updateURLParams = useCallback((params: Record<string, any>) => {
     const newSearchParams = new URLSearchParams();
-    
+
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
         newSearchParams.set(key, value.toString());
       }
     });
-    
+
     const newUrl = `${pathname}?${newSearchParams.toString()}`;
     if (newUrl !== `${pathname}?${searchParams.toString()}`) {
       router.push(newUrl, { scroll: false });
@@ -184,7 +186,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
     isLoading,
     isFetchingNextPage,
     isError,
-    error
+    error,
   } = useDataHook(filterParams);
 
   // Update URL when filters change (remove additional debouncing here)
@@ -194,62 +196,66 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
 
   // Infinite scroll observer
   useEffect(() => {
-    if (observerRef.current) observerRef.current.disconnect();
-    
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
     observerRef.current = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
-    
+
     if (lastItemRef.current) {
       observerRef.current.observe(lastItemRef.current);
     }
-    
+
     return () => {
-      if (observerRef.current) observerRef.current.disconnect();
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-  
+
   // Filter handlers
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
   }, []);
-  
+
   // Price range handler - direct update, debouncing handled at component level
   const handlePriceRangeChange = useCallback((range: [number, number]) => {
     setPriceRange(range);
   }, []);
-  
+
   const handleCustomFilterChange = useCallback((key: string, value: any) => {
     setCustomFilters(prev => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   }, []);
-  
+
   const handleCustomFilterToggle = useCallback((key: string, value: string) => {
-    setCustomFilters(prev => {
+    setCustomFilters((prev) => {
       const currentValues = prev[key] || [];
       const newValues = currentValues.includes(value)
         ? currentValues.filter((v: string) => v !== value)
         : [...currentValues, value];
-      
+
       return {
         ...prev,
-        [key]: newValues
+        [key]: newValues,
       };
     });
   }, []);
-  
+
   const clearAllFilters = useCallback(() => {
     setSearchQuery('');
     setPriceRange([
       filterConfig.priceRange?.min || 0,
-      filterConfig.priceRange?.max || 1000000
+      filterConfig.priceRange?.max || 1000000,
     ]);
     setCustomFilters(initialFilters);
   }, [filterConfig.priceRange, initialFilters]);
@@ -258,14 +264,14 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
   const allItems = useMemo(() => {
     return data?.pages?.flatMap(page => page.data || page.items || page) || [];
   }, [data]);
-  
+
   // Render filter section
   const renderFilters = () => (
-    <div className="bg-white rounded-lg shadow-sm border p-6 h-fit">
-      <div className="flex items-center gap-2 mb-6">
-        <Filter className="w-5 h-5 text-gray-600" />
+    <div className="h-fit rounded-lg border bg-white p-6 shadow-sm">
+      <div className="mb-6 flex items-center gap-2">
+        <Filter className="size-5 text-gray-600" />
         <h2 className="text-lg font-semibold text-gray-800">فیلترها</h2>
-        {(searchQuery || Object.keys(customFilters).some(key => {
+        {(searchQuery || Object.keys(customFilters).some((key) => {
           const value = customFilters[key];
           return value && (Array.isArray(value) ? value.length > 0 : value !== '');
         }) || (filterConfig.priceRange && (priceRange[0] > filterConfig.priceRange.min || priceRange[1] < filterConfig.priceRange.max))) && (
@@ -275,7 +281,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
             onClick={clearAllFilters}
             className="mr-auto text-xs text-red-500 hover:text-red-700"
           >
-            <X className="w-4 h-4 ml-1" />
+            <X className="ml-1 size-4" />
             پاک کردن همه
           </Button>
         )}
@@ -288,18 +294,18 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
             <input
               type="text"
               placeholder={filterConfig.search.placeholder || 'جستجو...'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-right text-sm"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-right text-sm focus:border-pink-500 focus:ring-2 focus:ring-pink-500"
               value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
+              onChange={e => handleSearchChange(e.target.value)}
             />
-            <Search className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-3.5 size-4 text-gray-400" />
           </div>
         </div>
       )}
 
       {/* Filters Accordion */}
       <Accordion type="multiple" className="w-full">
-        
+
         {/* Price Range Filter */}
         {filterConfig.priceRange && (
           <AccordionItem value="price-range">
@@ -314,7 +320,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
                 value={priceRange}
                 onValueChange={handlePriceRangeChange}
                 debounceMs={0} // Remove internal debouncing, handled at component level
-                formatValue={(value) => value.toLocaleString('fa')}
+                formatValue={value => value.toLocaleString('fa')}
                 label={filterConfig.priceRange.label || 'محدوده قیمت'}
                 className="w-full"
               />
@@ -323,7 +329,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
         )}
 
         {/* Custom Filters */}
-        {filterConfig.customFilters?.map((filter) => (
+        {filterConfig.customFilters?.map(filter => (
           <AccordionItem key={filter.key} value={filter.key}>
             <AccordionTrigger className="text-right hover:no-underline">
               <span>{filter.label}</span>
@@ -331,40 +337,42 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
             <AccordionContent>
               <div className="space-y-3">
                 {/* Special handling for course_category */}
-                {filter.key === 'course_category' ? (
-                  <CategorySelector
-                    selectedCategory={customFilters[filter.key] || ''}
-                    onCategoryChange={(categoryId) => handleCustomFilterChange(filter.key, categoryId)}
-                    placeholder="انتخاب دسته‌بندی"
-                    showAllOption={true}
-                    allOptionLabel="همه دسته‌ها"
-                  />
-                ) : filter.type === 'checkbox' && filter.options?.map((option) => (
-                  <div key={option.value} className="flex items-center gap-2">
-                    <input 
-                      type="checkbox" 
-                      id={`${filter.key}-${option.value}`}
-                      className="rounded"
-                      checked={(customFilters[filter.key] || []).includes(option.value)}
-                      onChange={() => handleCustomFilterToggle(filter.key, option.value)}
-                    />
-                    <label 
-                      htmlFor={`${filter.key}-${option.value}`} 
-                      className="text-sm text-gray-600 cursor-pointer"
-                    >
-                      {option.label}
-                    </label>
-                  </div>
-                ))}
-                
+                {filter.key === 'course_category'
+                  ? (
+                      <CategorySelector
+                        selectedCategory={customFilters[filter.key] || ''}
+                        onCategoryChange={categoryId => handleCustomFilterChange(filter.key, categoryId)}
+                        placeholder="انتخاب دسته‌بندی"
+                        showAllOption
+                        allOptionLabel="همه دسته‌ها"
+                      />
+                    )
+                  : filter.type === 'checkbox' && filter.options?.map(option => (
+                    <div key={option.value} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id={`${filter.key}-${option.value}`}
+                        className="rounded"
+                        checked={(customFilters[filter.key] || []).includes(option.value)}
+                        onChange={() => handleCustomFilterToggle(filter.key, option.value)}
+                      />
+                      <label
+                        htmlFor={`${filter.key}-${option.value}`}
+                        className="cursor-pointer text-sm text-gray-600"
+                      >
+                        {option.label}
+                      </label>
+                    </div>
+                  ))}
+
                 {filter.type === 'select' && filter.key !== 'course_category' && (
                   <select
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
                     value={customFilters[filter.key] || ''}
-                    onChange={(e) => handleCustomFilterChange(filter.key, e.target.value)}
+                    onChange={e => handleCustomFilterChange(filter.key, e.target.value)}
                   >
                     <option value="">انتخاب کنید</option>
-                    {filter.options?.map((option) => (
+                    {filter.options?.map(option => (
                       <option key={option.value} value={option.value}>
                         {option.label}
                       </option>
@@ -381,10 +389,10 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
 
   if (isError) {
     return errorComponent || (
-      <div className="flex items-center justify-center min-h-[200px] text-center">
+      <div className="flex min-h-[200px] items-center justify-center text-center">
         <div className="text-red-500">
           <p>خطا در بارگذاری اطلاعات</p>
-          <p className="text-sm mt-2">{error?.message}</p>
+          <p className="mt-2 text-sm">{error?.message}</p>
         </div>
       </div>
     );
@@ -394,9 +402,9 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
     <div className={`min-h-screen bg-gray-200 ${className}`} dir="rtl">
       {/* Header Section */}
       {title && (
-        <div className="bg-white shadow-sm border-b">
+        <div className="border-b bg-white shadow-sm">
           <div className="container mx-auto px-4 py-12">
-            <h1 className="text-lg md:text-2xl mt-16 font-bold text-gray-800 text-center mb-4">
+            <h1 className="mb-4 mt-16 text-center text-lg font-bold text-gray-800 md:text-2xl">
               {title}
             </h1>
           </div>
@@ -405,21 +413,23 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          
-          {/* Desktop Sidebar Filters */}
-          <div className="hidden lg:block lg:w-80">
-            {renderFilters()}
+        <div className="flex flex-col gap-6 md:flex-row">
+
+          {/* Desktop Sidebar Filters - Sticky from medium screens */}
+          <div className="hidden md:block md:w-80 md:shrink-0">
+            <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
+              {renderFilters()}
+            </div>
           </div>
 
           {/* Mobile Filter Button */}
           {showFiltersOnMobile && (
-            <div className="lg:hidden mb-4">
+            <div className="mb-4 md:hidden">
               <Button
                 onClick={() => setShowMobileFilters(!showMobileFilters)}
-                className="w-full bg-pink-500 hover:bg-pink-600 text-white"
+                className="w-full bg-pink-500 text-white hover:bg-pink-600"
               >
-                <Filter className="w-4 h-4 ml-2" />
+                <Filter className="ml-2 size-4" />
                 فیلترها
               </Button>
             </div>
@@ -427,25 +437,25 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
 
           {/* Mobile Filters */}
           {showMobileFilters && showFiltersOnMobile && (
-            <div className="lg:hidden mb-6">
+            <div className="mb-6 md:hidden">
               {renderFilters()}
             </div>
           )}
 
           {/* Content List */}
-          <div className="flex-1">
+          <div className="flex-1 md:min-w-0">
             {isLoading && allItems.length === 0 ? (
               loadingComponent || (
-                <div className="flex items-center justify-center min-h-[200px]">
+                <div className="flex min-h-[200px] items-center justify-center">
                   <div className="text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-pink-500" />
+                    <Loader2 className="mx-auto mb-4 size-8 animate-spin text-pink-500" />
                     <p className="text-gray-600">در حال بارگذاری...</p>
                   </div>
                 </div>
               )
             ) : allItems.length === 0 ? (
               emptyComponent || (
-                <div className="flex items-center justify-center min-h-[200px] text-center">
+                <div className="flex min-h-[200px] items-center justify-center text-center">
                   <p className="text-gray-600">هیچ موردی یافت نشد</p>
                 </div>
               )
@@ -456,23 +466,23 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
                     {renderItem(item, index)}
                   </div>
                 ))}
-                
+
                 {/* Infinite Scroll Trigger */}
                 <div ref={lastItemRef} className="h-4" />
-                
+
                 {/* Loading More Indicator */}
                 {isFetchingNextPage && (
                   <div className="flex items-center justify-center py-8">
                     <div className="text-center">
-                      <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-pink-500" />
+                      <Loader2 className="mx-auto mb-2 size-6 animate-spin text-pink-500" />
                       <p className="text-sm text-gray-600">در حال بارگذاری موارد بیشتر...</p>
                     </div>
                   </div>
                 )}
-                
+
                 {/* End of List Indicator */}
                 {!hasNextPage && allItems.length > 0 && (
-                  <div className="text-center py-8">
+                  <div className="py-8 text-center">
                     <p className="text-sm text-gray-500">همه موارد نمایش داده شد</p>
                   </div>
                 )}
