@@ -103,8 +103,8 @@ const CourseListPage = () => {
       filterConfig={filterConfig}
       title="فهرست دوره‌های آموزشی"
       queryKey="courses-list"
-      className="bg-gray-50"
-      itemClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      className="bg-gray-200"
+      itemClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 md:gap-y-6"
       showFiltersOnMobile
       loadingComponent={loadingComponent}
       errorComponent={errorComponent}

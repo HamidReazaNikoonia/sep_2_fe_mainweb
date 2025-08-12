@@ -20,7 +20,7 @@ export default async function Layout(props: {
       {/* <DemoBanner /> */}
       <TopNavBar />
       {/* <SubHeader /> */}
-      <div className="">{props.children}</div>
+      <div className="w-full">{props.children}</div>
       {/* Footer */}
       <Footer />
     </>

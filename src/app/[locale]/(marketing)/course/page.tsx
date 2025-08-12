@@ -60,7 +60,7 @@ export default async function Portfolio() {
         <CourseCategoryCardSection />
       </div> */}
 
-      <div className="mb-24 w-full">
+      <div className="w-full">
 
         <CourseListPage />
 

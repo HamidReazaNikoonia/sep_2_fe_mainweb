@@ -402,8 +402,8 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
       {/* Header Section */}
       {title && (
         <div className="border-b bg-white shadow-sm">
-          <div className="container mx-auto px-4 py-12">
-            <h1 className="mb-4 mt-16 text-center text-lg font-bold text-gray-800 md:text-2xl">
+          <div className="container mx-auto px-4 py-2 md:py-4">
+            <h1 className="my-2 text-center text-lg font-bold text-gray-800 md:text-2xl">
               {title}
             </h1>
           </div>
@@ -411,7 +411,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
       )}
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="px-4 py-8 md:px-8">
         {/* Mobile Filter Button */}
         {showFiltersOnMobile && (
           <div className="mb-4 md:hidden">
@@ -433,7 +433,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
         )}
 
         {/* Desktop Layout */}
-        <div className="hidden md:grid md:grid-cols-12 md:gap-6">
+        <div className="hidden md:grid md:grid-cols-12 md:gap-4">
 
           {/* Sticky Sidebar */}
           <div className="md:col-span-4 lg:col-span-3">
@@ -460,7 +460,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
                 </div>
               )
             ) : (
-              <div className={`space-y-4 ${itemClassName}`}>
+              <div className={`${itemClassName}`}>
                 {allItems.map((item, index) => (
                   <div key={item.id || item._id || index}>
                     {renderItem(item, index)}

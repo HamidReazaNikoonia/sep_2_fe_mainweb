@@ -1,16 +1,15 @@
-/* eslint-disable tailwindcss/no-custom-classname */
 /* eslint-disable tailwindcss/enforces-negative-arbitrary-values */
 'use client';
 import type { ICourseTypes } from '@/types/Course';
-// import { useCartStore } from '@/_store/Cart';
-import sampleImage from '@/public/assets/images/product_placeholder.png';
-import { MapIcon as City, Heart, ShoppingBasket, Star, UserRound, Users } from 'lucide-react';
-
+import { Heart, Star, UserRound, Users } from 'lucide-react';
 import Image from 'next/image';
 
 import Link from 'next/link';
 
 import { useState } from 'react';
+
+// import { useCartStore } from '@/_store/Cart';
+import sampleImage from '@/public/assets/images/product_placeholder.png';
 // Utils
 import { filterPriceNumber, truncateDescription } from '@/utils/Helpers';
 // import toast from 'react-hot-toast';
@@ -61,7 +60,7 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
   const tumbnailImageSrc = course?.tumbnail_image && `${NEXT_PUBLIC_SERVER_FILES_URL}/${course?.tumbnail_image?.file_name}`;
 
   return (
-    <div key={course?.id} dir="rtl" className=" mb-7.5  course-item mb-6 w-full px-2 font-[Yekan_Bakh]">
+    <div key={course?.id} dir="rtl" className="course-item w-full font-[Yekan_Bakh]">
       <div className="overflow-hidden rounded-md border border-[#e5e5e5] bg-[#f8f8f8] shadow-2xl transition-all duration-300 ease-in-out dark:bg-[#141414]">
         <div className="relative flex items-center justify-center">
           <Link href={`/course/${course?.id}`} className="w-full">
@@ -78,10 +77,14 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
           </Link>
           {course?.price_discount && (
             <div
-              className="absolute -bottom-[18px] left-5 rounded-full border-4 border-white bg-[#cf741e] p-2 text-sm text-white "
+              className="absolute -bottom-[18px] left-5 rounded-full border-4 border-white bg-[#cf741e] p-2 text-xs text-white "
             >
               {/* <ShoppingBasket className="size-5 text-left" /> */}
-              تخفیف ویژه {filterPriceNumber(course?.price_discount)} تومان
+              تخفیف ویژه
+              {' '}
+              {filterPriceNumber(course?.price_discount)}
+              {' '}
+              تومان
             </div>
           )}
 
@@ -94,18 +97,18 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
 
         <div className="p-4">
           <div className="mb-4">
-            <h4 className="mb-1 text-[15px] font-bold leading-normal">
+            <h4 className="mb-1 mt-2 text-[15px] font-bold leading-normal">
               <Link href={`/course/${course?.id}`} className="text-black hover:text-primary">
                 {course?.title}
               </Link>
             </h4>
 
-            <h6 className='text-xs mb-4 text-gray-500'>
+            <h6 className="mb-4 text-xs text-gray-500">
               {course?.sub_title ? truncateDescription(course?.sub_title, 100) : ''}
             </h6>
-            <div className="inline-block rounded bg-[#e1dfe2] px-2 py-1 text-xs text-black">
+            {/* <div className="inline-block rounded bg-[#e1dfe2] px-2 py-1 text-xs text-black">
               {courseTypeMap[course?.course_type] || courseTypeMap.HOZORI}
-            </div>
+            </div> */}
           </div>
 
           <div className="mb-4 flex items-center justify-between text-sm">
@@ -133,18 +136,19 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
               </span>
             </div>
 
-
             {course?.coach_id && (
-              <div className="rounded-lg border bg-[#6E0072] px-4 py-1.5 text-white hover:opacity-85">
+              <div className="rounded-lg border bg-[#d8e9e9] px-4 py-1.5 text-gray-800 hover:opacity-85">
                 <Link href="teacher/teacher.user_id" className="flex items-center text-xs">
                   <UserRound className="ml-1 size-4" />
-                  {course?.coach_id?.first_name} {course?.coach_id?.last_name}
+                  {course?.coach_id?.first_name || ''}
+                  {' '}
+                  {course?.coach_id?.last_name || ''}
                 </Link>
               </div>
             )}
           </div>
 
-          <div className="flex items-center justify-between border-t border-[#e1dfe2] py-2.5">
+          <div className="flex items-center justify-between border-t border-[#e1dfe2] py-1.5">
             {/* <div className="flex w-full items-center justify-center text-center text-sm text-black">
               <City className="ml-1 size-4" />
               <span>
@@ -154,9 +158,9 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
             </div> */}
           </div>
 
-          <div className=" flex items-center justify-between py-2">
-            <div
-              className="group relative flex items-center rounded bg-[#d8e9e9] px-2 py-1 text-sm text-black"
+          <div className=" flex items-center justify-center py-1">
+            {/* <div
+              className="group relative flex items-center rounded  px-2 py-1 text-sm text-black"
               aria-label="تعداد شرکت کننده"
             >
               <Users color="black" className="ml-2 size-4" />
@@ -170,34 +174,29 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
               <span className="mr-2 text-xs">
                 تعداد شرکت کننده
               </span>
-              {/* <div className="absolute bottom-full z-30 right-8 transform translate-x-1/2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 mb-1">
-                <div className="bg-[#383838] text-white text-xs py-2 px-2.5 rounded whitespace-nowrap relative">
-                  تعداد شرکت کننده
-                  <div className="absolute top-full right-1/2 transform translate-x-1/2 border-8 border-transparent border-t-[#383838]"></div>
-                </div>
-              </div> */}
-            </div>
-            <div className="flex items-center text-base font-bold text-black">
+            </div> */}
+            <div className="flex items-center justify-center text-lg font-bold text-black">
               {course?.price_discount ? (
                 <div className="relative">
-                  <div className="flex items-center text-xs font-medium text-gray-500">
+                  <div className="flex items-center text-base font-medium text-gray-500">
                     {filterPriceNumber(course?.price_real)}
-                    <span className="mr-1 text-xs">تومان</span>
+                    <span className="mr-1 text-xs">ریال</span>
                   </div>
                   {/* Custom diagonal line through the original price */}
-                  <div className="absolute top-1/2 left-0 h-[1.5px] w-full -rotate-12 transform bg-red-500"></div>
+                  <div className="absolute left-0 top-1/2 h-[1.5px] w-full -rotate-12 bg-red-500"></div>
                 </div>
               ) : (
                 <div className="flex items-center text-base font-bold text-black">
-                  {filterPriceNumber(course?.price_real)}
-                  <span className="mr-1 text-sm">تومان</span>
+                  <span className="mr-1 text-sm">قیمت دوره : </span>
+                  &nbsp;{filterPriceNumber(course?.price_real)}
+                  <span className="mr-1 text-sm">ریال</span>
                 </div>
               )}
             </div>
           </div>
 
           <div className="flex items-start justify-center pt-3">
-            <Link href={`/course/${course?.id}`} className="w-full rounded border-b-4 border-green-700 bg-green-500 py-3 text-center text-xs font-bold text-white hover:border-green-500 hover:bg-green-400">
+            <Link href={`/course/${course?.id}`} className="w-full rounded border-b-4 bg-gradient-to-r from-pink-500 to-purple-600 py-3 text-center text-xs font-bold text-white hover:border-purple-300 hover:bg-purple-400">
               شرکت در این دوره آموزشی
             </Link>
           </div>
