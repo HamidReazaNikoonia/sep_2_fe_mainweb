@@ -194,3 +194,16 @@ input#datePicker_from, input#datePicker_to  {
   transform: rotateY(180deg) translateY(-5px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
+
+.custom-sticky-sidebar {
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  z-index: 10;
+}
+
+/* Ensure parent container has proper height */
+.sticky-container {
+  min-height: 100vh;
+}

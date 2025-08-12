@@ -125,7 +125,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
 
   // Debounce search query and price range separately
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-  const debouncedPriceRange = useDebounce(priceRange, 800); // Debounce price range changes
+  const debouncedPriceRange = useDebounce(priceRange, 800);
 
   // Refs for infinite scroll
   const observerRef = useRef<IntersectionObserver>();
@@ -162,7 +162,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
     return params;
   }, [debouncedSearchQuery, debouncedPriceRange, customFilters, filterConfig.priceRange]);
 
-  // Update URL query parameters (no additional debouncing needed here)
+  // Update URL query parameters
   const updateURLParams = useCallback((params: Record<string, any>) => {
     const newSearchParams = new URLSearchParams();
 
@@ -189,7 +189,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
     error,
   } = useDataHook(filterParams);
 
-  // Update URL when filters change (remove additional debouncing here)
+  // Update URL when filters change
   useEffect(() => {
     updateURLParams(filterParams);
   }, [filterParams, updateURLParams]);
@@ -225,7 +225,6 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
     setSearchQuery(value);
   }, []);
 
-  // Price range handler - direct update, debouncing handled at component level
   const handlePriceRangeChange = useCallback((range: [number, number]) => {
     setPriceRange(range);
   }, []);
@@ -267,7 +266,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
 
   // Render filter section
   const renderFilters = () => (
-    <div className="h-fit rounded-lg border bg-white p-6 shadow-sm">
+    <div className="min-h-[500px] rounded-lg border bg-white p-6 shadow-sm">
       <div className="mb-6 flex items-center gap-2">
         <Filter className="size-5 text-gray-600" />
         <h2 className="text-lg font-semibold text-gray-800">فیلترها</h2>
@@ -304,7 +303,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
       )}
 
       {/* Filters Accordion */}
-      <Accordion type="multiple" className="w-full">
+      <Accordion defaultValue={['price-range', 'course_category', 'is_fire_sale']} type="multiple" className="w-full">
 
         {/* Price Range Filter */}
         {filterConfig.priceRange && (
@@ -319,7 +318,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
                 step={filterConfig.priceRange.step || 100000}
                 value={priceRange}
                 onValueChange={handlePriceRangeChange}
-                debounceMs={0} // Remove internal debouncing, handled at component level
+                debounceMs={0}
                 formatValue={value => value.toLocaleString('fa')}
                 label={filterConfig.priceRange.label || 'محدوده قیمت'}
                 className="w-full"
@@ -358,7 +357,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
                       />
                       <label
                         htmlFor={`${filter.key}-${option.value}`}
-                        className="cursor-pointer text-sm text-gray-600"
+                        className="cursor-pointer text-xs text-gray-600"
                       >
                         {option.label}
                       </label>
@@ -399,7 +398,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
   }
 
   return (
-    <div className={`min-h-screen bg-gray-200 ${className}`} dir="rtl">
+    <div className={`bg-gray-200 ${className}`} dir="rtl">
       {/* Header Section */}
       {title && (
         <div className="border-b bg-white shadow-sm">
@@ -413,37 +412,38 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col gap-6 md:flex-row">
+        {/* Mobile Filter Button */}
+        {showFiltersOnMobile && (
+          <div className="mb-4 md:hidden">
+            <Button
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="w-full bg-pink-500 text-white hover:bg-pink-600"
+            >
+              <Filter className="ml-2 size-4" />
+              فیلترها
+            </Button>
+          </div>
+        )}
 
-          {/* Desktop Sidebar Filters - Sticky from medium screens */}
-          <div className="hidden md:block md:w-80 md:shrink-0">
-            <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
+        {/* Mobile Filters */}
+        {showMobileFilters && showFiltersOnMobile && (
+          <div className="mb-6 md:hidden">
+            {renderFilters()}
+          </div>
+        )}
+
+        {/* Desktop Layout */}
+        <div className="hidden md:grid md:grid-cols-12 md:gap-6">
+
+          {/* Sticky Sidebar */}
+          <div className="md:col-span-4 lg:col-span-3">
+            <div className="h-auto">
               {renderFilters()}
             </div>
           </div>
 
-          {/* Mobile Filter Button */}
-          {showFiltersOnMobile && (
-            <div className="mb-4 md:hidden">
-              <Button
-                onClick={() => setShowMobileFilters(!showMobileFilters)}
-                className="w-full bg-pink-500 text-white hover:bg-pink-600"
-              >
-                <Filter className="ml-2 size-4" />
-                فیلترها
-              </Button>
-            </div>
-          )}
-
-          {/* Mobile Filters */}
-          {showMobileFilters && showFiltersOnMobile && (
-            <div className="mb-6 md:hidden">
-              {renderFilters()}
-            </div>
-          )}
-
-          {/* Content List */}
-          <div className="flex-1 md:min-w-0">
+          {/* Content */}
+          <div className="md:col-span-8 lg:col-span-9">
             {isLoading && allItems.length === 0 ? (
               loadingComponent || (
                 <div className="flex min-h-[200px] items-center justify-center">
@@ -489,6 +489,54 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
               </div>
             )}
           </div>
+        </div>
+
+        {/* Mobile Content (when filters are hidden) */}
+        <div className="md:hidden">
+          {isLoading && allItems.length === 0 ? (
+            loadingComponent || (
+              <div className="flex min-h-[200px] items-center justify-center">
+                <div className="text-center">
+                  <Loader2 className="mx-auto mb-4 size-8 animate-spin text-pink-500" />
+                  <p className="text-gray-600">در حال بارگذاری...</p>
+                </div>
+              </div>
+            )
+          ) : allItems.length === 0 ? (
+            emptyComponent || (
+              <div className="flex min-h-[200px] items-center justify-center text-center">
+                <p className="text-gray-600">هیچ موردی یافت نشد</p>
+              </div>
+            )
+          ) : (
+            <div className={`space-y-4 ${itemClassName}`}>
+              {allItems.map((item, index) => (
+                <div key={item.id || item._id || index}>
+                  {renderItem(item, index)}
+                </div>
+              ))}
+
+              {/* Infinite Scroll Trigger */}
+              <div ref={lastItemRef} className="h-4" />
+
+              {/* Loading More Indicator */}
+              {isFetchingNextPage && (
+                <div className="flex items-center justify-center py-8">
+                  <div className="text-center">
+                    <Loader2 className="mx-auto mb-2 size-6 animate-spin text-pink-500" />
+                    <p className="text-sm text-gray-600">در حال بارگذاری موارد بیشتر...</p>
+                  </div>
+                </div>
+              )}
+
+              {/* End of List Indicator */}
+              {!hasNextPage && allItems.length > 0 && (
+                <div className="py-8 text-center">
+                  <p className="text-sm text-gray-500">همه موارد نمایش داده شد</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

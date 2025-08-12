@@ -38,14 +38,15 @@ const CourseListPage = () => {
         key: 'course_category',
         label: 'دسته‌بندی دوره',
         type: 'select' as const,
-        // This will be rendered as a custom component
+        // CategorySelector component will automatically fetch and use categories
+        // No need to pass options here as it's handled by the CategorySelector
         options: [],
       },
     ],
   };
 
-  // Render individual course card
-  const renderCourseItem = (course: ICourseTypes, index: number) => (
+  // Render individual course card - fix linter error by prefixing unused param with underscore
+  const renderCourseItem = (course: ICourseTypes, _index: number) => (
     <CourseCardItem course={course} key={course?.id} isLikedByUser />
   );
 
