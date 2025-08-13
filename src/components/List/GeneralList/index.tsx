@@ -87,8 +87,8 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
   useDataHook,
   renderItem,
   filterConfig,
+  // eslint-disable-next-line react/no-unstable-default-props
   initialFilters = {},
-  queryKey = 'list-data',
   className = '',
   itemClassName = '',
   title,
@@ -122,14 +122,39 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
     return { ...initialFilters, ...filters };
   });
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [isMobileScreen, setIsMobileScreen] = useState(false);
 
   // Debounce search query and price range separately
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const debouncedPriceRange = useDebounce(priceRange, 800);
 
-  // Refs for infinite scroll
-  const observerRef = useRef<IntersectionObserver>();
-  const lastItemRef = useRef<HTMLDivElement>(null);
+  // Refs for infinite scroll - Separate refs for mobile and desktop
+  const mobileTriggerRef = useRef<HTMLDivElement>(null);
+  const desktopTriggerRef = useRef<HTMLDivElement>(null);
+
+  // Separate refs for mobile and desktop observers
+  const mobileObserverRef = useRef<IntersectionObserver | null>(null);
+  const desktopObserverRef = useRef<IntersectionObserver | null>(null);
+
+  // Separate refs for state tracking
+  const mobileHasNextPageRef = useRef<boolean>(false);
+  const mobileIsFetchingNextPageRef = useRef<boolean>(false);
+  const desktopHasNextPageRef = useRef<boolean>(false);
+  const desktopIsFetchingNextPageRef = useRef<boolean>(false);
+
+  // Detect screen size
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobileScreen(window.innerWidth < 768); // md breakpoint
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+    };
+  }, []);
 
   // Memoize filter params for API to prevent unnecessary recalculations
   const filterParams = useMemo(() => {
@@ -189,36 +214,132 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
     error,
   } = useDataHook(filterParams);
 
+  // Update refs when dependencies change
+  useEffect(() => {
+    mobileHasNextPageRef.current = hasNextPage;
+    mobileIsFetchingNextPageRef.current = isFetchingNextPage;
+    desktopHasNextPageRef.current = hasNextPage;
+    desktopIsFetchingNextPageRef.current = isFetchingNextPage;
+  }, [hasNextPage, isFetchingNextPage, data]);
+
   // Update URL when filters change
   useEffect(() => {
     updateURLParams(filterParams);
   }, [filterParams, updateURLParams]);
 
-  // Infinite scroll observer
+  // Mobile Infinite Scroll Observer
   useEffect(() => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
+    // Only setup mobile observer if on mobile screen
+    if (!isMobileScreen) {
+      // Clean up mobile observer if switching to desktop
+      if (mobileObserverRef.current) {
+        mobileObserverRef.current.disconnect();
+        mobileObserverRef.current = null;
+      }
+      return;
     }
 
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (lastItemRef.current) {
-      observerRef.current.observe(lastItemRef.current);
+    // Disconnect previous observer
+    if (mobileObserverRef.current) {
+      mobileObserverRef.current.disconnect();
     }
 
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
+    // Create callback function for mobile intersection observer
+    const handleMobileIntersection = (entries: IntersectionObserverEntry[]) => {
+      const entry = entries[0];
+      // console.log('📱 Mobile Intersection triggered:', {
+      //   isIntersecting: entry?.isIntersecting,
+      //   hasNextPage: mobileHasNextPageRef.current,
+      //   isFetchingNextPage: mobileIsFetchingNextPageRef.current
+      // });
+
+      if (
+        entry?.isIntersecting
+        && mobileHasNextPageRef.current
+        && !mobileIsFetchingNextPageRef.current
+      ) {
+        // console.log('📱 Fetching next page from mobile trigger');
+        fetchNextPage();
       }
     };
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+    // Create new mobile observer
+    mobileObserverRef.current = new IntersectionObserver(handleMobileIntersection, {
+      root: null,
+      threshold: 0.1,
+      rootMargin: '100px 0px 0px 0px',
+    });
+
+    // Observe mobile trigger element
+    if (mobileTriggerRef.current) {
+      // console.log('📱 Observing mobile trigger element');
+      mobileObserverRef.current.observe(mobileTriggerRef.current);
+    }
+
+    // Cleanup function
+    return () => {
+      if (mobileObserverRef.current) {
+        mobileObserverRef.current.disconnect();
+      }
+    };
+  }, [fetchNextPage, isMobileScreen, data]);
+
+  // Desktop Infinite Scroll Observer
+  useEffect(() => {
+    // Only setup desktop observer if on desktop screen
+    if (isMobileScreen) {
+      // Clean up desktop observer if switching to mobile
+      if (desktopObserverRef.current) {
+        desktopObserverRef.current.disconnect();
+        desktopObserverRef.current = null;
+      }
+      return;
+    }
+
+    // Disconnect previous observer
+    if (desktopObserverRef.current) {
+      desktopObserverRef.current.disconnect();
+    }
+
+    // Create callback function for desktop intersection observer
+    const handleDesktopIntersection = (entries: IntersectionObserverEntry[]) => {
+      const entry = entries[0];
+      // console.log('💻 Desktop Intersection triggered:', {
+      //   isIntersecting: entry?.isIntersecting,
+      //   hasNextPage: desktopHasNextPageRef.current,
+      //   isFetchingNextPage: desktopIsFetchingNextPageRef.current
+      // });
+
+      if (
+        entry?.isIntersecting
+        && desktopHasNextPageRef.current
+        && !desktopIsFetchingNextPageRef.current
+      ) {
+        // console.log('💻 Fetching next page from desktop trigger');
+        fetchNextPage();
+      }
+    };
+
+    // Create new desktop observer
+    desktopObserverRef.current = new IntersectionObserver(handleDesktopIntersection, {
+      root: null,
+      threshold: 0.1,
+      rootMargin: '100px 0px 0px 0px',
+    });
+
+    // Observe desktop trigger element
+    if (desktopTriggerRef.current) {
+      // console.log('💻 Observing desktop trigger element');
+      desktopObserverRef.current.observe(desktopTriggerRef.current);
+    }
+
+    // Cleanup function
+    return () => {
+      if (desktopObserverRef.current) {
+        desktopObserverRef.current.disconnect();
+      }
+    };
+  }, [fetchNextPage, isMobileScreen, data]);
 
   // Filter handlers
   const handleSearchChange = useCallback((value: string) => {
@@ -261,7 +382,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
 
   // Get all items from paginated data
   const allItems = useMemo(() => {
-    return data?.pages?.flatMap(page => page.data || page.items || page) || [];
+    return data?.pages?.flatMap((page: { data: any; items: any }) => page.data || page.items || page) || [];
   }, [data]);
 
   // Render filter section
@@ -460,15 +581,23 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
                 </div>
               )
             ) : (
-              <div className={`${itemClassName}`}>
-                {allItems.map((item, index) => (
-                  <div key={item.id || item._id || index}>
-                    {renderItem(item, index)}
-                  </div>
-                ))}
+              <>
+                <div className={`${itemClassName}`}>
+                  {allItems.map((item: any, index: number) => (
+                    <div key={item.id || item._id || index}>
+                      {renderItem(item, index)}
+                    </div>
+                  ))}
+                </div>
 
-                {/* Infinite Scroll Trigger */}
-                <div ref={lastItemRef} className="h-4" />
+                {/* Desktop Infinite Scroll Trigger */}
+                {hasNextPage && (
+                  <div
+                    ref={desktopTriggerRef}
+                    className="mt-4 flex h-20 w-full"
+                  >
+                  </div>
+                )}
 
                 {/* Loading More Indicator */}
                 {isFetchingNextPage && (
@@ -483,10 +612,10 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
                 {/* End of List Indicator */}
                 {!hasNextPage && allItems.length > 0 && (
                   <div className="py-8 text-center">
-                    <p className="text-sm text-gray-500">همه موارد نمایش داده شد</p>
+                    <p className="text-sm text-gray-400">همه موارد نمایش داده شد</p>
                   </div>
                 )}
-              </div>
+              </>
             )}
           </div>
         </div>
@@ -509,15 +638,23 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
               </div>
             )
           ) : (
-            <div className={`space-y-4 ${itemClassName}`}>
-              {allItems.map((item, index) => (
-                <div key={item.id || item._id || index}>
-                  {renderItem(item, index)}
-                </div>
-              ))}
+            <>
+              <div className={`space-y-4 ${itemClassName}`}>
+                {allItems.map((item: any, index: number) => (
+                  <div key={item.id || item._id || index}>
+                    {renderItem(item, index)}
+                  </div>
+                ))}
+              </div>
 
-              {/* Infinite Scroll Trigger */}
-              <div ref={lastItemRef} className="h-4" />
+              {/* Mobile Infinite Scroll Trigger */}
+              {hasNextPage && (
+                <div
+                  ref={mobileTriggerRef}
+                  className="mt-4 h-20 w-full"
+                >
+                </div>
+              )}
 
               {/* Loading More Indicator */}
               {isFetchingNextPage && (
@@ -535,7 +672,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
                   <p className="text-sm text-gray-500">همه موارد نمایش داده شد</p>
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
       </div>
