@@ -2,7 +2,9 @@
 'use client';
 
 import type { ICourseTypes } from '@/types/Course';
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
+import { getCoachListRequest } from '@/API/coach';
 import { useCoursesInfinite } from '@/API/course/course.hook';
 import CourseCardItem from '@/components/CourseItem';
 import ListWithFiltersAndPagination from '@/components/List/GeneralList';
@@ -12,6 +14,16 @@ const CourseListPage = () => {
   const useCoursesData = (filters: Record<string, any>) => {
     return useCoursesInfinite(filters);
   };
+
+  const { data: coachList, isLoading: isCoachListLoading, isSuccess: isCoachListSuccess } = useQuery({
+    queryKey: ['coach-list'],
+    queryFn: getCoachListRequest,
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+    gcTime: 24 * 60 * 60 * 1000, // Keep in cache for 24 hours
+  });
+
+  // eslint-disable-next-line no-console
+  console.log('💻 coachList', coachList);
 
   // Filter configuration
   const filterConfig = {
@@ -37,10 +49,23 @@ const CourseListPage = () => {
       {
         key: 'course_category',
         label: 'دسته‌بندی دوره',
+        type: 'checkbox' as const,
+        options: [],
+      },
+      {
+        key: 'coach_id',
+        label: 'انتخاب مربی',
         type: 'select' as const,
         // CategorySelector component will automatically fetch and use categories
         // No need to pass options here as it's handled by the CategorySelector
-        options: [],
+        options: [
+          ...(coachList
+            ? coachList.results.map((coach: any) => ({
+              value: coach.id,
+              label: `${coach.first_name} ${coach.last_name}`,
+            }))
+            : []),
+        ],
       },
     ],
   };
@@ -97,22 +122,34 @@ const CourseListPage = () => {
   );
 
   return (
-    <ListWithFiltersAndPagination
-      useDataHook={useCoursesData}
-      renderItem={renderCourseItem}
-      filterConfig={filterConfig}
-      title="فهرست دوره‌های آموزشی"
-      queryKey="courses-list"
-      className="bg-gray-200"
-      itemClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 md:gap-y-6"
-      showFiltersOnMobile
-      loadingComponent={loadingComponent}
-      errorComponent={errorComponent}
-      emptyComponent={emptyComponent}
-      initialFilters={{
-        limit: 12, // Show 12 courses per page
-      }}
-    />
+    <>
+      {isCoachListLoading && (
+        <div className="flex min-h-[400px] items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto mb-4 size-16 animate-spin rounded-full border-b-2 border-pink-500"></div>
+            <p className="text-lg text-gray-600">در حال بارگذاری دوره‌ها...</p>
+          </div>
+        </div>
+      )}
+      {isCoachListSuccess && coachList && (
+        <ListWithFiltersAndPagination
+          useDataHook={useCoursesData}
+          renderItem={renderCourseItem}
+          filterConfig={filterConfig}
+          title="فهرست دوره‌های آموزشی"
+          queryKey="courses-list"
+          className="bg-gray-200"
+          itemClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 md:gap-y-6"
+          showFiltersOnMobile
+          loadingComponent={loadingComponent}
+          errorComponent={errorComponent}
+          emptyComponent={emptyComponent}
+          initialFilters={{
+            limit: 12, // Show 12 courses per page
+          }}
+        />
+      )}
+    </>
   );
 };
 

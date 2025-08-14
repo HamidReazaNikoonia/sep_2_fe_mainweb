@@ -8,6 +8,13 @@ import CategorySelector from '@/components/CategorySelector';
 import PriceRangeSlider from '@/components/PriceRangeSlider';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 // Custom debounce hook
 const useDebounce = (value: any, delay: number) => {
@@ -351,10 +358,16 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
   }, []);
 
   const handleCustomFilterChange = useCallback((key: string, value: any) => {
-    setCustomFilters(prev => ({
-      ...prev,
-      [key]: value,
-    }));
+    setCustomFilters((prev) => {
+      if (key === 'coach_id' && value === 'all') {
+        const { [key]: _removed, ...rest } = prev;
+        return rest;
+      }
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
   }, []);
 
   const handleCustomFilterToggle = useCallback((key: string, value: string) => {
@@ -486,18 +499,23 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
                   ))}
 
                 {filter.type === 'select' && filter.key !== 'course_category' && (
-                  <select
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                  <Select
+                    dir="rtl"
                     value={customFilters[filter.key] || ''}
-                    onChange={e => handleCustomFilterChange(filter.key, e.target.value)}
+                    onValueChange={value => handleCustomFilterChange(filter.key, value)}
                   >
-                    <option value="">انتخاب کنید</option>
-                    {filter.options?.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                      <SelectValue placeholder="انتخاب کنید" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">همه موارد</SelectItem>
+                      {filter.options?.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               </div>
             </AccordionContent>

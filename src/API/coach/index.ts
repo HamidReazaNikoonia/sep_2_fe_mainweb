@@ -97,6 +97,28 @@ async function checkoutCoachCourseProgram({ coachCourseProgramId }: { coachCours
   return response.json();
 }
 
+async function getCoachList(): Promise<any> {
+  const options: RequestInit = {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getAuthToken()}`,
+    },
+  };
+
+  const response = await fetch(
+    `${API_BASE_URL}/coach`,
+    options,
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to get coach list');
+  }
+
+  return response.json();
+}
+
 // Export request functions
 export async function getCoachUserProfileRequest(coachId: string) {
   const data = await getCoachUserProfile(coachId);
@@ -115,5 +137,10 @@ export async function getCoachCourseProgramRequest() {
 
 export async function checkoutCoachCourseProgramRequest(body: { coachCourseProgramId: string }) {
   const data = await checkoutCoachCourseProgram(body);
+  return data;
+}
+
+export async function getCoachListRequest() {
+  const data = await getCoachList();
   return data;
 }
