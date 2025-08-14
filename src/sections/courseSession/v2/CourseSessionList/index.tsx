@@ -9,6 +9,25 @@ import { useCoursesSessionInfinite } from '@/API/courseSession/courseSession.hoo
 import CourseCardItem from '@/components/CourseItem';
 import CourseSessionListWithFiltersAndPagination from '@/components/List/CourseSessionList';
 
+import CourseSessionCardItem from '@/components/v2/CourseSessionCardItem';
+
+const sampleProduct = {
+  id: "number",
+  title: 'دوره مقدماتی وردپرس',
+  subtitle: "توضیحات محصول در این قسمت قرار میگیرد",
+  meta_title: "",
+  meta_description: "",
+  slug: "string",
+  description: "توضیحات",
+  brand: "string",
+  average_rating: 3,
+  countInStock: 20,
+  is_available: true,
+  status: true,
+  qr_code: "string",
+  price: 50000,
+}
+
 const CourseSessionListPage = () => {
   // Custom hook for fetching courses with infinite scroll
   const useCoursesSessionData = (filters: Record<string, any>) => {
@@ -72,7 +91,7 @@ const CourseSessionListPage = () => {
 
   // Render individual course card - fix linter error by prefixing unused param with underscore
   const renderCourseItem = (course: ICourseTypes, _index: number) => (
-    <CourseCardItem course={course} key={course?.id} isLikedByUser />
+    <CourseSessionCardItem courseSessionData={course} />
   );
 
   // Custom loading component
