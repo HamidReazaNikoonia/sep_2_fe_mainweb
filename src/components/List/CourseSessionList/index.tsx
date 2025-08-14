@@ -90,7 +90,7 @@ type ListWithFiltersAndPaginationProps = {
   emptyComponent?: React.ReactNode;
 };
 
-const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> = ({
+const CourseSessionListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> = ({
   useDataHook,
   renderItem,
   filterConfig,
@@ -437,7 +437,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
       )}
 
       {/* Filters Accordion */}
-      <Accordion defaultValue={['price-range', 'course_category', 'is_fire_sale']} type="multiple" className="w-full">
+      <Accordion defaultValue={['price-range', 'course_session_category', 'is_fire_sale']} type="multiple" className="w-full">
 
         {/* Price Range Filter */}
         {filterConfig.priceRange && (
@@ -470,12 +470,12 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
             <AccordionContent>
               <div className="space-y-3">
                 {/* Special handling for course_category */}
-                {filter.key === 'course_category'
+                {filter.key === 'course_session_category'
                   ? (
                       <CategorySelector
                         selectedCategory={customFilters[filter.key] || ''}
                         onCategoryChange={categoryId => handleCustomFilterChange(filter.key, categoryId)}
-                        categoryType="course"
+                        categoryType="courseSession"
                         showAllOption
                         allOptionLabel="همه دسته‌ها"
                       />
@@ -498,7 +498,7 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
                     </div>
                   ))}
 
-                {filter.type === 'select' && filter.key !== 'course_category' && (
+                {filter.type === 'select' && filter.key !== 'course_session_category' && (
                   <Select
                     dir="rtl"
                     value={customFilters[filter.key] || ''}
@@ -698,4 +698,4 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
   );
 };
 
-export default ListWithFiltersAndPagination;
+export default CourseSessionListWithFiltersAndPagination;

@@ -1,13 +1,12 @@
-/* eslint-disable tailwindcss/migration-from-tailwind-2 */
-/* eslint-disable react-dom/no-missing-button-type */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Minus, Loader2 } from 'lucide-react';
+import { Loader2, Minus, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { getCategoriesRequest } from '@/API/course';
+import { getCourseSessionCategoriesRequest } from '@/API/courseSession';
 
 type Category = {
   _id: string;
@@ -20,26 +19,45 @@ type Category = {
   updatedAt: string;
 };
 
+type CategoryType = 'course' | 'courseSession' | 'product';
+
 type CategorySelectorProps = {
   selectedCategory?: string;
   onCategoryChange: (categoryId: string) => void;
-  placeholder?: string;
   showAllOption?: boolean;
   allOptionLabel?: string;
+  categoryType: CategoryType; // New prop to specify which category type to fetch
+};
+
+const getCategoryQueryFn = (type: CategoryType) => {
+  switch (type) {
+    case 'course':
+      return getCategoriesRequest;
+    case 'courseSession':
+      return getCourseSessionCategoriesRequest;
+    case 'product':
+      // TODO: Implement product categories request
+      return getCategoriesRequest; // Placeholder until product categories API is implemented
+    default:
+      return getCategoriesRequest;
+  }
 };
 
 const CategorySelector: React.FC<CategorySelectorProps> = ({
   selectedCategory = '',
   onCategoryChange,
-  placeholder = 'انتخاب دسته‌بندی',
   showAllOption = true,
   allOptionLabel = 'همه دسته‌ها',
+  categoryType = 'course',
 }) => {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   const { data: categories, isLoading, isError } = useQuery({
-    queryKey: ['categories'],
-    queryFn: getCategoriesRequest,
+    queryKey: ['categories', categoryType], // Add categoryType to queryKey for proper caching
+    queryFn: () => getCategoryQueryFn(categoryType)(),
+    enabled: !!categoryType, // Only run the query if categoryType is provided
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+    gcTime: 24 * 60 * 60 * 1000, // Keep in cache for 24 hours
   });
 
   const toggleExpanded = (categoryId: string) => {
@@ -71,7 +89,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
           onClick={() => handleCategorySelect(category._id)}
         >
           <span className="text-sm font-medium">{category.name}</span>
-          
+
           {hasChildren && (
             <button
               type="button"
@@ -79,13 +97,15 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
                 e.stopPropagation();
                 toggleExpanded(category._id);
               }}
-              className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="flex size-6 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200"
             >
-              {isExpanded ? (
-                <Minus className="w-3 h-3 text-gray-600" />
-              ) : (
-                <Plus className="w-3 h-3 text-gray-600" />
-              )}
+              {isExpanded
+                ? (
+                    <Minus className="size-3 text-gray-600" />
+                  )
+                : (
+                    <Plus className="size-3 text-gray-600" />
+                  )}
             </button>
           )}
         </div>
@@ -103,7 +123,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
     return (
       <div className="w-full rounded-lg border border-gray-200 bg-white">
         <div className="flex items-center justify-center gap-2 px-4 py-8">
-          <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+          <Loader2 className="size-5 animate-spin text-gray-400" />
           <span className="text-sm text-gray-500">در حال بارگذاری دسته‌بندی‌ها...</span>
         </div>
       </div>
@@ -121,9 +141,9 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
   }
 
   return (
-    <div className="w-full rounded-lg border border-gray-200 bg-white overflow-hidden">
+    <div className="w-full overflow-hidden rounded-lg border border-gray-200 bg-white">
       {/* Header */}
-      <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+      <div className="border-b border-gray-200 bg-gray-50 px-4 py-3">
         <h3 className="text-sm font-semibold text-gray-700">دسته‌بندی</h3>
       </div>
 
