@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import useResponsiveEvent from '@/hooks/useResponsiveEvent';
 
 type CourseSessionCardItemProps = {
+  courseSessionData: { _id: any; title: any; sub_title: any; tumbnail: any; active_program: any; price?: 295000 | undefined; originalPrice?: 520000 | undefined; isPopular?: false | undefined; };
   title?: string;
   sub_title?: string;
   websiteUrl?: string;
@@ -24,8 +25,6 @@ const CourseSessionCardItem: React.FC<CourseSessionCardItemProps> = (props) => {
     sub_title,
     tumbnail,
     active_program,
-    price = 295000,
-    originalPrice = 520000,
     isPopular = false,
   } = props.courseSessionData;
 
@@ -38,14 +37,13 @@ const CourseSessionCardItem: React.FC<CourseSessionCardItemProps> = (props) => {
   const SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL || '';
   const image = tumbnail?.file_name ? `${SERVER_FILES_URL}/${tumbnail?.file_name}` : '';
   const coaches = active_program ? active_program.map((program: any) => program.coach) : [];
-  const courseType = active_program ? active_program[0]?.course_type : '';
+  // const courseType = active_program ? active_program[0]?.course_type : '';
 
   // if `active_program` Array include `program.program_type === 'ON-SITE'`
   const isOnSite = active_program?.some((program: any) => program.program_type === 'ON-SITE');
   const isOnline = active_program?.some((program: any) => program.program_type === 'ONLINE');
 
-  const lowestPrice = active_program
-    .filter((item: { program_price: number }) => item.program_price > 0)
+  const lowestPrice = active_program && active_program?.filter((item: { program_price: number }) => item.program_price > 0)
     .length > 0
     ? Math.min(...active_program
         .filter((item: { program_price: number }) => item.program_price > 0)
@@ -120,27 +118,29 @@ const CourseSessionCardItem: React.FC<CourseSessionCardItemProps> = (props) => {
 
           <div>
             {/* Course Info */}
-            {active_program?.length > 0 ? (
-              <div className="mb-4 flex items-center justify-between border-t border-gray-100 pt-4">
-              <div className="flex items-center gap-1">
-                <Banknote className="size-5 text-gray-400" />
-                <span className="text-xs text-gray-600">شروع قیمت ها از</span>
-              </div>
-              <div className="text-left">
-                {lowestPrice && (
-                  <div className="flex items-center gap-1">
-                    <span className="text-lg font-bold text-gray-900">{Number.isFinite(lowestPrice) && formatPrice(lowestPrice)}</span>
-                    <span className="text-xs text-gray-500">تومان</span>
+            {active_program?.length > 0
+              ? (
+                  <div className="mb-4 flex items-center justify-between border-t border-gray-100 pt-4">
+                    <div className="flex items-center gap-1">
+                      <Banknote className="size-5 text-gray-400" />
+                      <span className="text-xs text-gray-600">شروع قیمت ها از</span>
+                    </div>
+                    <div className="text-left">
+                      {lowestPrice && (
+                        <div className="flex items-center gap-1">
+                          <span className="text-lg font-bold text-gray-900">{Number.isFinite(lowestPrice) && formatPrice(lowestPrice)}</span>
+                          <span className="text-xs text-gray-500">تومان</span>
+                        </div>
+                      )}
+
+                    </div>
+                  </div>
+                )
+              : (
+                  <div className="mb-8 text-center text-xs text-gray-500">
+                    برای این دوره کلاس فعال وجود ندارد
                   </div>
                 )}
-
-              </div>
-            </div>
-            ) : (
-              <div className='text-center text-xs mb-8 text-gray-500'>
-                   برای این دوره کلاس فعال وجود ندارد
-              </div>
-            )}
 
             {/* Action Buttons */}
             <div className="flex gap-2">
