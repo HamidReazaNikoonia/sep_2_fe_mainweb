@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/migration-from-tailwind-2 */
 // @ts-nocheck
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -53,7 +54,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ user, productId }) => {
       />
       <div className='flex mt-4 justify-end'>
           <div className='flex'>
-            <h5 className='text-xs text-white ml-4 mt-1'>نظر دهید</h5>
+            <h5 className='text-xs text-gray-700 ml-4 mt-1'>نظر دهید</h5>
             <RatingStar defaultValue={1} onChange={handleRatingChange}  />
           {/* <Star
             key={1}
@@ -97,7 +98,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ user, productId }) => {
       <button
         type="submit"
         disabled={mutation.isLoading}
-        className="mt-2 px-14 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-colors duration-300 shadow-md disabled:opacity-50"
+        className="mt-2 rounded-full text-xs md:text-base bg-gradient-to-r from-pink-500 to-purple-600 px-8 md:px-14 py-2 text-white shadow-md transition-colors duration-300 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 disabled:opacity-50"
       >
         {mutation.isLoading ? 'در حال ارسال...' : 'ارسال نظر'}
       </button>

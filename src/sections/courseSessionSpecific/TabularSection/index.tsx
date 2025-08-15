@@ -140,11 +140,11 @@ const CardStyleTabs = ({ activeTab, onTabChange, layout = 'column' }: {
               ) : (
                 // Column layout for mobile
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-1 items-center gap-2 md:gap-4">
                     <div className="rounded-xl bg-white bg-opacity-20 p-3 backdrop-blur-sm">
                       {tab.icon}
                     </div>
-                    <div className="text-right">
+                    <div className="mr-2 w-full text-right">
                       <h3 className="text-lg font-bold">{tab.label}</h3>
                       <p className="text-sm opacity-90">{tab.description}</p>
                     </div>
@@ -270,8 +270,8 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
   return (
     <div dir="ltr" className="w-full space-y-6 shadow-lg">
       {/* Main Tabs Section with Gradient Border */}
-      <div className="rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 p-1">
-        <div className="rounded-lg bg-white">
+      <div className="rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 md:p-3">
+        <div className="rounded-lg bg-white pt-2 pb-8">
           <Tabs value={activeMobileTab} onValueChange={setActiveMobileTab} className="w-full">
             {/* Desktop Tabs - Standard horizontal tabs for large screens */}
             <div className="hidden">

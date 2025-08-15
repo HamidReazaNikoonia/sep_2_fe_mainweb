@@ -64,8 +64,12 @@ const CommentSection: React.FC<Iprops> = ({ productId, type }: Iprops) => {
   }
 
   return (
-    <div className="mx-0 md:mx-14 rounded-lg bg-gray-300 py-6 px-2 md:px-6 shadow-lg">
-      <h2 className="mb-6 text-xl font-medium text-gray-900"> دیدگاه های شما {data?.totalReviews && `(${parseInt(data?.totalReviews || 0).toLocaleString('ar-EG')})`}  </h2>
+    <div className="mx-0 rounded-lg bg-gray-300 px-4 py-6 shadow-lg md:mx-14 md:px-6">
+      <h2 className="mb-6 text-base md:text-xl font-medium text-gray-900"> دیدگاه های شما
+        {' '}
+        {data?.totalReviews && `(${parseInt(data?.totalReviews || 0).toLocaleString('ar-EG')})`}
+        {' '}
+      </h2>
       {/* <button
         onClick={toggleUser}
         className="mb-6 px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors duration-300 shadow-md"
