@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .JDatePicker.custom_style {
   border-radius: 20px;
   background-color: #1e0d46;
@@ -13,8 +12,7 @@
   background-color: #1e0d46;
 }
 
-
-.JDatePicker .JDheader .right input[type="tel"] {
+.JDatePicker .JDheader .right input[type='tel'] {
   padding: 11px !important;
   color: black !important;
 }
@@ -27,18 +25,18 @@
   border: 1px solid #fafafa1a !important;
 }
 
-
-input#datePicker_from, input#datePicker_to  {
+input#datePicker_from,
+input#datePicker_to {
   @apply mt-2 block w-full cursor-pointer rounded-md border border-gray-500 bg-gray-700 px-2 py-2 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50;
 }
 
 .before_style_course_info:after {
-  background: repeating-linear-gradient(to right,currentColor,currentColor 1px,transparent 2px,transparent 4px);
-    content: '';
-    display: inline-block;
-    flex-grow: 1;
-    height: 1px;
-    margin: 1em 3px 0;
+  background: repeating-linear-gradient(to right, currentColor, currentColor 1px, transparent 2px, transparent 4px);
+  content: '';
+  display: inline-block;
+  flex-grow: 1;
+  height: 1px;
+  margin: 1em 3px 0;
 }
 
 /* .jdtrp > div:nth-child(2) {
@@ -110,21 +108,61 @@ input#datePicker_from, input#datePicker_to  {
   }
 }
 
-
 .primary-gradient-bg {
-  background-color: #FFDEE9;
-  background-image: linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%);
+  background-color: #ffdee9;
+  background-image: linear-gradient(0deg, #ffdee9 0%, #b5fffc 100%);
 }
 
-
 .green-gradient-bg {
-  background-image: radial-gradient( circle 887px at -13.8% 18.3%,  rgba(8,208,115,1) 0%, rgba(0,0,0,1) 90% );
+  background-image: radial-gradient(circle 887px at -13.8% 18.3%, rgba(8, 208, 115, 1) 0%, rgba(0, 0, 0, 1) 90%);
 }
 
 .yellow-gradient-bg {
-  background-image: radial-gradient( circle 331px at 1.4% 52.9%,  rgba(255,236,2,1) 0%, rgba(255,223,2,1) 33.6%, rgba(255,187,29,1) 61%, rgba(255,175,7,1) 100.7% );
+  background-image: radial-gradient(
+    circle 331px at 1.4% 52.9%,
+    rgba(255, 236, 2, 1) 0%,
+    rgba(255, 223, 2, 1) 33.6%,
+    rgba(255, 187, 29, 1) 61%,
+    rgba(255, 175, 7, 1) 100.7%
+  );
 }
 
+.pink-gradient-bg {
+  background: #3494e6;
+  background: -webkit-linear-gradient(to right, #ec6ead, #3494e6); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #ec6ead,
+    #3494e6
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.blue-gradient-bg {
+  background: #f4c4f3; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #fc67fa, #f4c4f3); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #fc67fa,
+    #f4c4f3
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.light-gradient-bg {
+  background: #a1ffce; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #faffd1, #a1ffce); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #faffd1,
+    #a1ffce
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.test-gradient-bg {
+  background: #4568DC;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #B06AB3, #4568DC);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #B06AB3, #4568DC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  
+}
 
 /* Flip card styles */
 .transform-style-preserve-3d {
