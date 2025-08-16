@@ -1,7 +1,6 @@
-import MediaViewer from '@/components/MediaViewer';
 import { SwatchBook } from 'lucide-react';
-/* eslint-disable react/no-useless-fragment */
 import React from 'react';
+import MediaViewer from '@/components/MediaViewer';
 
 const NEXT_PUBLIC_SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL || '';
 
@@ -14,7 +13,7 @@ export default function VideoSampleGallery({ sampleMedia }: { sampleMedia: any }
       <div className="flex w-full flex-col items-end justify-center">
         {/* Title */}
         <h3 className="mb-6 flex text-lg text-white">
-          نمونه ویدیو ها
+          نمونه کار های این دوره
           <SwatchBook className="ml-3" />
         </h3>
 
@@ -39,10 +38,10 @@ export default function VideoSampleGallery({ sampleMedia }: { sampleMedia: any }
         )}
 
         {/* Video Items */}
-        <div className="mt-8  flex w-full flex-wrap md:flex-row">
-          {otherSampleMedia && otherSampleMedia.map((item: any) => (
-            <article key={item?._id} className=" mb-3 w-1/2 p-2  md:mb-0 md:w-1/3 md:p-3">
-              <div className=" flex items-end overflow-hidden rounded-xl">
+        <div dir="rtl" className="mt-8  flex w-full flex-wrap md:flex-row">
+          {otherSampleMedia && [...otherSampleMedia, ...otherSampleMedia, ...otherSampleMedia, ...otherSampleMedia].map((item: any) => (
+            <article key={item?._id} className="w-1/2 p-2 md:w-1/4 md:p-3">
+              <div className=" flex items-end overflow-hidden rounded border-2">
                 <MediaViewer
                   data={{
                     mediaType: item?.media_type,

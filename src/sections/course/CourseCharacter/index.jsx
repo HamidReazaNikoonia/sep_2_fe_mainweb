@@ -1,63 +1,48 @@
-import React from 'react';
-import { WalletMinimal, Headset, Clock } from 'lucide-react';
-
+import { Clock, Headset, WalletMinimal } from 'lucide-react';
 
 export default function CourseCharacter() {
   return (
     <>
-      <div className='w-full bg-gray-900 py-8 flex flex-col md:flex-row justify-around mt-8 mb-2 md:mb-4 py-4 px-4 rounded-lg'>
-        <div className='flex items-center justify-end mb-5 md:mb-0'>
-          <div className='text-[13px] text-right pr-4 leading-7 font-medium w-56 md:w-44'>
+      <div className="test-gradient-bg my-1 flex w-full flex-col justify-around rounded-lg p-4 py-8 md:my-1.5 md:flex-row">
+        <div className="mb-5 flex items-center justify-end md:mb-0">
+          <div className="w-56 pr-4 text-right text-[13px] font-medium leading-7 md:w-44">
             بازگشت وجه درصورت عدم رضایـت از دوره آموزشی
           </div>
 
-
           <div>
-            <div className='p-3 rounded-2xl bg-gray-800 '>
-              <WalletMinimal size={32} />
+            <div className="pink-gradient-bg rounded-2xl p-3 ">
+              <WalletMinimal color="white" size={32} />
             </div>
           </div>
 
-
         </div>
 
-
-
-
-        <div className='flex items-center justify-end mb-5 md:mb-0'>
-          <div className='text-[13px] text-right pr-4 leading-7 font-medium w-36'>
+        <div className="mb-5 flex items-center justify-end md:mb-0">
+          <div className="w-36 pr-4 text-right text-[13px] font-medium leading-7">
             پشتیبانی ۲ ساله برای پاسخ به سوالات
           </div>
 
-
           <div>
-            <div className='p-3 rounded-2xl bg-gray-800 '>
-              <Headset size={32} />
+            <div className="pink-gradient-bg rounded-2xl p-3 ">
+              <Headset color="white" size={32} />
             </div>
           </div>
 
-
         </div>
 
-
-
-
-
-        <div className='flex items-center justify-end'>
-          <div className='text-[13px] text-right pr-4 leading-7 font-medium w-44'>
+        <div className="flex items-center justify-end">
+          <div className="w-44 pr-4 text-right text-[13px] font-medium leading-7">
             دسترسی همیشگی به محتوای آفلاین آموزشی
           </div>
 
-
           <div>
-            <div className='p-3 rounded-2xl bg-gray-800 '>
-              <Clock size={32} />
+            <div className="pink-gradient-bg rounded-2xl p-3 ">
+              <Clock color="white" size={32} />
             </div>
           </div>
 
-
         </div>
       </div>
-      </>
-  )
+    </>
+  );
 }

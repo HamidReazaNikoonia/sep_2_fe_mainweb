@@ -66,7 +66,7 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
 
   return (
     <>
-      <div className="overflow-hidden bg-[#242525] text-white pt-16 min-h-screen">
+      <div className="overflow-hidden bg-gray-200 text-white pt-16 min-h-screen">
 
         {/* heaser title */}
         <div>
@@ -76,6 +76,8 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
         <div className="container mx-auto" id="StickySidebarWraper">
           <StickySidebarWraper dataFromServer={productsData} />
         </div>
+
+        <div className="w-full"></div>
 
          {/* Comment Section */}
         <CommentLayout type="product" productId={productsData.id} />

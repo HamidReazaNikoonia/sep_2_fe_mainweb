@@ -1,6 +1,7 @@
 /* eslint-disable react-dom/no-dangerously-set-innerhtml */
 'use client';
 import he from 'he';
+import { IndentIncrease, Newspaper } from 'lucide-react';
 import React from 'react';
 
 export default function CourseDetails({ courseDescriptionLong, courseDescriptionShort }: { courseDescriptionLong: string; courseDescriptionShort: string }) {
@@ -11,10 +12,11 @@ export default function CourseDetails({ courseDescriptionLong, courseDescription
       <div className="flex flex-col gap-4">
         {courseDescriptionShort && (
           <div>
-            <h3 className="text-right  text-lg font-bold">
+            <h3 className="flex items-center justify-end gap-2 text-right text-lg font-bold">
               توضیحات دوره
+              <IndentIncrease size={23} />
             </h3>
-            <p style={{ whiteSpace: 'pre-wrap', lineBreak: 'anywhere' }} className="text-right text-sm leading-8">
+            <p style={{ whiteSpace: 'pre-wrap', lineBreak: 'anywhere' }} className="mt-3 text-right text-xs leading-8 md:text-sm">
               {courseDescriptionShort}
             </p>
           </div>
@@ -24,15 +26,16 @@ export default function CourseDetails({ courseDescriptionLong, courseDescription
       <div className="flex flex-col gap-4">
         {courseDescriptionLong && (
           <div className="mt-8">
-            <h3 className="text-right  text-lg font-bold">
+            <h3 className="flex items-center justify-end gap-2 text-right text-lg font-bold">
               توضیحات بیشتر
+              <Newspaper size={23} />
             </h3>
             {/* <p style={{ whiteSpace: 'pre-line' }} className="text-right text-sm leading-8">
               {courseDescriptionLong}
             </p> */}
             <div
               dangerouslySetInnerHTML={{ __html: decodedHtml || '' }}
-              className="mt-4 text-right text-sm leading-8"
+              className="mt-3 text-right text-xs leading-8 md:text-sm"
             />
           </div>
         )}

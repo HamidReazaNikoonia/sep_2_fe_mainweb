@@ -24,7 +24,7 @@ export default function CoursePageHeader({title, courseCategory}: {title: string
 
 
   return (
-    <div className="mb-8 flex flex-col-reverse items-end justify-end bg-[#310c58] py-4 pr-4 md:flex-row md:py-8 md:pr-8">
+    <div className="pink-gradient-bg mb-0 flex flex-col-reverse items-end justify-end py-4 pr-4 md:mb-8 md:flex-row md:py-8 md:pr-8">
      
 
 
@@ -35,13 +35,15 @@ export default function CoursePageHeader({title, courseCategory}: {title: string
        <div className='flex flex-col items-end mb-4 md:mb-0'>
 
         {/* Header Title */}
-        <h2 className='mt-4 mb-6 text-3xl text-right'>
+        <h2 className='mt-4 mb-0 md:mb-2 text-lg md:text-3xl text-right text-white'>
          {title || ''} 
         </h2>
 
 
         {/* Breadcrumb */}
-        <Breadcrumbs levels={[{title: 'فیلم های آموزشی', link: '/course'}, {title: courseCategory, link: '/'}, {title: title}]} />
+        <div className='hidden md:block'>
+        <Breadcrumbs levels={[{title: 'فیلم های آموزشی', link: '/course'}, {title: title}]} />
+        </div>
 
 
         
