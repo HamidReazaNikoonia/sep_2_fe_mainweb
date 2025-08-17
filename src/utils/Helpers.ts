@@ -48,9 +48,10 @@ export const filterPriceNumber = (priceNumber: number) => {
   return priceNumber.toLocaleString('fa-IR');
 };
 
-export const toPersianDigits = (number: string) => {
+export const toPersianDigits = (number: number | string) => {
+  const numberString = typeof number === 'number' ? number.toString() : number;
   const persianDigits = '۰۱۲۳۴۵۶۷۸۹'; // Persian numbers
-  return number.replace(/\d/g, d => persianDigits[d]); // Replace each digit
+  return numberString.replace(/\d/g, d => persianDigits[d]); // Replace each digit
 };
 
 export const storeAuthToken = (tokens: { access: { token: string }; refresh: { token: string } }, userDoc: any) => {
@@ -109,11 +110,11 @@ export const formatDurationWithPersian = (minutes: number): string => {
   const remainingMinutes = minutes % 60;
 
   if (hours === 0) {
-    return `${remainingMinutes} دقیقه`;
+    return `${remainingMinutes.toLocaleString('fa-IR')} دقیقه`;
   } else if (remainingMinutes === 0) {
-    return `${hours} ساعت`;
+    return `${hours.toLocaleString('fa-IR')} ساعت`;
   } else {
-    return `${hours} ساعت و ${remainingMinutes} دقیقه`;
+    return `${hours.toLocaleString('fa-IR')} ساعت و ${remainingMinutes.toLocaleString('fa-IR')} دقیقه`;
   }
 };
 
