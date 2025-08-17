@@ -1,10 +1,10 @@
 'use client';
 
+import { Filter, Search } from 'lucide-react';
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import CourseSessionProgramCardItem from '@/components/v2/CourseSessionProgramCardItem';
-import { Search, Calendar, Clock, MapPin, Filter } from 'lucide-react';
 
 // Mock data for demonstration - replace with your actual data
 const courseCategories = [
@@ -13,7 +13,7 @@ const courseCategories = [
   'برنامه نویسی و سایت',
   'تقویم فنی و مهندسی',
   'تقویم حسابداری',
-  'تقویم عمومی و اداری'
+  'تقویم عمومی و اداری',
 ];
 
 const coursesData = [
@@ -26,7 +26,7 @@ const coursesData = [
     price: 6000000,
     duration: '۱.۵ ماه',
     isPresential: true,
-    imageUrl: 'https://www.aryatehran.com/wp-content/uploads/2019/08/Comprehensive-ICDL.jpg'
+    imageUrl: 'https://www.aryatehran.com/wp-content/uploads/2019/08/Comprehensive-ICDL.jpg',
   },
   {
     id: 2,
@@ -37,8 +37,8 @@ const coursesData = [
     price: 2000000,
     duration: '۱ ماه',
     isPresential: false,
-    imageUrl: 'https://www.aryatehran.com/wp-content/uploads/2019/08/Comprehensive-ICDL.jpg'
-  }
+    imageUrl: 'https://www.aryatehran.com/wp-content/uploads/2019/08/Comprehensive-ICDL.jpg',
+  },
 ];
 
 const CourseSessionV2Page = () => {
@@ -66,26 +66,26 @@ const CourseSessionV2Page = () => {
   return (
     <div className="min-h-screen bg-gray-200" dir="rtl">
       {/* Header Section */}
-      <div className="bg-white shadow-sm border-b ">
+      <div className="border-b bg-white shadow-sm ">
         <div className="container mx-auto px-4 py-12">
           {/* Main Title */}
-          <h1 className="text-lg md:text-2xl mt-16 font-bold text-gray-800 text-center mb-4">
-               دوره ها بر اساس تقویم آموزشی
+          <h1 className="mb-4 mt-16 text-center text-lg font-bold text-gray-800 md:text-2xl">
+            دوره ها بر اساس تقویم آموزشی
           </h1>
-          
+
           {/* Category Buttons */}
-          <div className="flex flex-wrap justify-start py-2 gap-2 md:gap-3">
-            <Button 
-              variant="default" 
-              className="bg-pink-500 hover:bg-pink-600 text-white text-[11px] md:text-xs min-w-[148px]"
+          <div className="flex flex-wrap justify-start gap-2 py-2 md:gap-3">
+            <Button
+              variant="default"
+              className="min-w-[148px] bg-pink-500 text-[11px] text-white hover:bg-pink-600 md:text-xs"
             >
               مشاهده همه
             </Button>
             {courseCategories.map((category, index) => (
-              <Button 
+              <Button
                 key={index}
-                variant="outline" 
-                className="border-pink-500 text-pink-500 hover:bg-pink-50 text-[11px] md:text-xs min-w-[148px]"
+                variant="outline"
+                className="min-w-[148px] border-pink-500 text-[11px] text-pink-500 hover:bg-pink-50 md:text-xs"
                 onClick={() => handleCategoryFilter(category)}
               >
                 {category}
@@ -97,12 +97,12 @@ const CourseSessionV2Page = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          
+        <div className="flex flex-col gap-6 lg:flex-row">
+
           {/* Sidebar Filters */}
-          <div className="lg:w-80 bg-white rounded-lg shadow-sm border p-6 h-fit">
-            <div className="flex items-center gap-2 mb-6">
-              <Filter className="w-5 h-5 text-gray-600" />
+          <div className="h-fit rounded-lg border bg-white p-6 shadow-sm lg:w-80">
+            <div className="mb-6 flex items-center gap-2">
+              <Filter className="size-5 text-gray-600" />
               <h2 className="text-lg font-semibold text-gray-800">جستجوی پیشرفته</h2>
             </div>
 
@@ -112,17 +112,17 @@ const CourseSessionV2Page = () => {
                 <input
                   type="text"
                   placeholder="فیلتر براساس نوع برگزاری"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-right text-sm"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-right text-sm focus:border-pink-500 focus:ring-2 focus:ring-pink-500"
                   value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
+                  onChange={e => handleSearch(e.target.value)}
                 />
-                <Search className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-3.5 size-4 text-gray-400" />
               </div>
             </div>
 
             {/* Filters Accordion */}
             <Accordion type="multiple" className="w-full">
-              
+
               {/* Date Range Filter */}
               <AccordionItem value="date-range">
                 <AccordionTrigger className="text-right hover:no-underline">
@@ -192,27 +192,27 @@ const CourseSessionV2Page = () => {
                       <input type="checkbox" id="long-hours" className="rounded" />
                       <label htmlFor="long-hours" className="text-sm text-gray-600">سه شنبه</label>
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                       <input type="checkbox" id="long-hours" className="rounded" />
                       <label htmlFor="long-hours" className="text-sm text-gray-600">چهارشنبه</label>
                     </div>
-                      
+
                     <div className="flex items-center gap-2">
                       <input type="checkbox" id="long-hours" className="rounded" />
                       <label htmlFor="long-hours" className="text-sm text-gray-600">جمعه</label>
                     </div>
-                    </div>
-                    
+                  </div>
+
                 </AccordionContent>
               </AccordionItem>
 
             </Accordion>
 
             {/* Apply Filters Button */}
-            <Button 
+            <Button
               onClick={applyFilters}
-              className="w-full mt-6 bg-gradient-to-r from-pink-500 to-purple-600 text-xs hover:from-pink-600 hover:to-purple-700 hover:bg-blue-600 text-white"
+              className="mt-6 w-full bg-gradient-to-r from-pink-500 to-purple-600 text-xs text-white hover:bg-blue-600 hover:from-pink-600 hover:to-purple-700"
             >
               اعمال فیلترها
             </Button>
@@ -221,7 +221,7 @@ const CourseSessionV2Page = () => {
           {/* Course Cards */}
           <div className="flex-1">
             <div className="space-y-4">
-              {filteredCourses.map((course) => (
+              {filteredCourses.map(course => (
                 <CourseSessionProgramCardItem
                   key={course.id}
                   title={course.title}

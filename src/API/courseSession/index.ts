@@ -59,6 +59,29 @@ async function getCourseSessionCategories(): Promise<any> {
   return response;
 }
 
+async function getAllPrograms(params: any): Promise<any> {
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+    },
+  };
+
+  // Only include non-empty parameters in the request
+  const filteredParams = Object.fromEntries(
+    Object.entries(params).filter(([_, value]) => value !== undefined && value !== ''),
+  );
+
+  const response = fetch(
+    `${API_BASE_URL}/course-session/program?${new URLSearchParams(filteredParams)}`,
+    options,
+  )
+    .then(response => response.json())
+    .catch(err => console.error(err));
+
+  return response;
+}
+
 export async function getAllCourseSessionRequest(params: CourseSessionFilterParams) {
   const data = await getAllCourseSession(params);
   return data;
@@ -69,5 +92,10 @@ export async function getCourseSessionCategoriesRequest() {
   return data;
 }
 
+export async function getAllProgramsRequest(params: any) {
+  const data = await getAllPrograms(params);
+  return data;
+}
+
 // Export other existing course session related functions
-export { getAllCourseSession, getCourseSessionCategories };
+export { getAllCourseSession, getAllPrograms, getCourseSessionCategories };
