@@ -16,7 +16,7 @@ export default function CourseDetails({ courseDescriptionLong, courseDescription
               توضیحات دوره
               <IndentIncrease size={23} />
             </h3>
-            <p style={{ whiteSpace: 'pre-wrap', lineBreak: 'anywhere' }} className="mt-3 text-right text-xs leading-8 md:text-sm">
+            <p dir="rtl" style={{ whiteSpace: 'pre-wrap', lineBreak: 'anywhere' }} className="mt-3 text-right text-xs leading-8 md:text-sm">
               {courseDescriptionShort}
             </p>
           </div>
@@ -34,6 +34,7 @@ export default function CourseDetails({ courseDescriptionLong, courseDescription
               {courseDescriptionLong}
             </p> */}
             <div
+              dir="rtl"
               dangerouslySetInnerHTML={{ __html: decodedHtml || '' }}
               className="mt-3 text-right text-xs leading-8 md:text-sm"
             />

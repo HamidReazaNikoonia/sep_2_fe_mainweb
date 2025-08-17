@@ -1,17 +1,15 @@
-/* eslint-disable react/no-useless-fragment */
-/* eslint-disable style/indent */
 /* eslint-disable tailwindcss/classnames-order */
-import { AppConfig } from '@/utils/AppConfig';
-import Image from 'next/image';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import StickySidebarWraper from '@/sections/course/StickySidebarWraper';
-import CoursePageHeader from '@/sections/course/CoursePageHeader';
-
-import { ICourseTypes } from '@/types/Course';
+import type { ICourseTypes } from '@/types/Course';
+import { getTranslations } from 'next-intl/server';
+// import Image from 'next/image';
+import { SERVER_API_URL } from '@/API/config';
 import CommentLayout from '@/components/Comment';
 
-import {SERVER_API_URL} from '@/API/config';
 import CourseSubjectLessonsList from '@/components/CourseSubjectLessonsList';
+import CoursePageHeader from '@/sections/course/CoursePageHeader';
+
+import StickySidebarWraper from '@/sections/course/StickySidebarWraper';
+// import { AppConfig } from '@/utils/AppConfig';
 
 type IPortfolioDetailProps = {
   params: Promise<{ slug: string; locale: string }>;
@@ -63,102 +61,101 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
 
   const params = await props.params;
   const productsData = await fetchRepo({ courseId: params.slug });
-  console.log({ nn: productsData })
+  console.log({ nn: productsData });
 
-   // Sample data matching the provided structure
-   const sampleCourseObjects = [
+  // Sample data matching the provided structure
+  const sampleCourseObjects = [
     {
-      subject_title: "مقدمه‌ای بر برنامه‌نویسی",
-      description: "آشنایی با مفاهیم پایه برنامه‌نویسی",
+      subject_title: 'مقدمه‌ای بر برنامه‌نویسی',
+      description: 'آشنایی با مفاهیم پایه برنامه‌نویسی',
       order: 1,
       duration: 120, // 2 hours
       files: {
-        _id: "file1",
-        file_name: "introduction-slides.pdf"
+        _id: 'file1',
+        file_name: 'introduction-slides.pdf',
       },
       lessons: [
         {
-          title: "تاریخچه برنامه‌نویسی",
-          description: "نگاهی به تاریخ و تکامل برنامه‌نویسی",
+          title: 'تاریخچه برنامه‌نویسی',
+          description: 'نگاهی به تاریخ و تکامل برنامه‌نویسی',
           order: 1,
           status: 'PUBLIC' as const,
           duration: 30,
           file: {
-            _id: "lesson-file1",
-            file_name: "history-of-programming.mp4"
-          }
+            _id: 'lesson-file1',
+            file_name: 'history-of-programming.mp4',
+          },
         },
         {
-          title: "زبان‌های برنامه‌نویسی",
-          description: "آشنایی با انواع زبان‌های برنامه‌نویسی",
+          title: 'زبان‌های برنامه‌نویسی',
+          description: 'آشنایی با انواع زبان‌های برنامه‌نویسی',
           order: 2,
           status: 'PUBLIC' as const,
           duration: 45,
           file: {
-            _id: "lesson-file2",
-            file_name: "programming-languages.mp4"
-          }
+            _id: 'lesson-file2',
+            file_name: 'programming-languages.mp4',
+          },
         },
         {
-          title: "محیط‌های توسعه",
-          description: "نصب و راه‌اندازی IDE",
+          title: 'محیط‌های توسعه',
+          description: 'نصب و راه‌اندازی IDE',
           order: 3,
           status: 'PRIVATE' as const,
           duration: 45,
           file: {
-            _id: "lesson-file3",
-            file_name: "ide-setup.mp4"
-          }
-        }
-      ]
+            _id: 'lesson-file3',
+            file_name: 'ide-setup.mp4',
+          },
+        },
+      ],
     },
     {
-      subject_title: "متغیرها و انواع داده",
-      description: "یادگیری متغیرها و انواع مختلف داده‌ها",
+      subject_title: 'متغیرها و انواع داده',
+      description: 'یادگیری متغیرها و انواع مختلف داده‌ها',
       order: 2,
       duration: 180, // 3 hours
       files: {
-        _id: "file2",
-        file_name: "variables-data-types.pdf"
+        _id: 'file2',
+        file_name: 'variables-data-types.pdf',
       },
       lessons: [
         {
-          title: "تعریف متغیر",
-          description: "نحوه تعریف و استفاده از متغیرها",
+          title: 'تعریف متغیر',
+          description: 'نحوه تعریف و استفاده از متغیرها',
           order: 1,
           status: 'PUBLIC' as const,
           duration: 60,
           file: {
-            _id: "lesson-file4",
-            file_name: "variables.mp4"
-          }
+            _id: 'lesson-file4',
+            file_name: 'variables.mp4',
+          },
         },
         {
-          title: "انواع داده‌ها",
-          description: "آشنایی با انواع مختلف داده‌ها",
+          title: 'انواع داده‌ها',
+          description: 'آشنایی با انواع مختلف داده‌ها',
           order: 2,
           status: 'PRIVATE' as const,
           duration: 90,
           file: {
-            _id: "lesson-file5",
-            file_name: "data-types.mp4"
-          }
+            _id: 'lesson-file5',
+            file_name: 'data-types.mp4',
+          },
         },
         {
-          title: "تبدیل نوع داده",
-          description: "نحوه تبدیل بین انواع مختلف داده‌ها",
+          title: 'تبدیل نوع داده',
+          description: 'نحوه تبدیل بین انواع مختلف داده‌ها',
           order: 3,
           status: 'PRIVATE' as const,
           duration: 30,
           file: {
-            _id: "lesson-file6",
-            file_name: "type-conversion.mp4"
-          }
-        }
-      ]
-    }
+            _id: 'lesson-file6',
+            file_name: 'type-conversion.mp4',
+          },
+        },
+      ],
+    },
   ];
-
 
   return (
     <>
@@ -178,7 +175,7 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
           <CourseSubjectLessonsList course_objects={sampleCourseObjects} />
         </div>
 
-         {/* Comment Section */}
+        {/* Comment Section */}
         <CommentLayout type="product" productId={productsData.id} />
       </div>
     </>

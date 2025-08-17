@@ -13,7 +13,7 @@ export default function Breadcrumbs({ levels }) {
           <li className='ml-2 w-full md:w-auto'>
             <div className=' items-center justify-end mt-3 md:mt-0 flex'>
 
-              <a className='font-normal text-xs md:font-medium md:text-sm '>
+              <a dir='rtl' className='font-normal text-xs md:font-medium md:text-sm '>
                 {levels[2]?.title}
               </a>
               <ChevronLeft size={18} className='ml-1' />
@@ -25,7 +25,7 @@ export default function Breadcrumbs({ levels }) {
           <li className='ml-2'>
             <div className=' items-center flex'>
 
-              <a className='font-normal text-xs md:font-medium md:text-sm '>
+              <a dir='rtl' className='font-normal text-xs md:font-medium md:text-sm '>
                 {levels[1]?.title}
               </a>
               <ChevronLeft size={18} className='ml-1' />

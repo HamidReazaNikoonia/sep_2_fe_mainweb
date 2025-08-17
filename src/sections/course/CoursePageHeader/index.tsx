@@ -35,7 +35,7 @@ export default function CoursePageHeader({title, courseCategory}: {title: string
        <div className='flex flex-col items-end mb-4 md:mb-0'>
 
         {/* Header Title */}
-        <h2 className='mt-4 mb-0 md:mb-2 text-lg md:text-3xl text-right text-white'>
+        <h2 dir='rtl' className='mt-4 mb-0 md:mb-2 text-lg md:text-3xl text-right text-white'>
          {title || ''} 
         </h2>
 
