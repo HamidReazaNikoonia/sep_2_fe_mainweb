@@ -159,7 +159,7 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
 
   return (
     <>
-      <div className="overflow-hidden blue-gradient-bg text-white pt-16 min-h-screen">
+      <div className="overflow-hidden primary-gradient-bg text-white pt-16 min-h-screen">
 
         {/* heaser title */}
         <div>

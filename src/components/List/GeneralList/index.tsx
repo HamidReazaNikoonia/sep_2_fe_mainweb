@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import CategorySelector from '@/components/CategorySelector';
 import PriceRangeSlider from '@/components/PriceRangeSlider';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -128,12 +129,63 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
     });
     return { ...initialFilters, ...filters };
   });
+
+  const ValidFilterBadge = (filters: any) => {
+    const { limit, ...validFilters } = filters || {};
+    // console.log('🔍 Valid Filters:', validFilters);
+    const validFilterKeys = Object.keys(validFilters).filter((key) => {
+      const value = validFilters[key];
+      return value !== null
+        && value !== undefined
+        && value !== ''
+        && !(Array.isArray(value) && value.length === 0);
+    });
+    return validFilterKeys;
+  };
+
+  const mapFilterBadgeTitle = (filters: string[]) => {
+    return filters.map((key: string) => {
+      if (key === 'price-range') {
+        return {
+          key,
+          label: `محدوده قیمت ${priceRange[0].toLocaleString('fa')} تا ${priceRange[1].toLocaleString('fa')}`,
+        };
+      }
+      return {
+        key,
+        label: filterConfig.customFilters?.find(filter => filter.key === key)?.label || '',
+      };
+    });
+  };
+  /**
+   * When user set a custom filter we want to show the selected filter
+   * as badge on the top of the List component and user should be able Delete each of them
+   *
+   */
+  // we want exclude filter which we dont want to create badge
+
+  // Filter Badge
+  const [filterBadge, setFilterBadge] = useState<string[]>([]);
+
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [isMobileScreen, setIsMobileScreen] = useState(false);
 
   // Debounce search query and price range separately
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const debouncedPriceRange = useDebounce(priceRange, 800);
+
+  useEffect(() => // console.log('🔍 Filters changed:', customFilters);
+  // console.log('🔍 Filters changed:', customFilters);
+  {
+    const filters = [...ValidFilterBadge(customFilters)];
+    if (filterConfig.priceRange) {
+      if (debouncedPriceRange[0] > filterConfig.priceRange.min || debouncedPriceRange[1] < filterConfig.priceRange.max) {
+        filters.push('price-range');
+      }
+    }
+    setFilterBadge(filters);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customFilters, filterConfig.priceRange]);
 
   // Refs for infinite scroll - Separate refs for mobile and desktop
   const mobileTriggerRef = useRef<HTMLDivElement>(null);
@@ -546,6 +598,32 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
               {title}
             </h1>
           </div>
+
+          {filterBadge && filterBadge.length > 0 && (
+            <div className="flex items-center border px-8 py-4">
+              <div className="flex flex-wrap items-center gap-1 md:gap-2">
+                {mapFilterBadgeTitle(filterBadge)?.map(filter => (
+                  <Badge
+                    key={filter.key}
+                    variant="secondary"
+                    className="flex items-center justify-center gap-1 py-1.5 text-center text-[11px] font-normal md:gap-2 md:text-xs md:font-medium"
+                  >
+                    {filter.label}
+                    {/* <X className="size-3 cursor-pointer" /> */}
+                  </Badge>
+                ))}
+                <Badge
+                  variant="secondary"
+                  onClick={clearAllFilters}
+                  className="flex cursor-pointer items-center justify-center gap-1 bg-red-100 py-1.5 text-center text-[11px] font-normal md:gap-2 md:text-xs md:font-medium"
+                >
+
+                  پاک کردن همه فیلتر ها
+                  <X className="ml-1 size-4" />
+                </Badge>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
