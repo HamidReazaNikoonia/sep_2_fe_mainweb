@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-unnecessary-arbitrary-value */
 import { Phone } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -31,7 +32,6 @@ const ProgramSpecificCardItem: React.FC<CourseSessionProgramCardItemProps> = ({
   const sessionsCount = programData?.sessions?.length || 0;
 
   const imageUrl = programData?.course?.tumbnail?.file_name ? `${NEXT_PUBLIC_SERVER_FILES_URL}/${programData?.course?.tumbnail?.file_name}` : '';
-
   return (
     <div dir="rtl" className="flex w-full flex-col gap-4 overflow-hidden rounded-lg bg-white p-4 shadow-md md:flex-row">
       {/* First Section - Image and Course Info */}

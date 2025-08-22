@@ -2,8 +2,10 @@
 'use client';
 
 import type { ICourseTypes } from '@/types/Course';
-import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 
+import React from 'react';
+import { getCoachListRequest } from '@/API/coach';
 import { useClassProgramInfinite } from '@/API/courseSession/program.hook';
 import ProgramListWithFiltersAndPagination from '@/components/List/ProgramList';
 import ProgramSpecificCardItem from '@/components/v2/ProgramSpecificCardItem';
@@ -31,12 +33,12 @@ const ProgramListContainer = () => {
     return useClassProgramInfinite(filters);
   };
 
-  // const { data: coachList, isLoading: isCoachListLoading, isSuccess: isCoachListSuccess } = useQuery({
-  //   queryKey: ['coach-list'],
-  //   queryFn: getCoachListRequest,
-  //   staleTime: 24 * 60 * 60 * 1000, // 24 hours
-  //   gcTime: 24 * 60 * 60 * 1000, // Keep in cache for 24 hours
-  // });
+  const { data: coachList, isLoading: isCoachListLoading, isSuccess: isCoachListSuccess } = useQuery({
+    queryKey: ['coach-list'],
+    queryFn: getCoachListRequest,
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+    gcTime: 24 * 60 * 60 * 1000, // Keep in cache for 24 hours
+  });
 
   // console.log('💻 coachList', coachList);
 
@@ -46,42 +48,76 @@ const ProgramListContainer = () => {
       placeholder: 'جستجو در دوره‌ها...',
       label: 'جستجو',
     },
-    // priceRange: {
-    //   min: 0,
-    //   max: 50000000, // 50 million tomans
-    //   step: 100000, // 100k tomans steps
-    //   label: 'محدوده قیمت',
-    // },
+    priceRange: {
+      min: 0,
+      max: 50000000, // 50 million tomans
+      step: 100000, // 100k tomans steps
+      label: 'محدوده قیمت',
+    },
     customFilters: [
-      // {
-      //   key: 'is_fire_sale',
-      //   label: 'دوره‌های تخفیف‌دار',
-      //   type: 'checkbox' as const,
-      //   options: [
-      //     { value: 'true', label: 'فقط دوره‌های دارای تخفیف' },
-      //   ],
-      // },
       {
-        key: 'course_session_category',
+        key: 'is_fire_sale',
+        label: 'دوره‌های تخفیف‌دار',
+        type: 'checkbox' as const,
+        options: [
+          { value: 'true', label: 'فقط دوره‌های دارای تخفیف' },
+        ],
+      },
+      {
+        key: 'program_type',
+        label: 'دوره حضوری و آنلاین',
+        type: 'checkbox' as const,
+        options: [
+          { value: 'ON-SITE', label: 'فقط دوره‌های حضوری' },
+          { value: 'ONLINE', label: 'فقط دوره‌های آنلاین' },
+        ],
+      },
+      {
+        key: 'date_begin',
+        label: 'فیلتر براساس تاریخ شروع',
+        type: 'checkbox' as const,
+        options: [
+          { value: 'this_week', label: 'هفته جاری' },
+          { value: 'next_week', label: 'هفته آینده' },
+          { value: 'this_month', label: 'ماه جاری' },
+          { value: 'next_month', label: 'ماه آینده' },
+        ],
+      },
+      {
+        key: 'selected_day',
+        label: 'فیلتر براساس روز های هفته',
+        type: 'checkbox' as const,
+        options: [
+          { value: 'saturday', label: 'شنبه' },
+          { value: 'sunday', label: 'یکشنبه' },
+          { value: 'monday', label: 'دوشنبه' },
+          { value: 'tuesday', label: 'سه شنبه' },
+          { value: 'wednesday', label: 'چهارشنبه' },
+          { value: 'thursday', label: 'پنجشنبه' },
+          { value: 'friday', label: 'جمعه' },
+        ],
+      },
+      {
+        key: 'course_category',
         label: 'دسته‌بندی دوره',
         type: 'checkbox' as const,
         options: [],
       },
-      // {
-      //   key: 'coach_id',
-      //   label: 'انتخاب مربی',
-      //   type: 'select' as const,
-      //   // CategorySelector component will automatically fetch and use categories
-      //   // No need to pass options here as it's handled by the CategorySelector
-      //   options: [
-      //     ...(coachList
-      //       ? coachList.results.map((coach: any) => ({
-      //         value: coach.id,
-      //         label: `${coach.first_name} ${coach.last_name}`,
-      //       }))
-      //       : []),
-      //   ],
-      // },
+      {
+        key: 'coach_id',
+        label: 'انتخاب مربی',
+        type: 'select' as const,
+        // CategorySelector component will automatically fetch and use categories
+        // No need to pass options here as it's handled by the CategorySelector
+        options: [
+          ...(coachList
+            ? coachList.results.map((coach: any) => ({
+                value: coach.id,
+                label: `${coach.first_name} ${coach.last_name}`,
+              }))
+            : []),
+        ],
+      },
     ],
   };
 
