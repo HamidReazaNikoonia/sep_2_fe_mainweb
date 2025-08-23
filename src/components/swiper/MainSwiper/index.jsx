@@ -1,12 +1,11 @@
-/* eslint-disable tailwindcss/no-custom-classname */
 'use client';
 
+import Image from 'next/image';
 // import { SquareCheck, SquareCheckBig } from 'lucide-react';
 // import required modules
-import { EffectFade, Navigation, Pagination } from 'swiper/modules';
-
 // Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
+
+import HeroImage from '@/public/assets/images/bg-stdio-hero.jpg';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -19,7 +18,10 @@ import './styles.css';
 export default function MainSwiper() {
   return (
     <>
-      <Swiper
+      <div className="size-full">
+        <HeroStudio />
+      </div>
+      {/* <Swiper
         pagination={{
           type: 'fraction',
         }}
@@ -57,9 +59,11 @@ export default function MainSwiper() {
               </div>
             </div>
           </div>
-        </SwiperSlide>
+        </SwiperSlide> */}
 
-        {/* <SwiperSlide>
+      {/* </Swiper> */}
+
+      {/* <SwiperSlide>
           <div className="swiper-zoom-container relative">
             <img alt="" className="swiper-lazy swiper-lazy-loaded"
               src="/assets/images/hero_img_2.jpg" />
@@ -92,34 +96,93 @@ export default function MainSwiper() {
           </div>
         </SwiperSlide> */}
 
-        {/* <SwiperSlide>
+      {/* <SwiperSlide>
         <div className="swiper-zoom-container">
           <img alt="" className="swiper-lazy swiper-lazy-loaded"
             src="/assets/images/sep_2_hero_img_1.webp" />
         </div>
         </SwiperSlide> */}
 
-        {/* <SwiperSlide>
+      {/* <SwiperSlide>
         <div className="swiper-zoom-container">
           <img alt="" className="swiper-lazy swiper-lazy-loaded"
             src="/assets/images/sep_2_hero_img_1.webp" />
         </div>
         </SwiperSlide> */}
 
-        {/* <SwiperSlide>
+      {/* <SwiperSlide>
         <div className="swiper-zoom-container">
           <img alt="" className="swiper-lazy swiper-lazy-loaded"
             src="/assets/images/sep_2_hero_img_1.webp" />
         </div>
         </SwiperSlide> */}
 
-        {/* <SwiperSlide>
+      {/* <SwiperSlide>
         <div className="swiper-zoom-container">
           <img alt="" className="swiper-lazy swiper-lazy-loaded"
             src="/assets/images/sep_2_hero_img_1.webp" />
         </div>
         </SwiperSlide> */}
-      </Swiper>
+
     </>
   );
 }
+
+const HeroStudio = () => {
+  const services = [
+    {
+      icon: '📷', // Film and photography icon
+      title: 'استدیو عکس و فیلم',
+    },
+    {
+      icon: '🏫', // Website design icon
+      title: 'آموزشکده خواهران',
+    },
+    {
+      icon: '🤖', // Educational courses icon
+      title: 'خدمات هوش مصنوعی',
+    },
+    {
+      icon: '💻', // Virtual space management icon
+      title: 'آموزش فضای مجازی',
+    },
+  ];
+
+  return (
+    <div className="relative h-screen w-full">
+      {/* Background Image */}
+      <Image
+        src={HeroImage}
+        alt="هدا استودیو"
+        fill
+        className="absolute inset-0 z-0 object-cover"
+        priority
+      />
+
+      {/* Green Overlay */}
+      <div className="pink-gradient-bg absolute inset-0 z-10 opacity-80"></div>
+
+      {/* Content */}
+      <div className="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center text-white">
+        <h1 className="mb-6 text-4xl font-bold md:text-5xl"> استودیو</h1>
+
+        <p className="mb-12 max-w-2xl text-lg md:text-xl">
+          تولید محتوای دیجیتال | دوره های آموزشی تخصصی هدایتگری رسانه
+        </p>
+
+        {/* Services Grid */}
+        <div className="grid w-full max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
+          {services.map((service, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center justify-center space-y-2 rounded-lg bg-white/20 p-4 backdrop-blur-sm"
+            >
+              <span className="text-3xl">{service.icon}</span>
+              <span className="text-sm font-medium md:text-base">{service.title}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};

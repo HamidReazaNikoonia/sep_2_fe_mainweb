@@ -19,6 +19,7 @@ type User = {
 type UserAvatarProps = {
   userName: string;
   user: User;
+  isMobile: boolean;
 };
 
 type DropdownItem = {
@@ -27,7 +28,7 @@ type DropdownItem = {
   icon?: JSX.Element;
 };
 
-const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
+const UserAvatar: React.FC<UserAvatarProps> = ({ user, isMobile }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -82,11 +83,11 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
       {/* Avatar Button */}
       <button
         onClick={toggleDropdown}
-        className="flex size-10 cursor-pointer items-center justify-center rounded-full border bg-white hover:bg-gray-100 focus:outline-none"
+        className="ml-3 flex size-8 cursor-pointer items-center justify-center rounded-full border bg-white hover:bg-gray-100 focus:outline-none md:size-10"
       >
 
-        <span className="font-semibold text-gray-700">
-          <UserRound color="gray" />
+        <span className="font-semibold text-gray-500">
+          <UserRound strokeWidth={1} size={isMobile ? 20 : 26} />
         </span>
 
       </button>
