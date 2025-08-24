@@ -50,7 +50,7 @@ const Drawer: React.FC<DrawerProps> = ({
   }
 
   const drawerContent = (
-    <div className="fixed inset-0 z-50 flex">
+    <div dir='rtl' className="fixed inset-0 z-50 flex">
       {/* Backdrop */}
       <div
         // eslint-disable-next-line tailwindcss/migration-from-tailwind-2

@@ -27,11 +27,11 @@ const SidebarLink = ({ href, icon: Icon, children, isActive, onClick }: {
   onClick?: () => void;
 }) => (
   <Link href={href} onClick={onClick}>
-    <div className={`flex cursor-pointer items-center space-x-3 rounded-lg px-4 py-3 transition-colors
+    <div className={`flex w-full cursor-pointer items-center space-x-3 rounded-lg px-4 py-3 transition-colors
       ${isActive ? 'bg-[#E6E6FF] text-[#4338CA]' : 'hover:bg-gray-100'}`}
     >
       <Icon size={20} className={isActive ? 'text-[#4338CA]' : 'text-gray-600'} />
-      <span className={`${isActive ? 'text-[#4338CA]' : 'text-gray-600'} font-medium`}>{children}</span>
+      <span className={`${isActive ? 'text-[#4338CA]' : 'text-gray-600'} font-medium pr-2`}>{children}</span>
     </div>
   </Link>
 );
@@ -41,7 +41,7 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
   pathname: string;
   onLinkClick?: () => void;
 }) => (
-  <div className="flex h-full flex-col">
+  <div className="flex h-full flex-col bg-white/70 backdrop-blur-sm border border-gray-200 shadow-md">
     <div className="flex-1 p-4">
       <div className="mb-8 flex items-center gap-3 p-2">
         {user?.avatar?.file_name
@@ -158,7 +158,7 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div dir='rtl' className="flex h-screen bg-gray-50">
       {/* Desktop Sidebar - Hidden on mobile */}
       <div className="hidden w-64 border-r bg-white shadow-sm lg:block">
         <SidebarContent user={user} pathname={pathname} />
