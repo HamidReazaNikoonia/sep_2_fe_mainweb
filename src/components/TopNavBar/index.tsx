@@ -20,6 +20,8 @@ import UserAvatar from "@/components/UserAvatar";
 import useResponsiveEvent from "@/hooks/useResponsiveEvent";
 import { toPersianDigits } from '@/utils/Helpers';
 
+import MobileNavDrawer from "./MobileNavDrawer";
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [productCountBadge, setproductCountBadge] = useState(0);
@@ -145,7 +147,7 @@ const Navbar = () => {
 
   return (
     // eslint-disable-next-line tailwindcss/classnames-order
-    <nav className="fixed z-50 w-dvw h-full">
+    <nav className="fixed z-50 w-dvw ">
       <div className="border-b border-gray-200 bg-white/90 px-6 py-4 text-gray-800 shadow-lg backdrop-blur-sm">
         <div className="container mx-auto w-full">
           {/* Search Mode */}
@@ -357,10 +359,11 @@ const Navbar = () => {
       )}
       {!isSearching && (
         <div
-          className={`fixed right-0 top-0 h-full w-64 transform primary-gradient-bg text-black ${isOpen ? "translate-x-0" : "translate-x-full"
+          className={`fixed right-0 top-0 h-full w-64 transform pink-gradient-bg text-black ${isOpen ? "translate-x-0" : "translate-x-full"
           } z-50 transition-transform duration-300`}
         >
-          <button
+          <MobileNavDrawer isOpen={isOpen} setIsOpen={setIsOpen} />
+          {/* <button
             className="absolute right-4 top-4"
             onClick={() => setIsOpen(false)}
           >
@@ -382,7 +385,7 @@ const Navbar = () => {
             </li>    
             <li className="hover:text-gray-300">آکادمی آموزشی</li>
             <li className="hover:text-gray-300">تماس با ما</li>
-          </ul>
+          </ul> */}
         </div>
       )}
     </nav>
