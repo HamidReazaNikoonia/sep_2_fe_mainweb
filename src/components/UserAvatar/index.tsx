@@ -4,7 +4,7 @@ import useAuth from '@/hooks/useAuth';
 /* eslint-disable react-dom/no-missing-button-type */
 import { toPersianDigits } from '@/utils/Helpers';
 
-import { GraduationCap, LayoutDashboard, LogOut, Logs, UserRound } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, LogOut, Logs, UserRound, Layers2 } from 'lucide-react';
 
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -60,6 +60,9 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ user, isMobile }) => {
   const items: DropdownItem[] = [
     { title: 'داشبورد', link: '/dashboard', icon: <LayoutDashboard size={16} color="rgb(55, 65, 81)" /> },
     { title: 'سفارش ها', link: '/dashboard/orders', icon: <Logs size={16} color="rgb(55, 65, 81)" /> },
+    { title: 'دوره ها', link: '/dashboard/course-sessions', icon: <GraduationCap size={16} color="rgb(55, 65, 81)" /> },
+    { title: 'آموزش ها', link: '/dashboard/course', icon: <Layers2 size={16} color="rgb(55, 65, 81)" /> },
+
     ...(user?.role === 'coach'
       ? [
           { title: 'پنل مربی', link: '/coach-dashboard', icon: <GraduationCap size={16} color="rgb(55, 65, 81)" /> },
