@@ -70,7 +70,7 @@ async function validateOTP({ userId, otpCode, role }: { userId: string; otpCode:
   return response;
 }
 
-async function completeProfile({ userId, data }: { userId: string; data: { name: string; family: string; gender: string; nationalId: string; avatar: string; national_card_images: string[] } }) {
+async function completeProfile({ userId, data }: { userId: string; data: { name: string; family: string; gender: string; nationalId: string; avatar: string; national_card_images: string[]; city: number | null } }) {
   const options = {
     method: 'PATCH',
     headers: {
@@ -78,7 +78,7 @@ async function completeProfile({ userId, data }: { userId: string; data: { name:
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${getAuthToken()}`,
     },
-    body: JSON.stringify({ name: data.name, family: data.family, gender: data.gender, nationalId: data.nationalId, avatar: data.avatar, national_card_images: data.national_card_images }),
+    body: JSON.stringify({ name: data.name, family: data.family, gender: data.gender, nationalId: data.nationalId, avatar: data.avatar, national_card_images: data.national_card_images, city: data.city }),
   };
 
   const response = fetch(
@@ -108,7 +108,7 @@ export async function getUserProfileRequest(body: { userId: string }) {
   return data;
 }
 
-export async function completeProfileRequest(body: { userId: string; data: { name: string; family: string; gender: string; nationalId: string; avatar: string; national_card_images: string[] } }) {
+export async function completeProfileRequest(body: { userId: string; data: { name: string; family: string; gender: string; nationalId: string; avatar: string; national_card_images: string[]; city: number | null } }) {
   const data = await completeProfile(body);
   return data;
 }

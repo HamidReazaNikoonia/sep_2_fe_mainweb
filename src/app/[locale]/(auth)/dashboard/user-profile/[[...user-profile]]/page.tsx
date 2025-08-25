@@ -1,3 +1,4 @@
+/* eslint-disable style/multiline-ternary */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable ts/ban-ts-comment */
 /* eslint-disable jsx-a11y/label-has-associated-control */
@@ -8,12 +9,24 @@ import { Upload, UserRound } from 'lucide-react';
 import { use, useEffect, useRef, useState } from 'react';
 import AvatarEditor from 'react-avatar-editor';
 import toast from 'react-hot-toast';
+import { completeProfileRequest } from '@/API/auth';
+import { useCitiesByProvince } from '@/API/siteInfo/useCitiesByProvince';
 import LoadingButton from '@/components/LoadingButton';
 import { Card, CardContent } from '@/components/ui/card';
 import Modal from '@/components/ui/Modal';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import useAuth from '@/hooks/useAuth';
+
 import { validateIranianNationalId } from '@/utils/Helpers';
-import { completeProfileRequest } from '@/API/auth';
+
+// Import Province data
+import { provinceData } from '@/utils/provinceData';
 
 type User = {
   first_name: string;
@@ -37,6 +50,7 @@ type IUserProfilePageProps = {
 };
 
 type FormData = {
+  city: number | null;
   first_name: string;
   last_name: string;
   gender: 'M' | 'W';
@@ -67,6 +81,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     nationalId: '',
     avatar: '',
     national_card_images: [],
+    city: null,
   });
 
   const [isUploading, setIsUploading] = useState(false);
@@ -96,8 +111,22 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
       nationalId: user?.nationalId || '',
       avatar: user?.avatar || '',
       national_card_images: user?.national_card_images?.map(image => image._id) || [],
+      city: user?.city || null,
     });
+
+    if (user?.province) {
+      // eslint-disable-next-line ts/no-use-before-define
+      handleProvinceChange(user?.province);
+    }
   }, [user]);
+
+  // Use the custom hook for cities
+  const {
+    cities,
+    isLoading,
+    handleProvinceChange,
+    selectedProvinceId,
+  } = useCitiesByProvince();
 
   const updateProfileMutation = useMutation({
     mutationFn: completeProfileRequest,
@@ -262,6 +291,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
         nationalId: formData.nationalId,
         avatar: formData.avatar,
         national_card_images: formData.national_card_images,
+        city: formData.city,
       },
     });
   };
@@ -352,13 +382,17 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     setNationalCardPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
+
+  const citiesByProvince = cities?.cities ? cities?.cities : [];
+
+
   return (
-    <div className="my-6 -ml-16">
+    <div className="my-6">
       <div className="container mx-auto">
         {/* Profile Card */}
         <div className="flex flex-col items-center justify-center ">
           <h1 className="mb-8 text-2xl font-bold">پروفایل کاربری</h1>
-          <Card className="w-full max-w-4xl shadow-lg">
+          <Card className="w-full max-w-5xl shadow-lg">
             <CardContent dir="rtl" className="p-6">
               <div className="mb-6 flex items-center justify-center">
                 <div className="flex size-40 items-center justify-center rounded-full bg-gray-100">
@@ -400,9 +434,9 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           </Card>
 
           {/* Edit Profile Form Card */}
-          <Card className="mt-8 w-full max-w-4xl shadow-lg">
+          <Card className="mt-8 w-full max-w-5xl shadow-lg">
             <CardContent dir="rtl" className="p-6">
-              <h2 className="mb-6 text-xl font-semibold">ویرایش پروفایل</h2>
+              <h2 className="mb-6 text-xl font-semibold">اطلاعات هویتی</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex flex-col">
                   <label className="mb-2 text-sm text-gray-500">نام</label>
@@ -588,6 +622,63 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                   ذخیره
                 </LoadingButton>
               </form>
+            </CardContent>
+          </Card>
+
+
+          {/* User Information */}
+          <Card className="mt-8 w-full max-w-5xl shadow-lg">
+            <CardContent dir="rtl" className="p-6">
+              <h2 className="mb-6 text-xl font-semibold">اطلاعات کاربری</h2>
+              <div className="flex w-full">
+                <div className="flex w-full gap-4">
+                  <div className="flex-1">
+                    <label className="mb-2 block text-sm text-gray-500">استان</label>
+                    <Select
+                      dir="rtl"
+                      value={user?.province || selectedProvinceId}
+                      onValueChange={(value: any) => handleProvinceChange(Number(value))}
+                    >
+                      <SelectTrigger className="w-full bg-gray-200">
+                        <SelectValue placeholder="انتخاب استان" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {provinceData.map((province: any) => (
+                          <SelectItem key={province.id} value={province.id}>
+                            {province.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex-1">
+                    <label className="mb-2 block text-sm text-gray-500">شهر</label>
+                    <Select
+                      dir="rtl"
+                      value={formData.city || ''}
+                      onValueChange={(value: any) => setFormData(prev => ({ ...prev, city: value }))}
+                      disabled={false}
+                    >
+                      <SelectTrigger className="w-full bg-gray-200">
+                        <SelectValue placeholder="انتخاب شهر" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {isLoading ? (
+                          <p>Loading cities...</p>
+                        )
+                          : (
+                              <>
+                                {citiesByProvince?.map((city: any) => (
+                                  <SelectItem key={city.id} value={city.id}>{city.name}</SelectItem>
+                                ))}
+                              </>
+                            )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
