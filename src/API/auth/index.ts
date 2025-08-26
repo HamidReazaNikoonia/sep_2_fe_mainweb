@@ -70,9 +70,7 @@ async function validateOTP({ userId, otpCode, role }: { userId: string; otpCode:
   return response;
 }
 
-async function completeProfile({ userId, data }: { userId: string; data: { name: string; family: string; gender: string; nationalId: string; avatar: string; national_card_images: string[]; city?: number | null; postalCode?: string | null; job_title?: string | null; field_of_study?: string | null; educational_qualification?: string | null; address?: string | null } }) {
-  console.log({data: data.postalCode})
-  
+async function completeProfile({ userId, data }: { userId: string; data: { name: string; family: string; gender: string; nationalId: string; avatar: string; national_card_images: string[]; city?: number | null; postalCode?: string | null; job_title?: string | null; field_of_study?: string | null; educational_qualification?: string | null; address?: string | null, personal_img?: string | null } }) {
   const options = {
     method: 'PATCH',
     headers: {
@@ -93,6 +91,7 @@ async function completeProfile({ userId, data }: { userId: string; data: { name:
       ...(data.field_of_study && { field_of_study: data.field_of_study }),
       ...(data.educational_qualification && { educational_qualification: data.educational_qualification }),
       ...(data.address && { address: data.address }),
+      ...(data.personal_img && { personal_img: data.personal_img }),
     }),
   };
 
@@ -123,7 +122,7 @@ export async function getUserProfileRequest(body: { userId: string }) {
   return data;
 }
 
-export async function completeProfileRequest(body: { userId: string; data: { name: string; family: string; gender: string; nationalId: string; avatar: string; national_card_images: string[]; city?: number | null; postalCode?: string | null; job_title?: string | null; field_of_study?: string | null; educational_qualification?: string | null; address?: string | null } }) {
+export async function completeProfileRequest(body: { userId: string; data: { name: string; family: string; gender: string; nationalId: string; avatar: string; national_card_images: string[]; city?: number | null; postalCode?: string | null; job_title?: string | null; field_of_study?: string | null; educational_qualification?: string | null; address?: string | null,  personal_img?: string | null } }) {
   const data = await completeProfile(body);
   return data;
 }

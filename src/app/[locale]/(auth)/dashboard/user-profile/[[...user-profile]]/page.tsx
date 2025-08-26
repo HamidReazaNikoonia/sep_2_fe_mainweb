@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable style/multiline-ternary */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable ts/ban-ts-comment */
@@ -47,6 +48,7 @@ type User = {
   postal_code?: string;
   job_title?: string;
   educational_qualification?: string;
+  personal_img?: any;
 };
 
 type IUserProfilePageProps = {
@@ -71,6 +73,7 @@ type FormData = {
   job_title?: string | null;
   educational_qualification?: string | null;
   education_field?: string | null;
+  personal_img?: any;
 };
 
 type FormErrors = {
@@ -88,6 +91,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     fetchUserFromServer: () => void;
   };
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const filePersoanlImgInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<FormData>({
     first_name: user?.first_name || '',
@@ -102,10 +106,16 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     postalCode: '',
     job_title: '',
     educational_qualification: '',
+    personal_img: undefined,
   });
 
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  const [isUploadingPersonalImg, setIsUploadingPersonalImg] = useState(false);
+  const [uploadPersonalImgProgress, setUploadPersonalImgProgress] = useState(0);
+
+  const [personalImagePreview, setpersonalImagePreview] = useState<string | undefined>(undefined);
 
   const [previewImage, setPreviewImage] = useState<File | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -145,12 +155,17 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
       postalCode: user?.postal_code || '',
       job_title: user?.job_title || '',
       educational_qualification: user?.educational_qualification || '',
+      personal_img: user?.personal_img || undefined,
     });
 
     if (user?.province) {
       handleProvinceChange(user?.province);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    if (user?.personal_img) {
+      setpersonalImagePreview(`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${user?.personal_img?.file_name}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const updateProfileMutation = useMutation({
@@ -247,9 +262,14 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
   };
 
   // @ts-expect-error
-  const handleFileUpload = async (file: File) => {
-    setIsUploading(true);
-    setUploadProgress(0);
+  const handleFileUpload = async (file: File, type: 'avatar' | 'personal_img') => {
+    if (type === 'avatar') {
+      setIsUploading(true);
+      setUploadProgress(0);
+    } else {
+      setIsUploadingPersonalImg(true);
+      setUploadPersonalImgProgress(0);
+    }
 
     const formDataAvatar = new FormData();
     formDataAvatar.append('file', file);
@@ -267,7 +287,11 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
             const progress = progressEvent.total
               ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
               : 0;
-            setUploadProgress(progress);
+            if (type === 'avatar') {
+              setUploadProgress(progress);
+            } else {
+              setUploadPersonalImgProgress(progress);
+            }
           },
         },
       );
@@ -280,17 +304,24 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
       if (response?.data?.uploadedFile) {
         setFormData(prev => ({
           ...prev,
-          avatar: response.data.uploadedFile._id,
+          ...(type === 'avatar' ? { avatar: response.data.uploadedFile._id } : {}),
+          ...(type === 'personal_img' ? { personal_img: response.data.uploadedFile._id } : {}),
         }));
         toast.success('تصویر با موفقیت آپلود شد');
+        toast.success('برای ثبت تغییرات باید دکمه ذخیره را کلیک کنید');
       }
     } catch (error) {
       toast.error('خطا در آپلود تصویر');
       // eslint-disable-next-line no-console
       console.log(error);
     } finally {
-      setIsUploading(false);
-      setUploadProgress(0);
+      if (type === 'avatar') {
+        setIsUploading(false);
+        setUploadProgress(0);
+      } else {
+        setIsUploadingPersonalImg(false);
+        setUploadPersonalImgProgress(0);
+      }
     }
   };
 
@@ -302,14 +333,21 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     }
   };
 
-  const handleSaveEdit = async () => {
+  const handlePersonalImgFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      await handleFileUpload(file, 'personal_img');
+    }
+  };
+
+  const handleSaveAvatarEdit = async () => {
     if (editorRef.current && previewImage) {
       const canvas = editorRef.current.getImageScaledToCanvas();
       canvas.toBlob(async (blob) => {
         if (blob) {
           const file = new File([blob], previewImage.name, { type: 'image/jpeg' });
           setIsPreviewOpen(false);
-          await handleFileUpload(file);
+          await handleFileUpload(file, 'avatar');
         }
       }, 'image/jpeg');
     }
@@ -342,6 +380,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
         ...(formData.job_title && { job_title: formData.job_title }),
         ...(formData.educational_qualification && { educational_qualification: formData.educational_qualification }),
         ...(formData.field_of_study && { field_of_study: formData.field_of_study }),
+        ...(formData.personal_img && { personal_img: formData.personal_img }),
       },
     });
   };
@@ -456,6 +495,34 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                       )}
                 </div>
               </div>
+              <div className="flex flex-col pb-6">
+                <label className="mb-2 text-xs text-gray-500 md:text-sm">تصویر پروفایل</label>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  accept="image/*"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center justify-center rounded-md border border-gray-300 p-2 text-xs hover:bg-gray-50"
+                >
+                  <Upload className="ml-2 size-4" />
+                  انتخاب تصویر
+                </button>
+                {isUploading && (
+                  <div className="mt-2">
+                    <div className="h-2 w-full rounded-full bg-gray-200">
+                      <div
+                        className="h-2 rounded-full bg-blue-600 transition-all"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
               <div className="space-y-4">
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-500 md:text-sm">نام و نام خانوادگی</span>
@@ -525,7 +592,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="mb-2 text-xs md:text-sm text-gray-500">جنسیت</label>
+                  <label className="mb-2 text-xs text-gray-500 md:text-sm">جنسیت</label>
                   <select
                     name="gender"
                     value={formData.gender}
@@ -539,7 +606,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="mb-2 text-xs md:text-sm text-gray-500">کد ملی</label>
+                  <label className="mb-2 text-xs text-gray-500 md:text-sm">کد ملی</label>
                   <input
                     type="text"
                     name="nationalId"
@@ -557,33 +624,47 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                   )}
                 </div>
 
-                <div className="flex flex-col">
-                  <label className="mb-2 text-xs md:text-sm text-gray-500">تصویر پروفایل</label>
+                <div className="flex flex-col border-b pb-4">
+                  <label className="mb-2 text-xs text-gray-500 md:text-sm">تصویر پرسونالی 3*4</label>
                   <input
                     type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileSelect}
+                    ref={filePersoanlImgInputRef}
+                    onChange={handlePersonalImgFileSelect}
                     className="hidden"
                     accept="image/*"
                   />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center justify-center rounded-md border border-gray-300 p-2 text-xs hover:bg-gray-50"
-                  >
-                    <Upload className="ml-2 size-4" />
-                    انتخاب تصویر
-                  </button>
-                  {isUploading && (
+
+
+                  <div className="flex w-full flex-col items-center  justify-between md:flex-row">
+                    <button
+                      type="button"
+                      onClick={() => filePersoanlImgInputRef.current?.click()}
+                      className="flex w-full items-center justify-center self-auto rounded-md border border-gray-300 p-2 text-xs hover:bg-gray-50 md:w-40 md:self-start"
+                    >
+                      <Upload className="ml-2 size-4" />
+                      انتخاب تصویر
+                    </button>
+
+                    {/* Personal Image Preview */}
+                    {personalImagePreview && (
+                      <div className="mt-4">
+                        <img src={personalImagePreview} alt="Personal Image" className="size-full max-h-96 rounded-lg object-cover" />
+                      </div>
+                    )}
+                  </div>
+
+                  {isUploadingPersonalImg && (
                     <div className="mt-2">
                       <div className="h-2 w-full rounded-full bg-gray-200">
                         <div
                           className="h-2 rounded-full bg-blue-600 transition-all"
-                          style={{ width: `${uploadProgress}%` }}
+                          style={{ width: `${uploadPersonalImgProgress}%` }}
                         />
                       </div>
                     </div>
                   )}
+
+
                 </div>
 
                 {/* After the avatar upload section, add this new section */}
@@ -673,7 +754,8 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     <label className="mb-2 block text-xs text-gray-500 md:text-sm">استان</label>
                     <Select
                       dir="rtl"
-                      value={user?.province || selectedProvinceId}
+                      defaultValue={user?.province || ''}
+                      value={selectedProvinceId}
                       onValueChange={(value: any) => handleProvinceChange(Number(value))}
                     >
                       <SelectTrigger className="w-full bg-gray-200">
@@ -849,7 +931,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={handleSaveEdit}
+              onClick={handleSaveAvatarEdit}
               className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
             >
               تایید و آپلود

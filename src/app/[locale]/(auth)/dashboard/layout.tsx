@@ -31,7 +31,7 @@ const SidebarLink = ({ href, icon: Icon, children, isActive, onClick }: {
       ${isActive ? 'bg-[#E6E6FF] text-[#4338CA]' : 'hover:bg-gray-100'}`}
     >
       <Icon size={20} className={isActive ? 'text-[#4338CA]' : 'text-gray-600'} />
-      <span className={`${isActive ? 'text-[#4338CA]' : 'text-gray-600'} font-medium pr-2`}>{children}</span>
+      <span className={`${isActive ? 'text-[#4338CA]' : 'text-gray-600'} pr-2 font-medium`}>{children}</span>
     </div>
   </Link>
 );
@@ -41,7 +41,7 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
   pathname: string;
   onLinkClick?: () => void;
 }) => (
-  <div className="flex relative  md:fixed h-full flex-col bg-white/70 backdrop-blur-sm border border-gray-200 shadow-md">
+  <div className="relative flex  h-full flex-col border border-gray-200 bg-white/70 shadow-md backdrop-blur-sm md:fixed">
     <div className="flex-1 p-4">
       <div className="mb-8 flex items-center gap-3 p-2">
         {user?.avatar?.file_name
@@ -160,7 +160,7 @@ export default function DashboardLayout({
   return (
     <div dir="rtl" className="flex h-auto bg-gray-50">
       {/* Desktop Sidebar - Hidden on mobile */}
-      <div className=" hidden h-lvh w-64 border-r bg-white shadow-sm lg:block">
+      <div className=" hidden h-lvh w-[230px] border-r bg-white shadow-sm lg:block">
         <SidebarContent user={user} pathname={pathname} />
       </div>
 
