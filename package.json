@@ -104,6 +104,7 @@
     "@types/node": "^22.9.0",
     "@types/pg": "^8.11.10",
     "@types/react": "^18.3.12",
+    "@types/react-avatar-editor": "^13.0.4",
     "@types/react-dom": "^19.1.6",
     "@types/react-image-gallery": "^1.2.4",
     "@vitejs/plugin-react": "^4.3.3",

@@ -3,10 +3,10 @@
 /* eslint-disable ts/ban-ts-comment */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 'use client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Upload, UserRound } from 'lucide-react';
-import { use, useEffect, useRef, useState } from 'react';
+import { type ReactNode, use, useEffect, useRef, useState } from 'react';
 import AvatarEditor from 'react-avatar-editor';
 import toast from 'react-hot-toast';
 import { completeProfileRequest } from '@/API/auth';
@@ -40,6 +40,13 @@ type User = {
     _id: string;
     file_name: string;
   }>;
+  address?: string;
+  city?: number | undefined;
+  province?: number;
+  field_of_study?: string;
+  postal_code?: string;
+  job_title?: string;
+  educational_qualification?: string;
 };
 
 type IUserProfilePageProps = {
@@ -50,16 +57,24 @@ type IUserProfilePageProps = {
 };
 
 type FormData = {
-  city: number | null;
+  city: number | undefined;
   first_name: string;
   last_name: string;
   gender: 'M' | 'W';
   nationalId: string;
   avatar: string;
   national_card_images: string[];
+  address?: string;
+  province?: number;
+  field_of_study?: string | null;
+  postalCode?: string | null;
+  job_title?: string | null;
+  educational_qualification?: string | null;
+  education_field?: string | null;
 };
 
 type FormErrors = {
+  postalCode: ReactNode;
   first_name?: string;
   last_name?: string;
   nationalId?: string;
@@ -81,7 +96,12 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     nationalId: '',
     avatar: '',
     national_card_images: [],
-    city: null,
+    city: undefined,
+    address: '',
+    field_of_study: '',
+    postalCode: '',
+    job_title: '',
+    educational_qualification: '',
   });
 
   const [isUploading, setIsUploading] = useState(false);
@@ -103,6 +123,14 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
 
   const { 'user-profile': _ = [] } = use(params);
 
+  // Use the custom hook for cities
+  const {
+    cities,
+    isLoading,
+    handleProvinceChange,
+    selectedProvinceId,
+  } = useCitiesByProvince();
+
   useEffect(() => {
     setFormData({
       first_name: user?.first_name || '',
@@ -111,22 +139,19 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
       nationalId: user?.nationalId || '',
       avatar: user?.avatar || '',
       national_card_images: user?.national_card_images?.map(image => image._id) || [],
-      city: user?.city || null,
+      city: user?.city || undefined,
+      address: user?.address || undefined,
+      field_of_study: user?.field_of_study || undefined,
+      postalCode: user?.postal_code || '',
+      job_title: user?.job_title || '',
+      educational_qualification: user?.educational_qualification || '',
     });
 
     if (user?.province) {
-      // eslint-disable-next-line ts/no-use-before-define
       handleProvinceChange(user?.province);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
-
-  // Use the custom hook for cities
-  const {
-    cities,
-    isLoading,
-    handleProvinceChange,
-    selectedProvinceId,
-  } = useCitiesByProvince();
 
   const updateProfileMutation = useMutation({
     mutationFn: completeProfileRequest,
@@ -163,6 +188,26 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           return false;
         }
         setErrors(prev => ({ ...prev, last_name: undefined }));
+        return true;
+
+      case 'postalCode':
+        // Postal code validation for Iranian postal codes
+        // Iranian postal codes are 10-digit numeric strings
+        // eslint-disable-next-line no-case-declarations
+        const postalCodeRegex = /^\d{10}$/;
+
+        // If postal code is empty, skip validation
+        if (!value.trim()) {
+          setErrors(prev => ({ ...prev, postalCode: undefined }));
+          return true;
+        }
+
+        if (!postalCodeRegex.test(value)) {
+          setErrors(prev => ({ ...prev, postalCode: 'کد پستی باید ۱۰ رقم باشد' }));
+          return false;
+        }
+
+        setErrors(prev => ({ ...prev, postalCode: undefined }));
         return true;
 
       default:
@@ -271,14 +316,14 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
   };
 
   // Update form submission to include validation
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = () => {
     // Validate all fields
     const isFirstNameValid = validateField('first_name', formData.first_name);
     const isLastNameValid = validateField('last_name', formData.last_name);
+    const isPostalCodeValid = validateField('postalCode', formData.postalCode || '');
 
-    if (!isFirstNameValid || !isLastNameValid) {
+    if (!isFirstNameValid || !isLastNameValid || !isPostalCodeValid) {
+      toast.error('لطفا فیلد های مورد نظر را به درستی وارد کنید');
       return; // Stop submission if validation fails
     }
 
@@ -291,11 +336,16 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
         nationalId: formData.nationalId,
         avatar: formData.avatar,
         national_card_images: formData.national_card_images,
-        city: formData.city,
+        ...(formData.city && { city: formData.city }),
+        ...(formData.address && { address: formData.address }),
+        ...(formData.postalCode && { postalCode: formData.postalCode }),
+        ...(formData.job_title && { job_title: formData.job_title }),
+        ...(formData.educational_qualification && { educational_qualification: formData.educational_qualification }),
+        ...(formData.field_of_study && { field_of_study: formData.field_of_study }),
       },
     });
   };
-    // Add this new handler for national ID card upload
+  // Add this new handler for national ID card upload
   const handleNationalCardUpload = async (files: FileList) => {
     if (formData.national_card_images.length + files.length > 3) {
       toast.error('حداکثر 3 تصویر می‌توانید آپلود کنید');
@@ -382,9 +432,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     setNationalCardPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-
   const citiesByProvince = cities?.cities ? cities?.cities : [];
-
 
   return (
     <div className="my-6">
@@ -410,20 +458,20 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
               </div>
               <div className="space-y-4">
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">نام و نام خانوادگی</span>
-                  <span className="mt-2 font-medium">
+                  <span className="text-xs text-gray-500 md:text-sm">نام و نام خانوادگی</span>
+                  <span className="mt-2 text-sm font-medium">
                     {user?.first_name}
                     {' '}
                     {user?.last_name}
                   </span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">شماره موبایل</span>
+                  <span className="text-xs text-gray-500 md:text-sm">شماره موبایل</span>
                   <span className="mt-2 font-medium">{user?.mobile}</span>
                 </div>
                 {user?.gender && (
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">جنسیت</span>
+                    <span className="text-xs text-gray-500 md:text-sm">جنسیت</span>
                     <span className="mt-2 font-medium">
                       {user?.gender === 'M' ? 'مرد' : 'زن'}
                     </span>
@@ -437,19 +485,18 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           <Card className="mt-8 w-full max-w-5xl shadow-lg">
             <CardContent dir="rtl" className="p-6">
               <h2 className="mb-6 text-xl font-semibold">اطلاعات هویتی</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form className="space-y-4">
                 <div className="flex flex-col">
-                  <label className="mb-2 text-sm text-gray-500">نام</label>
+                  <label className="mb-2 text-xs text-gray-500 md:text-sm">نام</label>
                   <input
                     type="text"
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleInputChange}
                     onBlur={handleBlur}
-                    className={`rounded-md border p-2 text-sm ${
-                      errors.first_name ?
-                        'border-red-500 focus:border-red-500 focus:ring-red-500' :
-                        'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    className={`rounded-md border p-2 text-sm ${errors.first_name
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                     }`}
                     required
                   />
@@ -459,17 +506,16 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="mb-2 text-sm text-gray-500">نام خانوادگی</label>
+                  <label className="mb-2 text-xs text-gray-500 md:text-sm">نام خانوادگی</label>
                   <input
                     type="text"
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
                     onBlur={handleBlur}
-                    className={`rounded-md border p-2 text-sm ${
-                      errors.last_name ?
-                        'border-red-500 focus:border-red-500 focus:ring-red-500' :
-                        'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    className={`rounded-md border p-2 text-sm ${errors.last_name
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                     }`}
                     required
                   />
@@ -479,7 +525,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="mb-2 text-sm text-gray-500">جنسیت</label>
+                  <label className="mb-2 text-xs md:text-sm text-gray-500">جنسیت</label>
                   <select
                     name="gender"
                     value={formData.gender}
@@ -493,17 +539,16 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="mb-2 text-sm text-gray-500">کد ملی</label>
+                  <label className="mb-2 text-xs md:text-sm text-gray-500">کد ملی</label>
                   <input
                     type="text"
                     name="nationalId"
                     value={formData.nationalId}
                     onChange={handleInputChange}
                     onBlur={handleNationalIdBlur}
-                    className={`rounded-md border p-2 ${
-                      errors.nationalId ?
-                        'border-red-500 focus:border-red-500 focus:ring-red-500' :
-                        'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    className={`rounded-md border p-2 ${errors.nationalId
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                     }`}
                     required
                   />
@@ -513,7 +558,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="mb-2 text-sm text-gray-500">تصویر پروفایل</label>
+                  <label className="mb-2 text-xs md:text-sm text-gray-500">تصویر پروفایل</label>
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -543,7 +588,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
 
                 {/* After the avatar upload section, add this new section */}
                 <div className="flex flex-col">
-                  <label className="mb-2 text-sm text-gray-500">تصویر کارت ملی (حداکثر 3 تصویر)</label>
+                  <label className="mb-2 text-xs text-gray-500 md:text-sm">تصویر کارت ملی (حداکثر 3 تصویر)</label>
                   <input
                     type="file"
                     ref={nationalCardInputRef}
@@ -614,26 +659,18 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                   </div>
                 </div>
 
-                <LoadingButton
-                  type="submit"
-                  isLoading={updateProfileMutation.isPending}
-                  className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  ذخیره
-                </LoadingButton>
               </form>
             </CardContent>
           </Card>
-
 
           {/* User Information */}
           <Card className="mt-8 w-full max-w-5xl shadow-lg">
             <CardContent dir="rtl" className="p-6">
               <h2 className="mb-6 text-xl font-semibold">اطلاعات کاربری</h2>
-              <div className="flex w-full">
-                <div className="flex w-full gap-4">
+              <div className="flex w-full flex-col gap-4">
+                <div className="flex w-full flex-col gap-4 md:flex-row">
                   <div className="flex-1">
-                    <label className="mb-2 block text-sm text-gray-500">استان</label>
+                    <label className="mb-2 block text-xs text-gray-500 md:text-sm">استان</label>
                     <Select
                       dir="rtl"
                       value={user?.province || selectedProvinceId}
@@ -653,10 +690,10 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                   </div>
 
                   <div className="flex-1">
-                    <label className="mb-2 block text-sm text-gray-500">شهر</label>
+                    <label className="mb-2 block text-xs md:text-sm text-gray-500">شهر</label>
                     <Select
                       dir="rtl"
-                      value={formData.city || ''}
+                      value={formData.city || undefined}
                       onValueChange={(value: any) => setFormData(prev => ({ ...prev, city: value }))}
                       disabled={false}
                     >
@@ -678,9 +715,102 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     </Select>
                   </div>
                 </div>
+
+                {/* Address */}
+                <div className="w-full">
+                  <label className="mb-2 block text-xs text-gray-500 md:text-sm">آدرس محل سکونت</label>
+                  <textarea
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+                    rows={4}
+                  />
+                </div>
+
+                {/* Postal Code */}
+                <div className="mt-2 w-full md:mt-4">
+                  <div className="flex flex-col gap-4 md:flex-row">
+                    <div className="flex-1">
+                      <label className="mb-2 block text-xs text-gray-500 md:text-sm">کد پستی</label>
+                      <input
+                        type="text"
+                        name="postalCode"
+                        value={formData.postalCode || ''}
+                        onChange={handleInputChange}
+                        onBlur={handleBlur}
+                        className={`w-full rounded-md border p-2 text-sm ${errors.postalCode
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                          : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                        }`}
+                        placeholder="کد پستی خود را وارد کنید"
+                      />
+                      {errors.postalCode && (
+                        <span className="mt-1 text-xs text-red-500">{errors.postalCode}</span>
+                      )}
+                    </div>
+
+                    {/* Job Title */}
+                    <div className="flex-1">
+                      <label className="mb-2 block text-xs text-gray-500 md:text-sm">عنوان شغلی</label>
+                      <input
+                        type="text"
+                        name="job_title"
+                        value={formData.job_title || ''}
+                        onChange={handleInputChange}
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+                        placeholder="عنوان شغلی خود را وارد کنید"
+                      />
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* educational_qualification && field_of_study */}
+                <div className="w-full mt-0 md:mt-4">
+                  <div className="flex flex-col gap-4 md:flex-row">
+                    <div className="flex-1">
+                      <label className="mb-2 block text-xs md:text-sm text-gray-500"> رشته تحصیلی</label>
+                      <input
+                        type="text"
+                        name="field_of_study"
+                        value={formData.field_of_study || ''}
+                        onChange={handleInputChange}
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+                        placeholder="رشته تحصیلی خود را وارد کنید"
+                      />
+                    </div>
+
+                    {/* Job Title */}
+                    <div className="flex-1">
+                      <label className="mb-2 block text-xs text-gray-500 md:text-sm">مدرک تحصیلی</label>
+                      <input
+                        type="text"
+                        name="educational_qualification"
+                        value={formData.educational_qualification || ''}
+                        onChange={handleInputChange}
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+                        placeholder="مدرک تحصیلی خود را وارد کنید"
+                      />
+                    </div>
+
+                  </div>
+                </div>
+
               </div>
             </CardContent>
           </Card>
+
+          <div className="mt-8 flex w-full max-w-5xl justify-center">
+            <LoadingButton
+              onClick={handleSubmit}
+              isLoading={updateProfileMutation.isPending}
+              className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              disabled={updateProfileMutation.isPending}
+            >
+              ذخیره
+            </LoadingButton>
+          </div>
         </div>
       </div>
 
