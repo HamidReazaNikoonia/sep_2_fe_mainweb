@@ -13,12 +13,12 @@ type UseNotificationsProps = {
 export function useNotifications({ initialPage = 1, limit = 10 }: UseNotificationsProps = {}) {
   const [currentPage, setCurrentPage] = useState(initialPage);
 
-  const { 
-    data, 
-    isLoading, 
-    isError, 
-    error, 
-    refetch 
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch
   } = useQuery<NotificationResponse>({
     queryKey: ['notifications', currentPage, limit],
     queryFn: () => getUserNotificationRequest({

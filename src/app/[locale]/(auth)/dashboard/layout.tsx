@@ -2,7 +2,7 @@
 'use client';
 
 import type React from 'react';
-import { BarChart2, BookOpenCheck, Calendar, GraduationCap, Heart, Home, House, LogOut, Menu, ShoppingBag, User, Users } from 'lucide-react';
+import { BarChart2, BookOpenCheck, Calendar, GraduationCap, Heart, Home, House, LogOut, Menu, ShoppingBag, User, Users, Bell } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -11,6 +11,7 @@ import Drawer from '@/components/Drawer';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import useAuth from '@/hooks/useAuth';
 import { useDrawer } from '@/hooks/useDrawer';
+import UnreadNotificationBadge from '@/components/UnreadNotificationBadge';
 
 // export const metadata: Metadata = {
 //   title: "داشبورد کاربر",
@@ -91,6 +92,9 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
         </SidebarLink>
         <SidebarLink href="/dashboard/team" icon={Users} isActive={pathname === '/dashboard/team'} onClick={onLinkClick}>
           تیم
+        </SidebarLink>
+        <SidebarLink href="/dashboard/notification" icon={Bell} isActive={pathname === '/dashboard/notification'} onClick={onLinkClick}>
+          اعلانات
         </SidebarLink>
       </nav>
     </div>
@@ -205,6 +209,12 @@ export default function DashboardLayout({
               >
                 <User size={20} className="text-gray-600" />
               </button>
+              <Link href="/dashboard/notification">
+                <button type="button" className="relative rounded-lg p-2 transition-colors hover:bg-gray-100">
+                  <UnreadNotificationBadge />
+                  <Bell size={20} className="text-gray-600" />
+                </button>
+              </Link>
               <button
                 type="button"
                 onClick={logoutUserHandler}

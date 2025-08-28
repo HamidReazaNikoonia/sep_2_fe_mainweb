@@ -10,7 +10,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { X, Search, ShoppingBasket, Menu, ChevronDown, ChevronRight, ChevronLeft } from 'lucide-react';
+import { X, Search, ShoppingBasket, Menu, ChevronDown, ChevronRight, ChevronLeft, Bell } from 'lucide-react';
 
 import { useCartStore } from '@/_store/Cart';
 import { getUserCartRequest } from "@/API/cart";
@@ -19,6 +19,8 @@ import useAuth from "@/hooks/useAuth";
 import UserAvatar from "@/components/UserAvatar";
 import useResponsiveEvent from "@/hooks/useResponsiveEvent";
 import { toPersianDigits } from '@/utils/Helpers';
+import UnreadNotificationBadge from '@/components/UnreadNotificationBadge';
+
 
 import MobileNavDrawer from "./MobileNavDrawer";
 
@@ -27,13 +29,15 @@ const Navbar = () => {
   const [productCountBadge, setproductCountBadge] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  
+
   // New states for courses dropdown
   const [coursesDropdownOpen, setCoursesDropdownOpen] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [hoveredSubCategory, setHoveredSubCategory] = useState(null);
 
   const { isAuthenticated, user, logout } = useAuth();
+
+
 
 
   const isMobileScreen = useResponsiveEvent(768, 200);
@@ -188,9 +192,16 @@ const Navbar = () => {
                 >
                   <Search strokeWidth={1} size={isMobileScreen ? 16 : 24} />
                 </button>
+                <Link href="/dashboard/notification">
+                  <button className="relative rounded-lg border border-white/50 bg-white/30 px-4 py-2 text-sm shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-white/50">
+                    <UnreadNotificationBadge />
+
+                    <Bell strokeWidth={1} size={isMobileScreen ? 16 : 24} />
+                  </button>
+                </Link>
 
                 <div className="relative inline-flex">
-                  <Link href='/cart' alt="go to cart items">
+                  <Link href="/cart" alt="go to cart items">
                     <button className="rounded-lg border border-white/50 bg-white/30 px-4 py-2 text-sm shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-white/50"
                     >
                       <ShoppingBasket strokeWidth={1} size={isMobileScreen ? 16 : 24} />
@@ -233,7 +244,7 @@ const Navbar = () => {
                   <li className="hover:text-gray-300">تماس با ما</li>
 
                   {/* Courses Dropdown */}
-                  <li 
+                  <li
                     className="relative hover:text-gray-300"
                     onMouseEnter={handleCoursesMouseEnter}
                     onMouseLeave={handleCoursesMouseLeave}
@@ -371,7 +382,7 @@ const Navbar = () => {
           </button>
           <ul className="mt-12 space-y-6 px-6 pt-9 text-right text-sm">
             <li className="hover:text-gray-300">خانه</li>
-            
+
             <li className="hover:text-gray-300">
               <Link href="/course-session">
                 دوره ها
@@ -382,7 +393,7 @@ const Navbar = () => {
               <Link href="/course">
                 فیلم آموزشی
               </Link>
-            </li>    
+            </li>
             <li className="hover:text-gray-300">آکادمی آموزشی</li>
             <li className="hover:text-gray-300">تماس با ما</li>
           </ul> */}
