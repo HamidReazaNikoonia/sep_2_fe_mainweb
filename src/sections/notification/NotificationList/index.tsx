@@ -6,8 +6,9 @@
 
 import type { Notification } from '@/API/Notification/types';
 import { AlertTriangle, Bell, BellRing, CheckCircle, ChevronLeft, ChevronRight, Clock, Settings, User, UserCheck, XCircle } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNotifications } from '@/API/Notification/notification.hook';
+import { useNotificationActions } from '@/hooks/useNotifications/useNotificationActions';
 import NotificationModal from '@/sections/notification/NotificationModal';
 
 const getNotificationTypeColor = (type: string) => {
@@ -118,6 +119,31 @@ export default function NotificationList() {
     hasNextPage,
     hasPrevPage,
   } = useNotifications({ limit: 10 });
+
+  const { markAllNotificationsReadMutation } = useNotificationActions();
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // Clear previous timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Only set timeout if there are notifications
+    if (notifications.length > 0) {
+      timeoutRef.current = setTimeout(() => {
+        markAllNotificationsReadMutation.mutate();
+      }, 1000);
+    }
+
+    // Cleanup function
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [notifications]);
 
   const handleNotificationClick = (notification: Notification) => {
     setSelectedNotification(notification);
