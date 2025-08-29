@@ -2,16 +2,16 @@
 'use client';
 
 import type React from 'react';
-import { BarChart2, BookOpenCheck, Calendar, GraduationCap, Heart, Home, House, LogOut, Menu, ShoppingBag, User, Users, Bell } from 'lucide-react';
+import { BarChart2, BookOpenCheck, Calendar, GraduationCap, Heart, Send, Home, House, LogOut, Menu, ShoppingBag, User, Users, Bell } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import Drawer from '@/components/Drawer';
 import LoadingSpinner from '@/components/LoadingSpiner';
+import UnreadNotificationBadge from '@/components/UnreadNotificationBadge';
 import useAuth from '@/hooks/useAuth';
 import { useDrawer } from '@/hooks/useDrawer';
-import UnreadNotificationBadge from '@/components/UnreadNotificationBadge';
 
 // export const metadata: Metadata = {
 //   title: "داشبورد کاربر",
@@ -32,7 +32,7 @@ const SidebarLink = ({ href, icon: Icon, children, isActive, onClick }: {
       ${isActive ? 'bg-[#E6E6FF] text-[#4338CA]' : 'hover:bg-gray-100'}`}
     >
       <Icon size={20} className={isActive ? 'text-[#4338CA]' : 'text-gray-600'} />
-      <span className={`${isActive ? 'text-[#4338CA]' : 'text-gray-600'} pr-2 font-medium`}>{children}</span>
+      <span className={`${isActive ? 'text-[#4338CA]' : 'text-gray-600'} pr-2 text-xs font-medium md:text-sm`}>{children}</span>
     </div>
   </Link>
 );
@@ -42,9 +42,9 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
   pathname: string;
   onLinkClick?: () => void;
 }) => (
-  <div className="relative flex  h-full flex-col border border-gray-200 bg-white/70 shadow-md backdrop-blur-sm md:fixed">
+  <div className="relative flex  h-full flex-col border border-gray-200 bg-white/70  backdrop-blur-sm md:fixed">
     <div className="flex-1 p-4">
-      <div className="mb-8 flex items-center gap-3 p-2">
+      <div className="mb-4 flex items-center gap-3 p-2 md:mb-8">
         {user?.avatar?.file_name
           ? (
               <img
@@ -59,12 +59,12 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
               </div>
             )}
         <div className="flex flex-col">
-          <h2 className="font-semibold text-gray-900">
+          <h2 className="text-xs font-semibold text-gray-900 md:text-sm">
             {user?.first_name}
             {' '}
             {user?.last_name}
           </h2>
-          <p className="text-right text-sm text-gray-500">خوش آمدید</p>
+          <p className="text-right text-xs text-gray-500 md:text-sm">خوش آمدید</p>
         </div>
       </div>
 
@@ -72,8 +72,8 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
         <SidebarLink href="/dashboard" icon={Home} isActive={pathname === '/dashboard'} onClick={onLinkClick}>
           خانه
         </SidebarLink>
-        <SidebarLink href="/dashboard/favorites" icon={Heart} isActive={pathname === '/dashboard/favorites'} onClick={onLinkClick}>
-          علاقه‌مندی‌ها
+        <SidebarLink href="/dashboard/user-profile" icon={User} isActive={pathname === '/dashboard/user-profile'} onClick={onLinkClick}>
+          پروفایل
         </SidebarLink>
         <SidebarLink href="/dashboard/orders" icon={ShoppingBag} isActive={pathname === '/dashboard/orders'} onClick={onLinkClick}>
           سفارشات
@@ -84,17 +84,18 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
         <SidebarLink href="/dashboard/course-session" icon={BookOpenCheck} isActive={pathname === '/dashboard/course-session'} onClick={onLinkClick}>
           کلاس ها
         </SidebarLink>
-        <SidebarLink href="/dashboard/statistics" icon={BarChart2} isActive={pathname === '/dashboard/statistics'} onClick={onLinkClick}>
-          آمار
+
+        <SidebarLink href="/dashboard/favorites" icon={Heart} isActive={pathname === '/dashboard/favorites'} onClick={onLinkClick}>
+          علاقه‌مندی‌ها
         </SidebarLink>
         <SidebarLink href="/dashboard/calendar" icon={Calendar} isActive={pathname === '/dashboard/calendar'} onClick={onLinkClick}>
           تقویم
         </SidebarLink>
-        <SidebarLink href="/dashboard/team" icon={Users} isActive={pathname === '/dashboard/team'} onClick={onLinkClick}>
-          تیم
-        </SidebarLink>
         <SidebarLink href="/dashboard/notification" icon={Bell} isActive={pathname === '/dashboard/notification'} onClick={onLinkClick}>
           اعلانات
+        </SidebarLink>
+        <SidebarLink href="/dashboard/ticket" icon={Send} isActive={pathname === '/dashboard/ticket'} onClick={onLinkClick}>
+          پشتیبانی
         </SidebarLink>
       </nav>
     </div>
@@ -113,8 +114,8 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
           <p className="text-sm text-gray-500">کاربر</p>
         </div> */}
         <div className="mt-2 flex w-full flex-col items-center justify-center">
-          <span className="pb-2 text-sm text-gray-500">موجودی کیف پول شما</span>
-          <span className="w-full border-t pt-2 text-center text-sm font-medium text-gray-900">
+          <span className="pb-1 pt-2 text-xs text-gray-500 md:pb-2">موجودی کیف پول شما</span>
+          <span className="w-full border-t pt-2 text-center text-xs font-medium text-gray-900">
             {user?.wallet?.amount ? user?.wallet?.amount?.toLocaleString('fa-IR') : (0).toLocaleString('fa-IR')}
             {' '}
             تومان
@@ -164,7 +165,7 @@ export default function DashboardLayout({
   return (
     <div dir="rtl" className="flex h-auto bg-gray-50">
       {/* Desktop Sidebar - Hidden on mobile */}
-      <div className=" hidden h-lvh w-[230px] border-r bg-white shadow-sm lg:block">
+      <div className=" hidden h-lvh w-[220px] border-r bg-white shadow-sm lg:block">
         <SidebarContent user={user} pathname={pathname} />
       </div>
 
