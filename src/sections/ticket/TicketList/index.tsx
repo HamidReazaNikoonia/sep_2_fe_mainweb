@@ -277,16 +277,16 @@ export default function TicketList({ onTicketSelect, filters = {} }: TicketListP
 
                     <div className="mt-4 flex flex-col gap-1 text-xs text-gray-500 md:flex-row md:items-center md:gap-4 ">
                       <div className="mb-2 flex items-center gap-2 md:mb-0 md:gap-4">
-                        <span className="rounded-2xl border border-gray-200 px-4 py-2 font-medium">
-                          <span className="flex flex-row  items-center gap-2">
-                            <MessageCircle className="size-4" />
-                            <div>
-                              دسته‌بندی
-                            </div>
-                            <span className="font-medium text-gray-700">{getCategoryLabel(ticket.category)}</span>
-                          </span>
+                        <span>
+                          آخرین فعالیت:
                           {' '}
-
+                          {new Date(ticket.last_reply_at).toLocaleString('fa-IR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
                         </span>
                         <span>
                           پاسخ‌ها:
@@ -294,17 +294,18 @@ export default function TicketList({ onTicketSelect, filters = {} }: TicketListP
                           {ticket.replies.length}
                         </span>
                       </div>
-                      <span>
-                        آخرین فعالیت:
+                      <span className="rounded-2xl border border-gray-200 px-4 py-2 font-medium">
+                        <span className="flex flex-row  items-center gap-2">
+                          <MessageCircle className="size-4" />
+                          <div>
+                            دسته‌بندی
+                          </div>
+                          <span className="font-medium text-gray-700">{getCategoryLabel(ticket.category)}</span>
+                        </span>
                         {' '}
-                        {new Date(ticket.last_reply_at).toLocaleString('fa-IR', {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+
                       </span>
+
                     </div>
                   </div>
 
