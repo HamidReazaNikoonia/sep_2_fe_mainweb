@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 // Upload type for attachments
 export type Upload = {
   _id: string;
@@ -32,6 +34,7 @@ export type TicketReply = {
 
 // Main Ticket Schema
 export type Ticket = {
+  id: any;
   _id: string;
   title: string;
   description: string;
@@ -104,6 +107,14 @@ export type TicketResponse = {
 };
 
 export type SingleTicketResponse = {
+  priority(priority: any): unknown;
+  status(status: any): unknown;
+  last_reply_by: string;
+  assigned_to: any;
+  description: ReactNode;
+  attachments: any;
+  createdAt(createdAt: any): import("react").ReactNode;
+  is_read_by_user: any;
   data: Ticket;
 };
 

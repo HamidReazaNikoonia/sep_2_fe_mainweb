@@ -1,17 +1,20 @@
-'use client'
+/* eslint-disable tailwindcss/no-custom-classname */
+/* eslint-disable react-dom/no-missing-button-type */
+/* eslint-disable tailwindcss/classnames-order */
+/* eslint-disable style/multiline-ternary */
+'use client';
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import Image from 'next/image'
+import Image from 'next/image';
 
 import AddressSelector from '@/sections/cart/AddressSelector';
 // utils
 
 // components
 import LoadingSpinner from '@/components/LoadingSpiner';
-
 
 import { filterPriceNumber } from '@/utils/Helpers';
 import useResponsiveEvent from '@/hooks/useResponsiveEvent';
@@ -20,11 +23,9 @@ import clsx from 'clsx';
 // assets
 // import emptyCartSvg from '@/public/assets/svg/empty_cart.svg';
 
-
 // API
 import { getUserCartRequest, updateUserCartRequest, deleteProductInCartRequest } from '@/API/cart';
 import { getUserAddressRequest, submitAddresRequest } from '@/API/order/address';
-
 
 // types
 import { Address, AddressResponse } from '@/types/Product';
@@ -33,50 +34,11 @@ import CartItemComponent from '@/sections/cart/CartList';
 import { submitCartToCreateOrderRequest } from '@/API/order/payment';
 import LoadingButton from '@/components/LoadingButton';
 import useAuth from '@/hooks/useAuth';
+import { ShoppingCart } from 'lucide-react';
 
-
-
-
-const initialCartItems = [
-  { id: 1, name: 'Wireless Earbuds', price: 79.99, quantity: 2, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-  { id: 2, name: 'Smart Watch', price: 129.99, quantity: 1, image: '/placeholder.svg?height=80&width=80' },
-
-  { id: 3, name: 'Portable Charger', price: 39.99, quantity: 3, image: '/placeholder.svg?height=80&width=80' },
-]
-
-const addresses = [
-  { id: 1, name: 'خانه', street: 'پردیسان, استقلال ۲ - بلوک حضرت الخدیجه - واحد ۲ پلاک ۶ منزل آقای نیکونیا ی عزیز', city: 'قم', state: '', zip: '12345' },
-  { id: 2, name: 'Work', street: '456 Office Blvd', city: 'Workville', state: 'NY', zip: '67890' },
-]
-
-
-// interface Address {
-//   _id: number
-//   name: string
-//   street: string
-//   city: string
-//   state: string
-//   zip: string
-// }
-
-
-
-
-export default function ShoppingCart() {
+export default function ShoppingCartPage() {
   // const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems)
-  const [selectedAddress, setSelectedAddress] = useState<AddressResponse | null>(null)
+  const [selectedAddress, setSelectedAddress] = useState<AddressResponse | null>(null);
   const [cartItemFiltered, setcartItemFiltered] = useState([]);
 
   // we have 2 kind of products [Product, course]
@@ -84,16 +46,14 @@ export default function ShoppingCart() {
   // then we need to appear address UI and get the Address from user
   const [isProductExistInTheList, setisProductExistInTheList] = useState(false);
   const [totalPriceValue, settotalPriceValue] = useState(0);
-  const [quantityChangeLoading, setquantityChangeLoading] = useState<string | null>(null)
+  const [quantityChangeLoading, setquantityChangeLoading] = useState<string | null>(null);
   const [submitCartIsLoading, setsubmitCartIsLoading] = useState(false);
   const [taxPrice, settaxPrice] = useState();
 
   const queryClient = useQueryClient();
   // const router = useRouter();
 
-
   const isMobileScreen = useResponsiveEvent(768, 200);
-
 
   // const { isAuthenticated, user } = useAuth();
 
@@ -103,28 +63,25 @@ export default function ShoppingCart() {
   //   }
   // }, [])
 
-
   // Get Cartd Items from API
   const { data, isLoading, isError, isSuccess, error } = useQuery({
     queryFn: async () => getUserCartRequest(),
-    queryKey: ["cart"], //Array according to Documentation
+    queryKey: ['cart'], // Array according to Documentation
   });
-
 
   // Get User Address From API
   const { data: addressData, isLoading: addressIsLoading, isError: addressIsError, isSuccess: addressIsSuccess } = useQuery({
     queryFn: async () => getUserAddressRequest(),
-    queryKey: ["order::address"], //Array according to Documentation
+    queryKey: ['order::address'], // Array according to Documentation
   });
-
 
   const mutation = useMutation({
     mutationFn: updateUserCartRequest,
     onSuccess: () => {
+      // eslint-disable-next-line ts/ban-ts-comment
       // @ts-expect-error
-      queryClient.invalidateQueries("cart");
+      queryClient.invalidateQueries('cart');
       setquantityChangeLoading(null);
-
     },
   });
 
@@ -132,11 +89,9 @@ export default function ShoppingCart() {
     mutationFn: deleteProductInCartRequest,
     onSuccess: () => {
       // @ts-expect-error
-      queryClient.invalidateQueries("cart");
-
+      queryClient.invalidateQueries('cart');
     },
-  })
-
+  });
 
   const submitAddressMutation = useMutation({
     mutationFn: submitAddresRequest,
@@ -148,11 +103,9 @@ export default function ShoppingCart() {
 
         setSelectedAddress(res || addressData[0]);
       }
-      console.log({ response: res })
-
+      console.log({ response: res });
     },
   });
-
 
   const submitCartToCreateOrderMutation = useMutation({
     mutationFn: submitCartToCreateOrderRequest,
@@ -164,7 +117,7 @@ export default function ShoppingCart() {
       if (response) {
         // order created successfully
         if (!response.newOrder) {
-          toast.error('خطایی رخ داده')
+          toast.error('خطایی رخ داده');
           setsubmitCartIsLoading(false);
         }
 
@@ -173,65 +126,46 @@ export default function ShoppingCart() {
           toast.success('شما در حال انتقال به بانک هستید');
           window && window.location.replace(response.payment.url);
         }
-
-
       } else {
-        toast.error('خطای سرور')
+        toast.error('خطای سرور');
         setsubmitCartIsLoading(false);
       }
-      console.log({ response: response })
-
+      console.log({ response: response });
     },
   });
 
   // Address Efects
-  useEffect(() => {
-
-    if (addressIsSuccess) {
-      console.log({ address: addressData });
-      // setSelectedAddress(addressData[0])
-    }
-
-
-  }, [addressData, addressIsSuccess])
-
+  // useEffect(() => {
+  //   if (addressIsSuccess) {
+  //     console.log({ address: addressData });
+  //     // setSelectedAddress(addressData[0])
+  //   }
+  // }, [addressData, addressIsSuccess])
 
   // useEffect(() => {
 
-
-
   // }, [submitCartToCreateOrderMutation.isPending])
 
-
-
-
   useEffect(() => {
-
     if (submitAddressMutation.isSuccess) {
-      toast.success('آدرس شما با موفقیت ثبت شد')
+      toast.success('آدرس شما با موفقیت ثبت شد');
     }
-
 
     if (submitAddressMutation.isError) {
-      toast.error('متاسفانه آدرس شما ثبت نشد')
-      toast.error('مشکلی پیش آمده , دوباره امتحان کنید')
+      toast.error('متاسفانه آدرس شما ثبت نشد');
+      toast.error('مشکلی پیش آمده , دوباره امتحان کنید');
     }
-
-  }, [submitAddressMutation.isSuccess, submitAddressMutation.isError])
-
-
+  }, [submitAddressMutation.isSuccess, submitAddressMutation.isError]);
 
   useEffect(() => {
     if (isSuccess && data && data._id) {
-
-
       settotalPriceValue(data.totalPrice || 0);
-      const cartItems = data.cartItem.map(item => {
+      const cartItems = data.cartItem.map((item: { productId: any; courseId: any }) => {
         return {
           ...(item.productId && item.productId),
           ...(item.courseId && item.courseId),
-          ...item
-        }
+          ...item,
+        };
       });
 
       // check if `Product` Exist in the cartitems
@@ -239,14 +173,9 @@ export default function ShoppingCart() {
       setisProductExistInTheList(hasProductItemProperty);
 
       setcartItemFiltered(cartItems);
-      console.log({ iiii: cartItems })
+      // console.log({ iiii: cartItems });
     }
-
-
-  }, [data, isSuccess])
-
-
-
+  }, [data, isSuccess]);
 
   const updateQuantity = (id: string, newQuantity: number) => {
     // setCartItems(prevItems =>
@@ -254,19 +183,17 @@ export default function ShoppingCart() {
     //     item.id === id ? { ...item, quantity: Math.max(newQuantity, 0) } : item
     //   )
     // )
-    console.log({ aaa: id })
+    // console.log({ aaa: id });
     setquantityChangeLoading(id);
     mutation.mutate({ productId: id, quantity: newQuantity });
-  }
+  };
 
   const removeItem = (id: string) => {
     // setCartItems(prevItems => prevItems.filter(item => item.id !== id))
-    deleteItemMutation.mutate({ cartItemId: id })
-  }
-
+    deleteItemMutation.mutate({ cartItemId: id });
+  };
 
   const submitAddressFormHandler = (address: Address) => {
-
     // Submit API
     submitAddressMutation.mutate({
       addressLine1: address.address,
@@ -274,16 +201,14 @@ export default function ShoppingCart() {
       city: address.city,
       postalCode: address.postalCode,
       title: address.title
-    })
+    });
 
-
-    console.log({ es: address })
-
-  }
-
+    console.log({ es: address });
+  };
 
   // Payment process
   const continuePaymentHandler = () => {
+    // eslint-disable-next-line no-console
     console.log({ selectedAddress, data });
     setsubmitCartIsLoading(true);
     // submit order API endpoint
@@ -295,10 +220,8 @@ export default function ShoppingCart() {
       return false;
     }
 
-
-
     // Product Exist in The Cart Items
-    // Means we should Validate Address 
+    // Means we should Validate Address
     if (isProductExistInTheList) {
       if (!selectedAddress || !selectedAddress?._id) {
         setsubmitCartIsLoading(false);
@@ -308,47 +231,53 @@ export default function ShoppingCart() {
       }
     }
 
-
     submitCartToCreateOrderMutation.mutate({ cartId: data?._id, ...(selectedAddress && {shippingAddress: selectedAddress._id}) });
     toast.success('سفارش در حال ارسال');
     return true;
-  }
+  };
 
   // const subtotal = cartItems.reduce(
   //   (sum, item) => sum + item.price * item.quantity,
   //   0
   // )
-  const tax = totalPriceValue * 0.08 // Assuming 8% tax rate
-  const shippingFee = 5000
+  const tax = Math.round(totalPriceValue * 0.08);// Assuming 8% tax rate
+  // const shippingFee = 5000
   const total = totalPriceValue + tax;
 
   const isDataExist = isSuccess && data && cartItemFiltered;
   const isAddressDataExist = addressIsSuccess && addressData && Array.isArray(addressData);
 
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <div className="w-full h-svh bg-gradient-to-t from-slate-900 to-slate-700 min-h-[80vh]">
+    <div className="w-full h-svh primary-gradient-bg ">
       <div className="mx-auto px-4 py-8">
         {/* <h2 dir='rtl' className="text-3xl text-right font-bold mb-6 text-gray-800">
         <X size={34} />
         </h2> */}
-        <div className=''>
+        <div className="">
           {isDataExist ? (
             <>
               {cartItemFiltered && cartItemFiltered.length === 0 ? (
                 <div className="text-center py-12 bg-none ">
-                  <div className='flex justify-center'>
-                    
+                  <div className="flex justify-center">
+
                   </div>
-                  <p className="text-xl text-gray-100 mb-12 mt-6">سبد شما خالی میباشد</p>
+                  <div className="flex justify-center text-6xl mb-4">
+                    🛒
+                  </div>
+                  <p className="text-xl text-gray-700 mb-12 mt-6">سبد شما خالی میباشد</p>
                   <Link href="/">
-                    <button className="w-60 cursor-pointer  bg-purple-900 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+                    <button className="w-60 cursor-pointer  pink-gradient-bg hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
                       ادامه خرید
                     </button>
                   </Link>
                 </div>
               ) : (
                 // List of Product In The Cart 
-                <div className="flex flex-col md:flex-row gap-8 mr-0 lg:mr-8">
+                <div className="flex flex-col md:flex-row-reverse gap-8 ml-0 lg:ml-6">
                   <div className="lg:w-2/3 bg-white rounded-xl shadow-lg p-6">
                     <h3 className="text-md text-right font-semibold mb-4">لیست محصولات</h3>
                     <div className="space-y-4">
@@ -365,7 +294,7 @@ export default function ShoppingCart() {
                   </div>
 
                   {/* SideBar */}
-                  <div className={clsx("lg:w-1/3 space-y-3 right-2 z-30", !isMobileScreen && 'fixed')} >
+                  <div className={clsx('lg:w-1/3 space-y-3 left-3 z-30', !isMobileScreen && 'fixed')}>
                     {isProductExistInTheList && (
                       <div className="bg-white rounded-xl shadow-lg p-6">
                         <AddressSelector
@@ -379,23 +308,25 @@ export default function ShoppingCart() {
                       </div>
                     )}
                     <div className="bg-white rounded-xl shadow-lg p-6 text-right">
-                      <h3 className="text-md font-semibold mb-4">فاکتور</h3>
+                      <h3 className="text-base font-semibold mb-4">فاکتور</h3>
                       <div className="space-y-2 mb-4 text-sm">
                         <div className="flex justify-between">
                           <span>
-                            <div dir='rtl' className="flex items-center">
-                              {filterPriceNumber(totalPriceValue)}<span className="text-sm mr-1">تومان</span>
+                            <div dir="rtl" className="flex items-center">
+                              {filterPriceNumber(totalPriceValue)}
+                              <span className="text-sm mr-1">تومان</span>
                             </div>
                           </span>
-                          <span className=''>جمع کل</span>
+                          <span className="">جمع کل</span>
                         </div>
                         <div className="flex justify-between">
                           <span>
-                            <div dir='rtl' className="flex items-center">
-                              {filterPriceNumber(tax)}<span className="text-sm mr-1">تومان</span>
+                            <div dir="rtl" className="flex items-center">
+                              {filterPriceNumber(tax)}
+                              <span className="text-sm mr-1">تومان</span>
                             </div>
                           </span>
-                          <span className=''> مالیات</span>
+                          <span className=""> مالیات</span>
                         </div>
                         {/* <div className="flex justify-between">
                           <span>
@@ -406,17 +337,18 @@ export default function ShoppingCart() {
                           <span className=''>هزینه ارسال</span>
                         </div> */}
                         <div className="border-t pt-2 mt-2">
-                          <div className="flex justify-between font-semibold text-lg text-[#137f3b]">
+                          <div className="flex justify-between font-semibold text-sm md:text-lg text-[#137f3b]">
                             <span>
-                              <div dir='rtl' className="flex items-center">
-                                {filterPriceNumber(total)}<span className="text-sm mr-1">تومان</span>
+                              <div dir="rtl" className="flex items-center">
+                                {filterPriceNumber(total)}
+                                <span className="text-sm mr-1">تومان</span>
                               </div>
                             </span>
                             <span>جمع کل</span>
                           </div>
                         </div>
                       </div>
-                      <div className='flex flex-col  space-y-2  mt-4'>
+                      <div className="flex flex-col  space-y-2  mt-8">
                         {/* <button
                     onClick={continuePaymentHandler}
                     className=" w-full md:w-60 cursor-pointer  bg-purple-800 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -424,15 +356,19 @@ export default function ShoppingCart() {
                   >
                     ادامه خرید
                   </button> */}
-                        <LoadingButton onClick={continuePaymentHandler} isLoading={submitCartIsLoading} disabled={(!selectedAddress && isProductExistInTheList)} >
-                          ادامه خرید
+                        <LoadingButton onClick={continuePaymentHandler} isLoading={submitCartIsLoading} disabled={(!selectedAddress && isProductExistInTheList)}>
+                          <div className="flex items-center gap-2 justify-center">
+                            ادامه خرید
+                            <ShoppingCart size={20} />
+                          </div>
+
                         </LoadingButton>
                         <Link href="/">
-                        <button
-                          className="w-full  cursor-pointer bg-red-500 hover:bg-red-400 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200"
-                        >
-                          بازگشت
-                        </button>
+                          <button
+                            className="w-full  cursor-pointer bg-red-500 hover:bg-red-400 text-white font-bold py-2.5 px-6 rounded-lg transition-colors duration-200"
+                          >
+                            بازگشت
+                          </button>
                         </Link>
                       </div>
                       {(!selectedAddress && isProductExistInTheList) && (
@@ -451,6 +387,5 @@ export default function ShoppingCart() {
         </div>
       </div>
     </div>
-  )
-}
-
+  );
+};

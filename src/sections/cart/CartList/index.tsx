@@ -29,18 +29,18 @@ const CartItemComponent: React.FC<{
 }> = ({ item, onUpdateQuantity, onRemove, incrementButtonLoading, decrementButtonLoading, quantityLoading }) => {
   
   const isItemAvailabel = !!(item?.productId ? item?.is_available : item?.course_status);
-  const wrapperClasess = "flex items-center space-x-4 py-6 border-b border-gray-200 last:border-b-0"
+  const wrapperClasess = "flex items-center  py-6 border-b border-gray-200 last:border-b-0"
   return (
-    <div className={clsx(wrapperClasess, (!isItemAvailabel && "opacity-50"))}>
+    <div dir='rtl' className={clsx(wrapperClasess, (!isItemAvailabel && "opacity-50"))}>
       <div className="flex-shrink-0 w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
         <CustomImage fileName={item?.tumbnail_image?.file_name} className="object-cover" src={''} alt={''} />
       </div>
-      <div className="flex-grow leading-10">
-        <h3 className="text-sm font-semibold text-gray-800">{item.title}</h3>
+      <div className="flex-grow mr-4 leading-10">
+        <h3 className="text-xs md:text-sm font-semibold text-gray-800">{item.title}</h3>
         {isItemAvailabel ? (
           <div className="text-gray-600">
           <span>
-            <div dir='rtl' className="flex items-center justify-end text-left">
+            <div dir='rtl' className="flex items-center justify-start">
               {filterPriceNumber(item.price)}<span className="text-sm mr-1">تومان</span>
             </div>
           </span>
