@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import { Heart, ShoppingBasket, Users, Languages, Timer, Cast, Copy, BookAudio, Scroll, Calendar, Star, FolderClosed } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getSpecificUserCourseRequest } from "@/API/course";
+import { getSpecificUserCourseFromProfileRequest, getSpecificUserCourseRequest } from "@/API/course";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -17,6 +17,7 @@ const NEXT_PUBLIC_SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL ||
 import product_placeholder from "@/public/assets/images/product_placeholder.png";
 import {Button} from "@/components/ui/button";
 import { ShowSubjectCourse } from "@/sections/dashboard/course/ShowCourseSubject";
+import useAuth from "@/hooks/useAuth";
 
 
 const courseTypeMap: {
@@ -28,15 +29,12 @@ const courseTypeMap: {
 }
 
 export default function CoursePage() {
-
+  const { user } = useAuth();
 
   const [courseState, setcourseState] = useState();
 
-
-
-
   const { slug } = useParams<{ slug: string }>()
-  console.log({ slug });
+  console.log({ user, slug });
 
   if (!slug) {
     notFound()
@@ -45,16 +43,16 @@ export default function CoursePage() {
 
   const { data, isLoading, isError, error, isSuccess } = useQuery({
     queryKey: ['course', slug],
-    queryFn: slug ? () => getSpecificUserCourseRequest({ courseId: slug }) : undefined,
-    enabled: !!slug,
+    queryFn: slug ? () => getSpecificUserCourseFromProfileRequest({ userId: user?.id, courseId: slug }) : undefined,
+    enabled: !!slug && !!user,
 
   })
 
   // Simulate order data fetching
   useEffect(() => {
     if (data && isSuccess) {
-      if (data?._id) {
-        setcourseState(data);
+      if (data?.course) {
+        setcourseState(data?.course);
       }
 
 
@@ -87,7 +85,7 @@ export default function CoursePage() {
     return (
       <Card>
         <CardContent>
-          <div dir="rtl" className=" text-right py-4" >در حال دریافت اطلاعات</div>
+          <div dir="rtl" className=" py-4 text-right">در حال دریافت اطلاعات</div>
         </CardContent>
       </Card>
     )
@@ -96,12 +94,12 @@ export default function CoursePage() {
   return (
     <div dir="rtl">
       {courseState && (
-        <Card className="w-full max-w-none md:max-w-7xl mx-auto">
+        <Card className="mx-auto w-full max-w-none md:max-w-7xl">
           <CardHeader>
             <CardTitle className="text-2xl md:text-3xl">{courseState?.title}</CardTitle>
-            <CardDescription className="text-sm  md:text-base mt-2 pb-2">{courseState?.sub_title}</CardDescription>
-            <div className="flex flex-col-reverse md:flex-row border-t justify-center  md:justify-around">
-              <div className="mt-4  pt-2 w-full md:w-1/2">
+            <CardDescription className="mt-2  pb-2 text-sm md:text-base">{courseState?.sub_title}</CardDescription>
+            <div className="flex flex-col-reverse justify-center border-t md:flex-row  md:justify-around">
+              <div className="mt-4  w-full pt-2 md:w-1/2">
 
                 {/* Score */}
                 <div className="mt-1">

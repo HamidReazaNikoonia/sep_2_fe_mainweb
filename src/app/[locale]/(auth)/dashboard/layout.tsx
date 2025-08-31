@@ -42,7 +42,7 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
   pathname: string;
   onLinkClick?: () => void;
 }) => (
-  <div className="relative flex  h-full flex-col border border-gray-200 bg-white/70  backdrop-blur-sm md:fixed">
+  <div className="relative flex  h-full flex-col border border-gray-200 bg-white/70 w-auto md:w-[230px]   backdrop-blur-sm md:fixed">
     <div className="flex-1 p-4">
       <div className="mb-4 flex items-center gap-3 p-2 md:mb-8">
         {user?.avatar?.file_name
@@ -165,7 +165,7 @@ export default function DashboardLayout({
   return (
     <div dir="rtl" className="flex h-auto bg-gray-50">
       {/* Desktop Sidebar - Hidden on mobile */}
-      <div className=" hidden h-lvh w-[220px] border-r bg-white shadow-sm lg:block">
+      <div className=" hidden h-lvh w-auto border-r bg-white shadow-sm md:w-[230px] lg:block">
         <SidebarContent user={user} pathname={pathname} />
       </div>
 

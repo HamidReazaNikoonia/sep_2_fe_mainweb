@@ -100,18 +100,18 @@ export default function CoursesPage() {
             <CardDescription>{course.sub_title}</CardDescription>
           </CardHeader>
           <CardContent className="flex-grow">
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                 <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${30}%` }}></div>
               </div>
               <span className="text-sm pr-2 font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap">
                 ٪{30}
               </span>
-            </div>
+            </div> */}
           </CardContent>
           <CardFooter>
-            <Button asChild className="w-full">
-              <Link href={`/dashboard/courses/${course._id}`}>مشاهده دوره</Link>
+            <Button asChild className="w-full pink-gradient-bg">
+              <Link href={`/dashboard/courses/${course?.id}`}>مشاهده دوره</Link>
             </Button>
           </CardFooter>
         </Card>

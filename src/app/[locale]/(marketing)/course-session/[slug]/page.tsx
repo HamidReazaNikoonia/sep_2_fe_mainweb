@@ -61,7 +61,7 @@ const courseSessionData = {
 const SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL || '';
 
 
-export default function page() {
+export default function page({ params }: { params: { slug: string } }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [showVideo, setShowVideo] = useState(false);
@@ -103,7 +103,7 @@ export default function page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${SERVER_API_URL}/course-session/6843d2f6c8b36b2417f1334e`, {
+        const res = await fetch(`${SERVER_API_URL}/course-session/${params.slug}`, {
           next: { revalidate: 60 },
         });
 
@@ -310,13 +310,13 @@ export default function page() {
       {/* CourseSchedule */}
       <div className="w-full py-8 bg-gray-300">
         <div className="w-full  container mx-auto ">
-          <CourseScheduleV3 courseId={dataFromServer?.id} />
+          <CourseScheduleV3 courseId={dataFromServer?.id || ''} />
         </div>
       </div>
 
       <div className="w-full bg-gray-300">
         {/* Comment Section */}
-        <CommentLayout type="product" productId={dataFromServer?.id} />
+        <CommentLayout type="product" productId={dataFromServer?.id || ''} />
       </div>
 
     </div>
