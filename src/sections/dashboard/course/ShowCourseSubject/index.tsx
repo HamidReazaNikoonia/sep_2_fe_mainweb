@@ -31,7 +31,7 @@ export function ShowSubjectCourse({ course_objects }: ShowSubjectCourseProps) {
         <AccordionItem key={index} value={`item-${index}`} className="border rounded-lg">
           <AccordionTrigger className="px-4 py-4 hover:no-underline">
             <div className="flex items-center justify-between w-full">
-              <span className="font-semibold text-left">{subject.subject_title}</span>
+              <span className="font-semibold text-xs md:text-base text-left">{subject.subject_title}</span>
               <div className="flex items-center space-x-2">
                 {/* <Badge className="ml-4" variant={subject.status === "PUBLIC" ? "default" : "secondary"}>
                   {subject.status === "PUBLIC" ? (

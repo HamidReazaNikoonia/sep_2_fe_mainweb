@@ -1,14 +1,15 @@
+/* eslint-disable tailwindcss/no-contradicting-classname */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 'use client';
 
-import { Book, Clock, FileText, Lock, Play, Unlock } from 'lucide-react';
-import React, { useState } from 'react';
+import { Book, Clock, FileText, Lock, Play } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import LessonModal from '@/components/LessonModal';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatDurationWithPersian, toPersianDigits } from '@/utils/Helpers';
-import LessonModal from '@/components/LessonModal';
 
 // Types based on the provided data structure
 type LessonFile = {
@@ -43,17 +44,36 @@ type CourseSubjectLessonsListProps = {
   course_objects: CourseObject[];
   onLessonClick?: (lesson: Lesson, subject: CourseObject) => void;
   onDownloadFile?: (file: LessonFile | SubjectFiles, type: 'lesson' | 'subject') => void;
+  userPermission?: boolean;
 };
 
 export default function CourseSubjectLessonsList({
   course_objects,
   onLessonClick,
   onDownloadFile,
+  userPermission = false,
 }: CourseSubjectLessonsListProps) {
   // Modal state
+  const [courseObjectsState, setCourseObjectsState] = useState(course_objects);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<CourseObject | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    // TODO: Change the Logic From Back-end
+    if (userPermission) {
+      const data = course_objects.map((subject) => {
+        const filteredLessons = subject.lessons.map((lesson) => {
+          lesson.status = 'PUBLIC';
+          return lesson;
+        });
+        return { ...subject, lessons: filteredLessons };
+      });
+      setCourseObjectsState(data);
+    }
+    // eslint-disable-next-line no-console
+    console.log(userPermission);
+  }, [course_objects, userPermission]);
 
   // Calculate total lessons count for a subject
   const getTotalLessonsCount = (lessons: Lesson[]) => lessons.length ? toPersianDigits(lessons.length) : 0;
@@ -80,7 +100,7 @@ export default function CourseSubjectLessonsList({
     <>
       <div className="w-full" dir="rtl">
         <Accordion type="single" collapsible className="w-full space-y-2 md:space-y-4">
-          {course_objects
+          {courseObjectsState
             .sort((a, b) => a.order - b.order)
             .map((subject, subjectIndex) => (
               <AccordionItem
@@ -93,7 +113,7 @@ export default function CourseSubjectLessonsList({
                     <div className="flex min-w-0 flex-1 items-start gap-2 md:items-center md:gap-3">
                       <Book className="mt-0.5 size-4 shrink-0 text-blue-600 md:mt-0 md:size-5" />
                       <div className="min-w-0 flex-1 text-right">
-                        <h3 className="text-xs md:text-sm font-semibold leading-tight text-gray-900 md:text-base">
+                        <h3 className="text-xs font-semibold leading-tight text-gray-900 md:text-base md:text-sm">
                           {subject.subject_title}
                         </h3>
                         {subject.description && (
@@ -109,7 +129,7 @@ export default function CourseSubjectLessonsList({
                         <Clock className="size-3 md:size-4" />
                         <span className="text-xs md:text-sm">{formatDurationWithPersian(subject.duration)}</span>
                       </div>
-                      <Badge variant="secondary" className="whitespace-nowrap font-medium text-gray-800 text-[10px] md:text-sm">
+                      <Badge variant="secondary" className="whitespace-nowrap text-[10px] font-medium text-gray-800 md:text-sm">
                         {getTotalLessonsCount(subject.lessons)}
                         {' '}
                         درس
@@ -168,7 +188,7 @@ export default function CourseSubjectLessonsList({
 
                                 <Badge
                                   variant={lesson.status === 'PUBLIC' ? 'default' : 'secondary'}
-                                  className="hidden md:block h-5 font-medium px-1.5 text-[11px] md:text-xs md:h-6 md:px-2"
+                                  className="hidden h-5 px-1.5 text-[11px] font-medium md:block md:h-6 md:px-2 md:text-xs"
                                 >
                                   {lesson.status === 'PUBLIC' ? 'رایگان' : 'پولی'}
                                 </Badge>
@@ -216,7 +236,7 @@ export default function CourseSubjectLessonsList({
         </Accordion>
 
         {/* Empty state if no subjects */}
-        {course_objects.length === 0 && (
+        {courseObjectsState.length === 0 && (
           <div className="py-8 text-center text-gray-500 md:py-12">
             <Book className="mx-auto mb-3 size-12 text-gray-300 md:mb-4 md:size-16" />
             <h3 className="mb-2 text-base font-medium md:text-lg">هنوز سرفصلی اضافه نشده است</h3>

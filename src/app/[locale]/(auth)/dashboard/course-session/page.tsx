@@ -11,45 +11,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import UserAvatar from '@/components/UserAvatar';
 import useAuth from '@/hooks/useAuth';
 
-type Session = {
-  _id: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  meetingLink?: string;
-  location?: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
-};
-
-type CourseSessionEnrollment = {
-  _id: string;
-  course: {
-    title: string;
-    sub_title: string;
-  };
-  coach: {
-    First_name: string;
-    Last_name?: string;
-    avatar?: string;
-  };
-  class_id: {
-    class_title: string;
-  };
-  program_type: 'ONLINE' | 'ON-SITE';
-  status: 'active' | 'inactive' | 'completed';
-  sessions: Session[];
-
-};
-
 export default function CourseSessionPage() {
   const { user } = useAuth();
 
   const [courseSessionEnrollments, setCourseSessionEnrollments] = useState([]);
 
   const { data: profileData, isLoading: profileIsLoading, isError: profileIsError, error: profileError, isSuccess: profileIsSuccess } = useQuery({
-    // @ts-expect-error
+    // @ts-expect-error not sure why this is needed
     queryKey: ['profile', user?.id],
-    // @ts-expect-error
     queryFn: () => {
       if (!user) {
         throw new Error('User not authenticated');
@@ -65,6 +34,7 @@ export default function CourseSessionPage() {
     }
   }, [profileIsSuccess, profileData]);
 
+  // eslint-disable-next-line no-console
   console.log(profileData, 'profileData----');
 
   if (profileIsLoading) {
@@ -91,6 +61,7 @@ export default function CourseSessionPage() {
     );
   }
 
+  // eslint-disable-next-line no-console
   console.log(courseSessionEnrollments, 'courseSessionEnrollments----');
 
   const getStatusColor = (status: string) => {
@@ -130,12 +101,12 @@ export default function CourseSessionPage() {
   return (
     <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
+        <h1 className="text-right text-lg font-bold">کلاس های من</h1>
         <Badge variant="outline">
           {courseSessionEnrollments?.length}
           {' '}
           دوره
         </Badge>
-        <h1 className="text-right text-2xl font-bold">کلاس های من</h1>
       </div>
 
       <div dir="rtl" className="grid gap-6">
@@ -173,7 +144,7 @@ export default function CourseSessionPage() {
                 <UserAvatar
                   src={enrollment?.coach?.avatar}
                   alt={`${enrollment?.coach?.first_name} ${enrollment?.coach?.last_name || ''}`}
-                  className="size-12"
+                  className="size-14"
                 />
                 <div>
                   <p className="font-medium">

@@ -172,7 +172,7 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
 
         <div className="w-full  pink-gradient-bg pb-14 pt-10 px-4 md:px-12">
           <h2 className="text-right text-lg md:text-2xl font-bold mb-6">فهرست درس ها</h2>
-          <CourseSubjectLessonsList course_objects={sampleCourseObjects} />
+          <CourseSubjectLessonsList course_objects={productsData.course_objects} />
         </div>
 
         {/* Comment Section */}
