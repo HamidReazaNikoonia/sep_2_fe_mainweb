@@ -19,6 +19,7 @@ import ServicesNavBar from '@/sections/home/ServicesNavBar';
 import FAQSection from '../../../sections/home/FAQ';
 import CourseSessionSwiperRow from '@/sections/home/v2/CourseSessionSwiperRow';
 import CourseSessionProgramCategorySection from '@/sections/home/CourseSessionProgramCategorySection';
+import AboutCoachesSection from '@/sections/home/AboutCoachesSection';
 // import CourseSessionProgramCardItem from '@/components/v2/CourseSessionProgramCardItem';
 
 type IIndexProps = {
@@ -47,7 +48,7 @@ export default async function Index() {
   // });
 
   return (
-    <div className=" overflow-hidden bg-gray-200 pt-16">
+    <div className=" overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 pt-16">
 
       {/* Main Slider In md Screen */}
       <div className=" flex-col">
@@ -58,7 +59,11 @@ export default async function Index() {
         <ServicesNavBar />
       </section>
 
-      <section className="w-full">
+      <section>
+        <AboutCoachesSection />
+      </section>
+
+      <section className="pink-gradient-bg w-full">
         <CourseSessionCategory />
       </section>
 
