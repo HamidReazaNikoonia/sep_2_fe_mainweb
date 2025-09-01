@@ -16,8 +16,9 @@ export default function CourseSessionProgramCategorySection() {
 
           <Link href="/course">
             <button
-              className="inline-flex items-center rounded-md bg-transparent px-1 py-2 text-xs font-medium  text-black md:px-4 md:text-sm">
-              <ChevronsLeft className='mr-2' />
+              className="inline-flex items-center rounded-md bg-transparent px-1 py-2 text-xs font-medium  text-gray-500 md:px-4 md:text-sm"
+>
+              <ChevronsLeft className="mr-1 size-4 md:size-5" />
               مشاهده همه
             </button>
           </Link>
