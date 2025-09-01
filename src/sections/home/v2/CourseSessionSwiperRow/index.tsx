@@ -22,7 +22,7 @@ import './styles.css';
 const sampleProduct = {
   id: 'number',
   title: 'دوره مقدماتی وردپرس',
-  subtitle: 'توضیحات محصول در این قسمت قرار میگیرد',
+  sub_title: 'توضیحات محصول در این قسمت قرار میگیرد',
   meta_title: '',
   meta_description: '',
   slug: 'string',

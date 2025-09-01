@@ -35,7 +35,7 @@ const CourseSessionCardItem: React.FC<CourseSessionCardItemProps> = (props) => {
   };
 
   const SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL || '';
-  const image = tumbnail?.file_name ? `${SERVER_FILES_URL}/${tumbnail?.file_name}` : '';
+  const image = tumbnail?.file_name ? `${SERVER_FILES_URL}/${tumbnail?.file_name}` : '/assets/images/product_placeholder.png';
   const coaches = active_program ? active_program.map((program: any) => program.coach) : [];
   // const courseType = active_program ? active_program[0]?.course_type : '';
 
