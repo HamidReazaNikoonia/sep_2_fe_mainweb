@@ -1,60 +1,60 @@
-'use client'
+'use client';
 
+import { ChevronsLeft, SquarePercent } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
-import { ChevronsLeft, ClipboardList } from 'lucide-react';
-// Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
-
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
-
-import './styles.css';
 
 // import required modules
 import { Navigation } from 'swiper/modules';
-
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
 // compo
 import CourseSessionCardItem from '@/components/v2/CourseSessionCardItem';
-import Link from 'next/link';
 
+// Import Swiper styles
+import 'swiper/css';
 
+import 'swiper/css/pagination';
+
+import 'swiper/css/navigation';
+import './styles.css';
 
 const sampleProduct = {
-  id: "number",
+  id: 'number',
   title: 'دوره مقدماتی وردپرس',
-  subtitle: "توضیحات محصول در این قسمت قرار میگیرد",
-  meta_title: "",
-  meta_description: "",
-  slug: "string",
-  description: "توضیحات",
-  brand: "string",
+  subtitle: 'توضیحات محصول در این قسمت قرار میگیرد',
+  meta_title: '',
+  meta_description: '',
+  slug: 'string',
+  description: 'توضیحات',
+  brand: 'string',
   average_rating: 3,
   countInStock: 20,
   is_available: true,
   status: true,
-  qr_code: "string",
+  qr_code: 'string',
   price: 50000,
 
-}
+};
 
 export default function CourseSessionSwiperRow() {
   return (
     <>
-      <div className='flex justify-between w-full pb-1 px-1 gap-y-12'>
+      <div className="flex w-full items-center justify-between gap-y-12 px-4 pb-1 md:px-0">
 
         <Link href="/course">
           <button
-            className="bg-transparent text-black font-medium text-xs md:text-sm py-2 px-1 md:px-4  rounded-md inline-flex items-center">
-            <ChevronsLeft className='mr-2' />
+            type="button"
+            className="inline-flex items-center rounded-md bg-transparent px-1 py-2 text-xs font-medium  text-gray-500 md:px-4 md:text-sm"
+          >
+            <ChevronsLeft className="mr-1 size-4 md:size-5" />
             مشاهده همه
           </button>
         </Link>
-        <div className='py-2 inline-flex items-center text-sm  md:text-lg text-black font-semibold'>
+        <div className="inline-flex items-center py-2 text-sm  font-semibold text-black md:text-xl">
 
           دوره های تخفیف دار
-          <ClipboardList className='ml-3' />
+          <SquarePercent className="ml-2 size-6 text-gray-700 md:size-8" />
         </div>
       </div>
       <Swiper
@@ -77,7 +77,7 @@ export default function CourseSessionSwiperRow() {
         pagination={{
           type: 'fraction',
         }}
-        navigation={true}
+        navigation
         modules={[Navigation]}
         className="course_session_swiper"
       >
@@ -85,16 +85,13 @@ export default function CourseSessionSwiperRow() {
           <CourseSessionCardItem courseSessionData={sampleProduct} />
         </SwiperSlide>
 
-
         <SwiperSlide>
           <CourseSessionCardItem courseSessionData={sampleProduct} />
         </SwiperSlide>
 
-
         <SwiperSlide>
           <CourseSessionCardItem courseSessionData={sampleProduct} />
         </SwiperSlide>
-
 
         <SwiperSlide>
           <CourseSessionCardItem courseSessionData={sampleProduct} />

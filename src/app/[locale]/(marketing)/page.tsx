@@ -106,7 +106,7 @@ export default async function Index() {
       </div> */}
 
 
-      <div className='w-full md:container md:mx-auto border px-0 md:px-4 py-12'>
+      <div className="w-full px-0 py-12 md:container md:mx-auto md:px-4">
         <CourseSessionSwiperRow />
       </div>
 

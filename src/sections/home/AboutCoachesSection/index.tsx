@@ -5,7 +5,7 @@ import React from 'react';
 
 const AboutCoachesSection = () => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:items-start md:p-8">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4 pb-8 md:items-start md:p-8 md:pb-0">
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-start gap-2 md:grid-cols-2 md:gap-10">
 
         {/* Left Side - Text Content */}
