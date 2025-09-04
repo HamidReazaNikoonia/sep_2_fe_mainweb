@@ -20,6 +20,7 @@ import FAQSection from '../../../sections/home/FAQ';
 import CourseSessionSwiperRow from '@/sections/home/v2/CourseSessionSwiperRow';
 import CourseSessionProgramCategorySection from '@/sections/home/CourseSessionProgramCategorySection';
 import AboutCoachesSection from '@/sections/home/AboutCoachesSection';
+import SimpleSliderRow from '@/sections/SimpleSliderRow';
 // import CourseSessionProgramCardItem from '@/components/v2/CourseSessionProgramCardItem';
 
 type IIndexProps = {
@@ -105,15 +106,18 @@ export default async function Index() {
         </div>
       </div> */}
 
-
       <div className="w-full px-0 py-12 md:container md:mx-auto md:px-4">
         <CourseSessionSwiperRow />
       </div>
 
-        <div>
+      <div>
         <CourseSessionProgramCategorySection />
-        </div>
-    
+      </div>
+
+      {/* News Section */}
+      <div>
+        <SimpleSliderRow showTitle title="اخبار و رویدادها" />
+      </div>
 
       {/* <div className='py-12 bg-white'>
         <CategoriesBannerSlider />
