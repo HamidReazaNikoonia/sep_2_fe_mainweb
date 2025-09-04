@@ -13,6 +13,7 @@ import { truncateDescription } from '@/utils/Helpers';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import Link from 'next/link';
 
 // Types
 type NewsItem = {
@@ -160,12 +161,14 @@ const SimpleSliderRow: React.FC<SimpleSliderRowProps> = ({
               </p>
             </div>
 
-            <Button className="pink-gradient-bg hidden text-white hover:bg-green-600 md:block">
-              <div className="flex items-center gap-2">
-                دیدن همه اخبار
-                <ChevronsLeft className="mr-1 size-4 md:size-5" />
-              </div>
-            </Button>
+            <Link href="/blog">
+              <Button className="pink-gradient-bg hidden text-white hover:bg-green-600 md:block">
+                <div className="flex items-center gap-2">
+                  دیدن همه اخبار
+                  <ChevronsLeft className="mr-1 size-4 md:size-5" />
+                </div>
+              </Button>
+            </Link>
           </div>
         )}
 
