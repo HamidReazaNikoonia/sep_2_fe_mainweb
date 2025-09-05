@@ -4,7 +4,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 
-import product_placeholder from "@/public/assets/images/product_placeholder.png";
+import product_placeholder from '@/public/assets/images/product_placeholder.png';
 
 type CustomImageProps = ImageProps & {
   className?: string;

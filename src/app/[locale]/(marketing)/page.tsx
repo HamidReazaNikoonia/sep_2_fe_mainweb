@@ -21,6 +21,7 @@ import CourseSessionSwiperRow from '@/sections/home/v2/CourseSessionSwiperRow';
 import CourseSessionProgramCategorySection from '@/sections/home/CourseSessionProgramCategorySection';
 import AboutCoachesSection from '@/sections/home/AboutCoachesSection';
 import SimpleSliderRow from '@/sections/SimpleSliderRow';
+import CoachSliderRow from '@/sections/coach/CoachSliderRow';
 // import CourseSessionProgramCardItem from '@/components/v2/CourseSessionProgramCardItem';
 
 type IIndexProps = {
@@ -110,8 +111,12 @@ export default async function Index() {
         <CourseSessionSwiperRow />
       </div>
 
-      <div>
+      <div className="py-4 md:py-8">
         <CourseSessionProgramCategorySection />
+      </div>
+
+      <div className="pink-gradient-bg py-4 md:py-8">
+        <CoachSliderRow />
       </div>
 
       {/* News Section */}
