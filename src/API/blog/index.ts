@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { getAuthToken, SERVER_API_URL } from '../config';
 
 // Types for Blog API
@@ -17,6 +18,13 @@ export type BlogResponse = {
 };
 
 export type SingleBlogResponse = {
+  readingTime: ReactNode;
+  publishedAt: any;
+  author: any;
+  category: any;
+  featuredImage: any;
+  excerpt: any;
+  tags: boolean;
   // Define the structure of a single blog post
   id: string;
   title: string;
