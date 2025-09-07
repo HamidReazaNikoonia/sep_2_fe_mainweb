@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import CoachesContainer from '@/sections/coach/CoachesContainer';
 
 export const metadata: Metadata = {
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function CoachesPage() {
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
+    <div className="primary-gradient-bg min-h-screen pt-16">
       <CoachesContainer />
     </div>
   );

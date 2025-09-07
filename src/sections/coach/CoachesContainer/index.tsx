@@ -1,14 +1,16 @@
-/* eslint-disable tailwindcss/no-custom-classname */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable react/no-nested-components */
 'use client';
 
-import { Search, Filter, CheckCircle2, Loader2, User } from 'lucide-react';
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Input } from '@/components/ui/input';
+import { CheckCircle2, Filter, Loader2, Search, User } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCoaches } from '@/API/coach/coach.hook';
+import CustomImage from '@/components/CustomImage';
+import { Badge } from '@/components/ui/badge';
 // import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import CustomImage from '@/components/CustomImage';
-import { useCoaches } from '@/API/coach/coach.hook';
+import { Input } from '@/components/ui/input';
 
 // Types
 type Coach = {
@@ -24,31 +26,33 @@ type Coach = {
 // Coach Card Component
 const CoachCard: React.FC<{ coach: Coach }> = ({ coach }) => {
   const fullName = `${coach.first_name} ${coach.last_name}`;
-  
+
   return (
-    <div className="group relative flex h-full min-h-[300px] cursor-pointer flex-col overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+    <div className="group relative flex h-full min-h-[300px] cursor-pointer flex-col overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
       {/* Avatar Container */}
       <div className="relative flex flex-1 items-center justify-center p-6 pb-4">
-        <div className="relative size-20 overflow-hidden rounded-full ring-4 ring-gray-100 transition-all duration-300 group-hover:ring-green-200 group-hover:ring-8">
-          {coach.avatar?.file_name ? (
-            <CustomImage
-              fileName={coach.avatar.file_name}
-              alt={fullName}
-              className="rounded-full transition-transform duration-300 group-hover:scale-110"
-              containerClassName="w-full h-full"
-            />
-          ) : (
-            <div className="flex size-full items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200">
-              <User className="size-10 text-gray-500" />
-            </div>
-          )}
+        <div className="relative size-20 overflow-hidden rounded-full ring-4 ring-gray-100 transition-all duration-300 group-hover:ring-8 group-hover:ring-green-200">
+          {coach.avatar?.file_name
+            ? (
+                <CustomImage
+                  fileName={coach.avatar.file_name}
+                  alt={fullName}
+                  className="rounded-full transition-transform duration-300 group-hover:scale-110"
+                  containerClassName="w-full h-full"
+                />
+              )
+            : (
+                <div className="flex size-full items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200">
+                  <User className="size-10 text-gray-500" />
+                </div>
+              )}
         </div>
       </div>
 
       {/* Content */}
       <div className="flex flex-col items-center p-4 pt-2">
         {/* Name */}
-        <h3 className="mb-2 text-center text-lg font-bold text-gray-900 transition-colors duration-200 group-hover:text-green-600">
+        <h3 className="mb-2 text-center text-lg font-bold text-gray-900 transition-colors duration-200 group-hover:text-pink-600">
           {fullName}
         </h3>
 
@@ -72,14 +76,14 @@ const CoachCard: React.FC<{ coach: Coach }> = ({ coach }) => {
         <Button
           variant="outline"
           size="sm"
-          className="mt-auto w-full border-green-500 bg-white text-green-600 transition-all duration-200 hover:bg-green-500 hover:text-white group-hover:border-green-600"
+          className="mt-auto w-full border-pink-500 bg-white text-pink-600 transition-all duration-200 hover:bg-pink-500 hover:text-white group-hover:border-pink-600"
         >
           مشاهده پروفایل
         </Button>
       </div>
 
       {/* Decorative gradient border on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 opacity-0 transition-opacity duration-300 group-hover:opacity-20 pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 opacity-0 transition-opacity duration-300 group-hover:opacity-20" />
     </div>
   );
 };
@@ -107,7 +111,7 @@ const CoachesContainer: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [hasActiveCourse, setHasActiveCourse] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  
+
   // Refs for infinite scroll
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -144,7 +148,7 @@ const CoachesContainer: React.FC = () => {
           fetchNextPage();
         }
       },
-      { threshold: 1 }
+      { threshold: 1 },
     );
 
     if (loadMoreRef.current) {
@@ -184,7 +188,7 @@ const CoachesContainer: React.FC = () => {
             placeholder="نام استاد یا تخصص..."
             value={searchQuery}
             onChange={handleSearchChange}
-            className="pr-10"
+            className="pr-10 text-sm"
           />
         </div>
       </div>
@@ -197,12 +201,12 @@ const CoachesContainer: React.FC = () => {
             type="checkbox"
             id="activeCourse"
             checked={hasActiveCourse}
-            onChange={(e) => handleActiveCourseChange(e.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+            onChange={e => handleActiveCourseChange(e.target.checked)}
+            className="size-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
           />
           <label
             htmlFor="activeCourse"
-            className="text-sm text-gray-600 cursor-pointer"
+            className="cursor-pointer text-xs text-gray-600"
           >
             اساتیدی که دوره فعال دارند
           </label>
@@ -226,7 +230,9 @@ const CoachesContainer: React.FC = () => {
           <div className="flex flex-wrap gap-2">
             {searchQuery && (
               <Badge variant="secondary" className="text-xs">
-                جستجو: {searchQuery}
+                جستجو:
+                {' '}
+                {searchQuery}
               </Badge>
             )}
             {hasActiveCourse && (
@@ -241,13 +247,21 @@ const CoachesContainer: React.FC = () => {
 
       {/* Results Count */}
       <div className="text-sm text-gray-600">
-        <span className="font-medium">{totalCoaches}</span> استاد یافت شد
+        <span className="font-medium">{totalCoaches}</span>
+        {' '}
+        استاد یافت شد
       </div>
 
       {/* Pagination Info */}
       {data?.pages && data.pages.length > 0 && (
         <div className="text-xs text-gray-500">
-          صفحه {data.pages[data.pages.length - 1].page} از {data.pages[0].totalPages}
+          صفحه
+          {' '}
+          {data.pages[data.pages.length - 1].page}
+          {' '}
+          از
+          {' '}
+          {data.pages[0].totalPages}
         </div>
       )}
     </div>
@@ -258,7 +272,7 @@ const CoachesContainer: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="text-red-500 mb-4">خطا در بارگذاری اطلاعات</div>
+          <div className="mb-4 text-red-500">خطا در بارگذاری اطلاعات</div>
           <Button onClick={() => window.location.reload()}>تلاش مجدد</Button>
         </div>
       </div>
@@ -266,11 +280,11 @@ const CoachesContainer: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8" dir="rtl">
+    <div className="container mx-auto mt-0 px-4 py-8 md:mt-8" dir="rtl">
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">لیست بهترین اساتید آوانو</h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
+        <h1 className="mb-2 text-lg font-bold text-gray-900 md:text-2xl">لیست بهترین اساتید آوانو</h1>
+        <p className="mx-auto px-4 text-xs leading-6 text-gray-600 md:text-sm">
           با بهترین مربیان و اساتید آوانو آشنا شوید و مسیر ورزشی خود را با راهنمایی آن‌ها طی کنید
         </p>
       </div>
@@ -287,7 +301,9 @@ const CoachesContainer: React.FC = () => {
         </Button>
         {(searchQuery || hasActiveCourse) && (
           <Badge variant="secondary">
-            {(searchQuery ? 1 : 0) + (hasActiveCourse ? 1 : 0)} فیلتر فعال
+            {(searchQuery ? 1 : 0) + (hasActiveCourse ? 1 : 0)}
+            {' '}
+            فیلتر فعال
           </Badge>
         )}
       </div>
@@ -300,9 +316,9 @@ const CoachesContainer: React.FC = () => {
       )}
 
       {/* Main Layout */}
-      <div className="flex gap-8">
+      <div className="flex gap-4">
         {/* Desktop Sidebar */}
-        <div className="hidden lg:block w-80 shrink-0">
+        <div className="hidden w-80 shrink-0 lg:block">
           <div className="sticky top-24 rounded-lg border bg-white p-6 shadow-sm">
             <FilterSidebar />
           </div>
@@ -317,26 +333,28 @@ const CoachesContainer: React.FC = () => {
           {!isLoading && (
             <>
               {/* Coaches Grid */}
-              {allCoaches.length > 0 ? (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {allCoaches.map((coach, index) => (
-                    <CoachCard key={`${coach._id}-${index}`} coach={coach} />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-20 text-center">
-                  <User className="size-16 text-gray-300 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    هیچ استادی یافت نشد
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    لطفاً فیلترهای خود را تغییر دهید یا دوباره تلاش کنید
-                  </p>
-                  <Button variant="outline" onClick={clearFilters}>
-                    پاک کردن فیلترها
-                  </Button>
-                </div>
-              )}
+              {allCoaches.length > 0
+                ? (
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {[...allCoaches, ...allCoaches, ...allCoaches, ...allCoaches, ...allCoaches, ...allCoaches, ...allCoaches].map((coach, index) => (
+                        <CoachCard key={`${coach._id}-${index}`} coach={coach} />
+                      ))}
+                    </div>
+                  )
+                : (
+                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                      <User className="mb-4 size-16 text-gray-300" />
+                      <h3 className="mb-2 text-lg font-medium text-gray-900">
+                        هیچ استادی یافت نشد
+                      </h3>
+                      <p className="mb-4 text-gray-600">
+                        لطفاً فیلترهای خود را تغییر دهید یا دوباره تلاش کنید
+                      </p>
+                      <Button variant="outline" onClick={clearFilters}>
+                        پاک کردن فیلترها
+                      </Button>
+                    </div>
+                  )}
 
               {/* Load More Trigger */}
               {hasNextPage && (
