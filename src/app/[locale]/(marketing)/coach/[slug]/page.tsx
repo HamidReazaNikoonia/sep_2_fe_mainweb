@@ -8,5 +8,9 @@ type CoachPageProps = {
 export default async function CoachPage({ params }: CoachPageProps) {
   const { slug } = await params;
 
-  return <CoachSpecificContainer coachId={slug} />;
+  return (
+    <div className="min-h-svh bg-slate-100">
+      <CoachSpecificContainer coachId={slug} />
+    </div>
+  );
 }
