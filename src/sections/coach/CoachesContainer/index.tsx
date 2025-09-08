@@ -4,6 +4,7 @@
 'use client';
 
 import { CheckCircle2, Filter, Loader2, Search, User } from 'lucide-react';
+import Link from 'next/link';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useCoaches } from '@/API/coach/coach.hook';
 import CustomImage from '@/components/CustomImage';
@@ -31,13 +32,13 @@ const CoachCard: React.FC<{ coach: Coach }> = ({ coach }) => {
     <div className="group relative flex h-full min-h-[300px] cursor-pointer flex-col overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
       {/* Avatar Container */}
       <div className="relative flex flex-1 items-center justify-center p-6 pb-4">
-        <div className="relative size-20 overflow-hidden rounded-full ring-4 ring-gray-100 transition-all duration-300 group-hover:ring-8 group-hover:ring-green-200">
+        <div className="relative size-40   overflow-hidden rounded-full ring-4 ring-gray-100 transition-all duration-300 group-hover:ring-8 group-hover:ring-green-200 md:size-48">
           {coach.avatar?.file_name
             ? (
                 <CustomImage
                   fileName={coach.avatar.file_name}
                   alt={fullName}
-                  className="rounded-full transition-transform duration-300 group-hover:scale-110"
+                  className=" transition-transform duration-300 group-hover:scale-110"
                   containerClassName="w-full h-full"
                 />
               )
@@ -52,7 +53,7 @@ const CoachCard: React.FC<{ coach: Coach }> = ({ coach }) => {
       {/* Content */}
       <div className="flex flex-col items-center p-4 pt-2">
         {/* Name */}
-        <h3 className="mb-2 text-center text-lg font-bold text-gray-900 transition-colors duration-200 group-hover:text-pink-600">
+        <h3 className="mb-3 text-center text-lg font-bold text-gray-900 transition-colors duration-200 group-hover:text-pink-600">
           {fullName}
         </h3>
 
@@ -73,13 +74,15 @@ const CoachCard: React.FC<{ coach: Coach }> = ({ coach }) => {
         )}
 
         {/* View Profile Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-auto w-full border-pink-500 bg-white text-pink-600 transition-all duration-200 hover:bg-pink-500 hover:text-white group-hover:border-pink-600"
-        >
-          مشاهده پروفایل
-        </Button>
+        <Link className="w-full" href={`/coach/${coach?.id}`}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-auto w-full border-pink-500 bg-white text-pink-600 transition-all duration-200 hover:bg-pink-500 hover:text-white group-hover:border-pink-600"
+          >
+            مشاهده پروفایل
+          </Button>
+        </Link>
       </div>
 
       {/* Decorative gradient border on hover */}
