@@ -8,6 +8,7 @@ import HeroSwiperSection from '@/sections/course/HeroSwiperSection';
 // import CourseSessionListContainer from '@/sections/courseSession/CourseSessionListContainer';
 import CourseSessionListPage from '@/sections/courseSession/v2/CourseSessionList';
 import CourseSessionSwiperRow from '@/sections/home/v2/CourseSessionSwiperRow';
+import CourseDescriptionSection from '@/sections/home/CourseDescriptionSection';
 
 // type IPortfolioProps = {
 //   params: Promise<{ locale: string }>;
@@ -58,6 +59,10 @@ export default async function Portfolio() {
 
       <div className="">
         <HeroSwiperSection />
+      </div>
+
+      <div>
+        <CourseDescriptionSection />
       </div>
 
       {/* <div className=' container mx-auto my-28'>
