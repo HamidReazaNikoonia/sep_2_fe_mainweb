@@ -148,7 +148,68 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
   };
 
   return (
-    <div className=" mt-1 md:mt-12">
+    <div className="">
+
+      <div className='w-full'>
+        {/* Thumb Image */}
+        <div className='bg-white w-full relative py-8'>
+          
+          {/* Image with full width */}
+          <div className='w-full'>
+            <Image className='rounded-lg w-full' alt="" width={600} height={450} src={tumbnailImage} />
+          </div>
+
+          {/* Buttons Section - Absolute positioned over image */}
+          <div className='absolute top-8 left-4 bg-white rounded-lg shadow-lg p-4 max-w-sm'>
+            {/* Buttons */}
+            <div className='w-full flex flex-col justify-center items-center'>
+              {/* Price Section */}
+              <div className='flex w-full justify-between items-center border-2 border-green-600 border-dashed p-4 rounded-xl'>
+                <div className='flex flex-col items-start'>
+                  {price_discount ? (
+                    <>
+                      <div className='flex items-center'>
+                        <div className='text-sm md:text-lg text-gray-900 font-bold mr-2'>ریال</div>
+                        <div className='text-xl md:text-4xl text-gray-900'>{(price_discount).toLocaleString('ar-EG')}</div>
+                        <div className='ml-2 px-3 py-1 bg-[#cf741e] text-white text-xs md:text-sm rounded-full'>تخفیف ویژه</div>
+                      </div>
+                      <div className='flex items-center mt-1 relative'>
+                        <div className='text-sm text-gray-400 font-bold mr-2'>ریال</div>
+                        <div className='text-lg text-gray-400'>{(price_real).toLocaleString('ar-EG')}</div>
+                        {/* Custom diagonal line through the original price */}
+                        <div className="absolute top-1/2 inset-x-0 h-[1.5px] w-full -rotate-12 bg-red-500"></div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className='flex items-center text-gray-900'>
+                      <div className='text-lg font-bold mr-2'>ریال</div>
+                      <div className='text-4xl'>{(price_real).toLocaleString('ar-EG')}</div>
+                    </div>
+                  )}
+                </div>
+                <div className='text-sm md:text-xl text-gray-900'>قیمت</div>
+              </div>
+
+              {/* Buttons Section */}
+              <div className='flex flex-col space-y-2 mt-6 w-full justify-between items-center'>
+
+                <LoadingButton disabled={addToCartMutation.isPending} isLoading={addToCartMutation.isPending} onClick={attToBasketHandler} className="text-white flex justify-center items-center w-full pink-gradient-bg px-4 py-3 rounded mr-2 text-sm md:text-lg">
+                  ثبت نام
+                  <SquareArrowUpLeft className='ml-2' />
+                </LoadingButton>
+
+                <button type='button' className="bg-[#251f3e] text-white hover:opacity-80 w-full flex justify-center px-4 py-3 rounded mr-2 text-sm md:text-lg">
+                  افزودن به علاقه مندی ها
+                  <Heart className='ml-3' />
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+
       <div className="flex flex-col-reverse md:flex-row">
 
         {/* Left Side (Sticky Side Bar) */}
@@ -161,53 +222,9 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
           </div> */}
 
           <div className=' w-full flex justify-center items-center flex-col'>
-            {/* Buttons */}
-            <div className=' w-full flex flex-col justify-center items-center px-2'>
-              {/* Price Section */}
-              <div className='flex  w-full justify-between items-center border-2 border-green-600 border-dashed p-4 rounded-xl'>
-                <div className='flex flex-col items-start'>
-                  {price_discount ? (
-                    <>
-                      <div className='flex items-center'>
-                        <div className=' text-sm md:text-lg text-gray-900 font-bold mr-2'>ریال</div>
-                        <div className=' text-xl md:text-4xl text-gray-900'>{(price_discount).toLocaleString('ar-EG')}</div>
-                        <div className='ml-2 px-3 py-1 bg-[#cf741e] text-white text-xs md:text-sm rounded-full'>تخفیف ویژه</div>
-                      </div>
-                      <div className='flex items-center mt-1 relative'>
-                        <div className='text-sm text-gray-400 font-bold mr-2'>ریال</div>
-                        <div className='text-lg text-gray-400'>{(price_real).toLocaleString('ar-EG')}</div>
-                        {/* Custom diagonal line through the original price */}
-                        <div className="absolute top-1/2 inset-x-0 h-[1.5px] w-full -rotate-12 bg-red-500"></div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className='flex items-center text-gray-900'>
-                      <div className='text-lg  font-bold mr-2'>ریال</div>
-                      <div className='text-4xl'>{(price_real).toLocaleString('ar-EG')}</div>
-                    </div>
-                  )}
-                </div>
-                <div className='text-sm md:text-xl text-gray-900'>قیمت</div>
-              </div>
-
-              {/* Buttons Section */}
-              <div className='flex flex-col space-y-2 mt-6 w-full justify-between items-center'>
-
-                <LoadingButton disabled={addToCartMutation.isPending} isLoading={addToCartMutation.isPending} onClick={attToBasketHandler} className=" text-white  flex justify-center items-center w-full pink-gradient-bg px-4 py-3 rounded mr-2 text-sm md:text-lg">
-                  ثبت نام
-                  <SquareArrowUpLeft className='ml-2' />
-                </LoadingButton>
-
-                <button type='button' className="bg-[#251f3e] text-white hover:opacity-80 w-full flex justify-center px-4 py-3 rounded mr-2 text-sm md:text-lg">
-                  افزودن به علاقه مندی ها
-                  <Heart className='ml-3' />
-                </button>
-              </div>
-
-            </div>
 
             {/* Course Information */}
-            <div className='w-full text-xs md:text-sm text-white flex flex-col mt-4 px-4 test-gradient-bg rounded-lg py-5'>
+            <div className='w-full text-xs md:text-sm text-gray-900 flex flex-col mt-4 px-4 bg-white rounded-lg py-5'>
               {/* Item */}
               {/* <div className='flex justify-center items-center py-4 text-sm'>
 
@@ -241,7 +258,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
               <div className='flex justify-center items-center py-4'>
 
                 <div className='flex grow before_style_course_info'>
-                        <span>{formatDurationWithPersian(course_duration)}</span>
+                  <span>{formatDurationWithPersian(course_duration)}</span>
                 </div>
 
                 <div className='text-right'>
@@ -296,9 +313,9 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
             </div>
 
             {/* Course Information Second Card */}
-            <div className='w-full text-white flex flex-col mt-4 px-8 text-xs md:text-sm  test-gradient-bg rounded-lg py-5'>
+            <div className='w-full text-gray-900 flex flex-col mt-4 px-8 text-xs md:text-sm  bg-white rounded-lg py-5'>
               {/* Item */}
-              <div className="w-full flex justify-end items-center border-b border-cyan-100 py-4">
+              <div className="w-full flex justify-end items-center border-b border-gray-300 py-4">
 
                 <span>{createAtDateInJalaliFormat}</span>
                 <span className='ml-2'>   : تاریخ انتشار  </span>
@@ -306,7 +323,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
               </div>
 
               {/* Item */}
-              <div className="w-full flex justify-end items-center border-b border-cyan-100 py-4">
+              <div className="w-full flex justify-end items-center border-b border-gray-300 py-4">
                 <div className='flex justify-between w-1/5'>
                   {Array.from({ length: 5 }).map((_, index) => (
                     <Star
@@ -323,7 +340,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
               </div>
 
               {/* Item */}
-              <div className="w-full flex flex-col border-b border-cyan-100 py-4">
+              <div className="w-full flex flex-col border-b border-gray-300 py-4">
 
                 <div className='flex w-full justify-end'>
                   <span className='ml-2'>  دسته بندی  </span>
@@ -331,7 +348,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                 </div>
 
                 <div className='text-right text-xs mt-4'>
-                   {courseCategoryName}
+                  {courseCategoryName}
                 </div>
               </div>
 
@@ -343,7 +360,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                   <Link size={18} className="ml-2" />
                 </div>
 
-                <div className='text-right text-xs p-2 items-center mt-4 flex justify-between border border-cyan-100 rounded-md'>
+                <div className='text-right text-xs p-2 items-center mt-4 flex justify-between border border-gray-300 rounded-md'>
                   <span>
                     -
                   </span>
@@ -383,10 +400,6 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
         {/* Rigth Side */}
         <div className="md:w-2/3">
           <div className='flex flex-col justify-center items-center px-0 md:px-8'>
-            {/* Thumb Image */}
-            <div className='test-gradient-bg w-full flex justify-center items-center py-8 rounded-lg'>
-              <Image className=' rounded-lg' alt="" width={700} height={450} src={tumbnailImage} />
-            </div>
 
             {/* courseCharacteristics */}
             <div className='w-full'>
@@ -394,12 +407,12 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
             </div>
 
             {/* Video Sample Gallery */}
-            <div className='w-full test-gradient-bg px-6 py-10 rounded-t-lg shadow-lg'>
+            <div className='w-full bg-white px-6 py-10 rounded-t-lg shadow-lg'>
               <VideoSampleGallery sampleMedia={sample_media} />
             </div>
 
             {/* Course Details information */}
-            <div className='w-full test-gradient-bg px-6 py-10 rounded-b-lg'>
+            <div className='w-full bg-white px-6 py-10 rounded-b-lg'>
               <CourseDetails courseDescriptionLong={description_long} courseDescriptionShort={description} />
             </div>
 
@@ -436,6 +449,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
         {/* Comment Section */}
         {/* <CommentLayout type="course" productId={dataFromServer._id} /> */}
       </div>
+    </div>
     </div>
   );
 }

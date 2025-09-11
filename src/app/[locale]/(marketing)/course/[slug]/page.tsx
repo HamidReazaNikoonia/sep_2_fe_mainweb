@@ -159,14 +159,14 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
 
   return (
     <>
-      <div className="overflow-hidden primary-gradient-bg text-white pt-16 min-h-screen">
+      <div className="overflow-hidden blue-gradient-bg text-white pt-16 min-h-screen">
 
         {/* heaser title */}
         <div>
           <CoursePageHeader courseCategory={productsData.course_category[0]?.name || ''} title={productsData.title} />
         </div>
 
-        <div className="container mx-auto" id="StickySidebarWraper">
+        <div className="" id="StickySidebarWraper">
           <StickySidebarWraper dataFromServer={productsData} />
         </div>
 

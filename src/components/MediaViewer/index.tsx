@@ -48,7 +48,7 @@ const MediaViewer: React.FC<MediaViewerProps> = ({
   };
 
   if (!mediaSrc) {
-    return <div className="p-4 text-center text-gray-500">No media source provided</div>;
+    return <div className="p-4 text-center text-gray-700">فایل مدیا وجود ندارد</div>;
   }
 
   const renderMedia = (isFullscreenMode = false) => {
@@ -87,7 +87,7 @@ const MediaViewer: React.FC<MediaViewerProps> = ({
           {enableFullscreen && !isFullscreenMode && (
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 transition-colors hover:bg-opacity-20">
               <div className="rounded-full bg-black bg-opacity-50 p-3 opacity-0 transition-opacity hover:opacity-100">
-                <svg className="size-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="size-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                 </svg>
               </div>
@@ -118,7 +118,7 @@ const MediaViewer: React.FC<MediaViewerProps> = ({
           {enableFullscreen && !isFullscreenMode && (
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 transition-colors hover:bg-opacity-20">
               <div className="rounded-full bg-black bg-opacity-50 p-3 opacity-0 transition-opacity hover:opacity-100">
-                <svg className="size-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="size-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                 </svg>
               </div>
@@ -144,7 +144,7 @@ const MediaViewer: React.FC<MediaViewerProps> = ({
                 onClick={closeFullscreen}
                 className="absolute right-4 top-4 z-50 rounded-full bg-black bg-opacity-50 p-2 transition-colors hover:bg-opacity-75"
               >
-                <svg className="size-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="size-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -161,7 +161,7 @@ const MediaViewer: React.FC<MediaViewerProps> = ({
   }
 
   return (
-    <div className="p-4 text-center text-gray-300">
+    <div className="p-4 text-center text-gray-500">
       این فایل پشتیبانی نمی شود:
       {' '}
       {mediaType}
