@@ -12,19 +12,19 @@ import CourseSessionListWithFiltersAndPagination from '@/components/List/CourseS
 import CourseSessionCardItem from '@/components/v2/CourseSessionCardItem';
 
 const sampleProduct = {
-  id: "number",
+  id: 'number',
   title: 'دوره مقدماتی وردپرس',
-  subtitle: "توضیحات محصول در این قسمت قرار میگیرد",
-  meta_title: "",
-  meta_description: "",
-  slug: "string",
-  description: "توضیحات",
-  brand: "string",
+  subtitle: 'توضیحات محصول در این قسمت قرار میگیرد',
+  meta_title: '',
+  meta_description: '',
+  slug: 'string',
+  description: 'توضیحات',
+  brand: 'string',
   average_rating: 3,
   countInStock: 20,
   is_available: true,
   status: true,
-  qr_code: "string",
+  qr_code: 'string',
   price: 50000,
 }
 
@@ -146,7 +146,6 @@ const CourseSessionListPage = () => {
         useDataHook={useCoursesSessionData}
         renderItem={renderCourseItem}
         filterConfig={filterConfig}
-        title="فهرست کلاس‌ های آموزشی"
         queryKey="courses-list"
         className="bg-gray-200"
         itemClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 md:gap-y-6"

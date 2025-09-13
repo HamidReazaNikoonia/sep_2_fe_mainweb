@@ -9,6 +9,7 @@ import HeroSwiperSection from '@/sections/course/HeroSwiperSection';
 import CourseSessionListPage from '@/sections/courseSession/v2/CourseSessionList';
 import CourseSessionSwiperRow from '@/sections/home/v2/CourseSessionSwiperRow';
 import CourseDescriptionSection from '@/sections/home/CourseDescriptionSection';
+import CourseSessionCategorySection from '@/sections/courseSession/v2/CourseSessionCategorySection';
 
 // type IPortfolioProps = {
 //   params: Promise<{ locale: string }>;
@@ -72,12 +73,16 @@ export default async function Portfolio() {
         <CourseSessionSwiperRow />
       </div>
 
+      <div className="w-full">
+        <CourseSessionCategorySection />
+      </div>
+
       <div className="mb-24">
 
         {/* <CourseList data={coursesData.data} /> */}
         <div>
           {/* <CourseSessionsSection courseSessions={coursesData.data.courses} /> */}
-          <main className="mt-16 py-8">
+          <main className="">
             <CourseSessionListPage />
           </main>
         </div>
