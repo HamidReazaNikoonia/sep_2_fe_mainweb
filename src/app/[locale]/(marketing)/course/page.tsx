@@ -3,6 +3,7 @@ import { SERVER_API_URL } from '@/API/config';
 // import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import HeroSwiperSection from '@/sections/course/HeroSwiperSection';
+import CourseDescriptionSection2 from '@/sections/course/v2/CourseDescriptionSection2';
 import CourseListPage from '@/sections/course/v2/CourseList';
 
 // type IPortfolioProps = {
@@ -54,6 +55,10 @@ export default async function Portfolio() {
 
       <div className="">
         <HeroSwiperSection />
+      </div>
+
+      <div className='w-full'>
+        <CourseDescriptionSection2 />
       </div>
 
       {/* <div className=' container mx-auto my-28'>
