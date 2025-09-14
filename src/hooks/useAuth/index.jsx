@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useCartStore } from '@/_store/Cart';
 import { getUserProfileRequest } from '@/API/auth';
 
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME || 'sepah_2';
@@ -110,6 +111,9 @@ const useAuth = () => {
     // Reset profile states
     setIsUserCompleteProfile(false);
     setUserProfileData(null);
+
+    // Reset the cart when logging out
+    useCartStore.getState().resetCart();
   };
 
   // Add the fetchUserFromServer method

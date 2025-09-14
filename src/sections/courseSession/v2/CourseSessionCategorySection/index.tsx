@@ -141,7 +141,7 @@ const CourseSessionCategorySection: React.FC = () => {
               </ul>
 
               {/* Image */}
-              <div className="mb-6 w-full flex justify-end">
+              <div className="mb-6 flex w-full justify-end">
                 <img
                   src={card.image}
                   alt={card.title}
