@@ -239,10 +239,10 @@ export default function AuthComponent() {
 
   if (showSetProfileInfo) {
     return (
-      <div className="flex h-screen w-full bg-gray-900 text-white">
+      <div className="flex h-screen w-full bg-gray-100 text-gray-700">
         <div className="mx-auto flex w-full  max-w-xl flex-col items-center justify-center px-8 md:px-0">
           <div className="text-center">
-            <h2 className="mb-8 text-sm font-extrabold text-white md:text-xl">
+            <h2 className="mb-8 text-sm font-extrabold text-gray-700 md:text-xl">
               نام و نام خانوادگی خود را وارد کنید
             </h2>
           </div>
@@ -255,7 +255,7 @@ export default function AuthComponent() {
               value={name}
               onChange={e => setName(e.target.value)}
               required
-              className="mb-4 rounded-md border-gray-700 bg-gray-800 px-4 py-2 text-xs text-white placeholder:text-gray-400 md:text-sm"
+              className="mb-4 rounded-md border-gray-900 bg-gray-300 px-4 py-2 text-xs text-gray-800 placeholder:text-gray-600 md:text-sm"
             />
             <input
               type="text"
@@ -263,7 +263,7 @@ export default function AuthComponent() {
               value={family}
               onChange={e => setFamily(e.target.value)}
               required
-              className="mb-4 rounded-md border-gray-700 bg-gray-800 px-4 py-2 text-xs text-white placeholder:text-gray-400 md:text-sm"
+              className="mb-4 rounded-md border-gray-900 bg-gray-300 px-4 py-2 text-xs text-gray-800 placeholder:text-gray-600 md:text-sm"
             />
 
             <div className="relative mb-4">
@@ -271,7 +271,7 @@ export default function AuthComponent() {
                 value={gender}
                 onChange={e => setGender(e.target.value)}
                 required
-                className="w-full appearance-none rounded-md border-gray-700 bg-gray-800 px-4 py-2 pr-10 text-xs text-white placeholder:text-gray-400 md:text-sm"
+                className="w-full appearance-none rounded-md border-gray-700 bg-gray-300 px-4 py-2 pr-10 text-xs text-gray-800 placeholder:text-gray-600 md:text-sm"
               >
                 <option style={{ padding: '10px 0' }} value="" disabled>جنسیت خود را انتخاب کنید</option>
                 <option value="W">زن</option>
