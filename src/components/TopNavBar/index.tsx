@@ -235,7 +235,7 @@ const Navbar = () => {
                   {isAuthenticated && (
                     <li className="hover:text-gray-300 ">
                       <span className="pink-gradient-bg rounded  px-2.5 py-1 text-white">
-                        <Link href="/profile">پنل کاربری شما</Link>
+                        <Link href="/dashboard">پنل کاربری شما</Link>
 
                       </span>
                     </li>

@@ -64,7 +64,7 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
             {' '}
             {user?.last_name}
           </h2>
-          <p className="text-right text-xs text-gray-500 md:text-sm">خوش آمدید</p>
+          <p className="mt-1 text-right text-xs text-gray-500 md:text-sm">خوش آمدید</p>
         </div>
       </div>
 

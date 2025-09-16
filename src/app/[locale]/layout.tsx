@@ -71,17 +71,16 @@ export default async function RootLayout(props: {
     <html lang={locale}>
       <body className={myFont.className} suppressHydrationWarning>
         <ReactQueryProvider>
-        <NextIntlClientProvider
-          locale={locale}
-          messages={messages}
-        >
-        <Toaster position="bottom-center" />
-          {props.children}
+          <NextIntlClientProvider
+            locale={locale}
+            messages={messages}
+          >
+            <Toaster toastOptions={{duration: 4000, className: 'toast-notification'}} position="bottom-center" />
+            {props.children}
 
-          {/* <DemoBadge /> */}
+            {/* <DemoBadge /> */}
 
-         
-        </NextIntlClientProvider>
+          </NextIntlClientProvider>
         </ReactQueryProvider>
       </body>
     </html>

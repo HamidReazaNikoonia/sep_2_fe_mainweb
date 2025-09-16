@@ -495,7 +495,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                       )}
                 </div>
               </div>
-              <div className="flex flex-col pb-6">
+              <div className="flex flex-col items-center pb-6">
                 <label className="mb-2 text-xs text-gray-500 md:text-sm">تصویر پروفایل</label>
                 <input
                   type="file"
@@ -507,7 +507,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center justify-center rounded-md border border-gray-300 p-2 text-xs hover:bg-gray-50"
+                  className="flex max-w-64 items-center justify-center rounded-md border border-gray-300 p-2 text-xs hover:bg-gray-50"
                 >
                   <Upload className="ml-2 size-4" />
                   انتخاب تصویر
@@ -648,7 +648,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     {/* Personal Image Preview */}
                     {personalImagePreview && (
                       <div className="mt-4">
-                        <img src={personalImagePreview} alt="Personal Image" className="size-full max-h-96 rounded-lg object-cover" />
+                        <img src={personalImagePreview} alt="Personal Image" className="size-full max-h-32 rounded-lg object-cover" />
                       </div>
                     )}
                   </div>
@@ -748,7 +748,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           <Card className="mt-8 w-full max-w-5xl shadow-lg">
             <CardContent dir="rtl" className="p-6">
               <h2 className="mb-6 text-xl font-semibold">اطلاعات کاربری</h2>
-              <div className="flex w-full flex-col gap-4">
+              <div className="flex w-full flex-col gap-4 pb-4">
                 <div className="flex w-full flex-col gap-4 md:flex-row">
                   <div className="flex-1">
                     <label className="mb-2 block text-xs text-gray-500 md:text-sm">استان</label>
@@ -814,7 +814,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 <div className="mt-2 w-full md:mt-4">
                   <div className="flex flex-col gap-4 md:flex-row">
                     <div className="flex-1">
-                      <label className="mb-2 block text-xs text-gray-500 md:text-sm">کد پستی</label>
+                      <label className="mb-2 block text-xs text-gray-500 md:text-sm">کد پستی *</label>
                       <input
                         type="text"
                         name="postalCode"
