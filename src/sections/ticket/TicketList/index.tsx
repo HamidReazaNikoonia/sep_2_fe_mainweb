@@ -4,7 +4,7 @@
 import type { Ticket, TicketFilterParams } from '@/API/ticket/types';
 // import { format } from 'date-fns';
 // import { fa } from 'date-fns/locale';
-import { CheckCircle, ChevronLeft, ChevronRight, Clock, MessageCircle, X } from 'lucide-react';
+import { CheckCircle, ChevronLeft, ChevronRight, Clock, MessageCircle, X, Plus } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 
 // Status colors and icons
 const getStatusConfig = (status: Ticket['status']) => {
@@ -224,6 +225,18 @@ export default function TicketList({ onTicketSelect, filters = {} }: TicketListP
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+
+      <div className="flex justify-center md:justify-start">
+        <Link href="/dashboard/ticket/create">
+          <div className="rounded-lg border bg-blue-500 px-4 py-2 text-sm text-white">  
+            <div className="flex items-center gap-2">
+              <Plus className="size-4" />
+              <span>ارسال پیام جدید</span>
+            </div>
+          </div>
+        </Link>
       </div>
 
       {/* Tickets List */}
