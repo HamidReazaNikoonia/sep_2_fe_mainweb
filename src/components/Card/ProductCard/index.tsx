@@ -99,7 +99,7 @@ export default function ProductCard({ product }: { product: IProduct }) {
     if (isAuthenticated) {
       console.log('Add product to cart in database');
       console.log({product})
-      mutation.mutate({ productId: product._id, quantity: 1 });
+      mutation.mutate({ productId: product?.id, quantity: 1 });
     } else {
       // Add product to cart in local storage
       addToCartInLocalStorage(product);
@@ -110,7 +110,7 @@ export default function ProductCard({ product }: { product: IProduct }) {
   }
 
   return (
-    <Link legacyBehavior href={product?._id ? `/product/${product?._id}` : '/product/674b5414a7fc7c43af15f67a'} >
+    <Link href={product?.id ? `/product/${product?.id}` : '/product/674b5414a7fc7c43af15f67a'} >
       <div className="relative w-full overflow-hidden rounded-lg bg-white shadow-md cursor-pointer hover:opacity-80">
         <div className=' relative w-full'>
           <Image width="256" height="256" className=" rounded-t-lg " src={product?.thumbnail?.file_name ? `${NEXT_PUBLIC_SERVER_FILES_URL}/${product?.thumbnail?.file_name}` : sampleImage} alt={product.title} />
@@ -146,10 +146,10 @@ export default function ProductCard({ product }: { product: IProduct }) {
             <div className='border-2 border-slate-300 text-center py-2 border-dashed w-full'>
               <div className="flex justify-center text-lg font-bold items-center text-slate-900">
                 {product?.is_available && <span className='mr-1 text-sm'>تومان</span>}
-                {product?.is_available ? (<span>{product.price.toLocaleString('ar-EG')}</span>) : 'ناموجود'}
+                {product?.is_available ? (<span>{product?.price_real?.toLocaleString('ar-EG')}</span>) : 'ناموجود'}
               </div>
               {(product?.discountable?.status && product?.is_available) && (<span className=" inline-block text-sm text-slate-900 line-through">
-                {calculateDiscountByPercentage(product.price, product?.discountable.percent).toLocaleString('ar-EG')}
+                {calculateDiscountByPercentage(product.price_real, product?.discountable.percent).toLocaleString('ar-EG')}
               </span>)}
 
             </div>

@@ -314,7 +314,7 @@ export default function ShoppingCartPage() {
                           <span>
                             <div dir="rtl" className="flex items-center">
                               {filterPriceNumber(totalPriceValue)}
-                              <span className="text-sm mr-1">تومان</span>
+                              <span className="text-sm mr-1">ریال</span>
                             </div>
                           </span>
                           <span className="">جمع کل</span>
@@ -323,7 +323,7 @@ export default function ShoppingCartPage() {
                           <span>
                             <div dir="rtl" className="flex items-center">
                               {filterPriceNumber(tax)}
-                              <span className="text-sm mr-1">تومان</span>
+                              <span className="text-sm mr-1">ریال</span>
                             </div>
                           </span>
                           <span className=""> مالیات</span>
@@ -341,7 +341,7 @@ export default function ShoppingCartPage() {
                             <span>
                               <div dir="rtl" className="flex items-center">
                                 {filterPriceNumber(total)}
-                                <span className="text-sm mr-1">تومان</span>
+                                <span className="text-sm mr-1">ریال</span>
                               </div>
                             </span>
                             <span>جمع کل</span>
