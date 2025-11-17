@@ -1,7 +1,8 @@
+/* eslint-disable style/multiline-ternary */
 'use client';
 
 import clsx from 'clsx';
-import { AlertCircle, Check, Loader2, Tag, X } from 'lucide-react';
+import { AlertCircle, Check, Loader2, Tag } from 'lucide-react';
 import { useState } from 'react';
 
 type ValidCoupon = {
@@ -40,13 +41,19 @@ export default function OrderCoupon({ couponInfo, onApplyCoupon, isApplying = fa
       return;
     }
 
+    // INSERT_YOUR_CODE
+    if (couponCode.trim().length <= 5) {
+      setInputError('کد تخفیف باید بیش از ۵ حرف باشد');
+      return;
+    }
+
     // Check if coupon is already applied
     const isAlreadyApplied = couponInfo?.validCoupons?.some(
-      c => c.code.toLowerCase() === couponCode.toLowerCase()
+      c => c.code.toLowerCase() === couponCode.toLowerCase(),
     );
 
     if (isAlreadyApplied) {
-      setInputError('این کد تخفیف قبلا اعمال شده است');
+      setInputError('این کد تخفیف در لیست وجود دارد  ');
       return;
     }
 
@@ -82,7 +89,7 @@ export default function OrderCoupon({ couponInfo, onApplyCoupon, isApplying = fa
           <input
             type="text"
             value={couponCode}
-            onChange={(e) => handleInputChange(e.target.value.toUpperCase())}
+            onChange={e => handleInputChange(e.target.value.toUpperCase())}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleApplyCoupon();
@@ -94,7 +101,7 @@ export default function OrderCoupon({ couponInfo, onApplyCoupon, isApplying = fa
               {
                 'border-red-500 focus:ring-red-200': inputError,
                 'border-gray-300 focus:border-purple-500 focus:ring-purple-200': !inputError,
-              }
+              },
             )}
             disabled={isApplying}
           />
@@ -105,95 +112,101 @@ export default function OrderCoupon({ couponInfo, onApplyCoupon, isApplying = fa
             className={clsx(
               'flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 font-semibold text-white transition-colors',
               'disabled:cursor-not-allowed disabled:opacity-50',
-              'bg-purple-600 hover:bg-purple-700'
+              'pink-gradient-bg hover:bg-purple-700',
             )}
           >
-            {isApplying ? (
-              <>
-                <Loader2 className="animate-spin" size={18} />
-                <span>در حال بررسی...</span>
-              </>
-            ) : (
-              <span>اعمال کد</span>
-            )}
+            {isApplying
+              ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    <span>در حال بررسی...</span>
+                  </>
+                )
+              : (
+                  <span>اعمال کد</span>
+                )}
           </button>
         </div>
         {inputError && (
-          <p className="mt-2 text-sm text-red-500 text-right">{inputError}</p>
+          <p className="mt-2 text-right text-sm text-red-500">{inputError}</p>
         )}
       </div>
 
       {/* Applied Coupons Display */}
-      {(couponInfo?.validCoupons && couponInfo.validCoupons.length > 0) || 
-       (couponInfo?.invalidCoupons && couponInfo.invalidCoupons.length > 0) ? (
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium text-gray-700 text-right">کدهای اعمال شده:</h4>
+      {(couponInfo?.validCoupons && couponInfo.validCoupons.length > 0)
+      || (couponInfo?.invalidCoupons && couponInfo.invalidCoupons.length > 0) ? (
+            <div className="space-y-3">
+              <h4 className="text-right text-sm font-medium text-gray-700">کدهای اعمال شده:</h4>
 
-          {/* Valid Coupons */}
-          {couponInfo?.validCoupons?.map((coupon) => (
-            <div
-              key={coupon.id}
-              className="flex items-center justify-between rounded-lg border-2 border-green-500 bg-green-50 p-4"
-            >
-              <div className="flex items-center gap-3">
-                <div className="rounded-full bg-green-500 p-1">
-                  <Check className="text-white" size={16} />
+              {/* Valid Coupons */}
+              {couponInfo?.validCoupons?.map(coupon => (
+                <div
+                  key={coupon.id}
+                  className="flex items-center justify-between rounded-lg border-2 border-green-500 bg-green-50 p-4"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-full bg-green-500 p-1">
+                      <Check className="text-white" size={16} />
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-green-800 md:text-base" style={{ letterSpacing: '1px' }}>
+                        {coupon.code}
+                      </p>
+                      <p className="text-xs text-green-600 md:text-sm">
+                        {formatDiscount(coupon)}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="rounded-full bg-green-600 px-3 py-1 text-xs font-medium text-white">
+                    معتبر
+                  </span>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-green-800" style={{ letterSpacing: '1px' }}>
-                    {coupon.code}
-                  </p>
-                  <p className="text-sm text-green-600">
-                    {formatDiscount(coupon)}
-                  </p>
-                </div>
-              </div>
-              <span className="rounded-full bg-green-600 px-3 py-1 text-xs font-medium text-white">
-                معتبر
-              </span>
-            </div>
-          ))}
+              ))}
 
-          {/* Invalid Coupons */}
-          {couponInfo?.invalidCoupons?.map((coupon, index) => (
-            <div
-              key={`${coupon.couponId}-${index}`}
-              className="flex items-center justify-between rounded-lg border-2 border-red-500 bg-red-50 p-4"
-            >
-              <div className="flex items-center gap-3">
-                <div className="rounded-full bg-red-500 p-1">
-                  <AlertCircle className="text-white" size={16} />
+              {/* Invalid Coupons */}
+              {couponInfo?.invalidCoupons?.map((coupon, index) => (
+                <div
+                  key={`${coupon.couponId}-${index}`}
+                  className="flex items-center justify-between rounded-lg border-2 border-red-500 bg-red-50 p-4 opacity-60"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-full bg-red-500 p-1">
+                      <AlertCircle className="text-white" size={16} />
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-red-800 md:text-base" style={{ letterSpacing: '1px' }}>
+                        {coupon.code}
+                      </p>
+                      <p className="text-xs text-red-600 md:text-sm">
+                        {coupon.reason || 'کد تخفیف نامعتبر است'}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="rounded-full bg-red-600 px-3 py-1 text-xs font-medium text-white">
+                    نامعتبر
+                  </span>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-red-800" style={{ letterSpacing: '1px' }}>
-                    {coupon.code}
-                  </p>
-                  <p className="text-sm text-red-600">
-                    {coupon.reason || 'کد تخفیف نامعتبر است'}
-                  </p>
-                </div>
-              </div>
-              <span className="rounded-full bg-red-600 px-3 py-1 text-xs font-medium text-white">
-                نامعتبر
-              </span>
-            </div>
-          ))}
+              ))}
 
-          {/* Total Discount Display */}
-          {couponInfo?.totalDiscount > 0 && (
-            <div className="mt-4 rounded-lg bg-purple-50 p-4 border-2 border-purple-300">
-              <div className="flex items-center justify-between text-right">
-                <span className="text-lg font-bold text-purple-800">
-                  {couponInfo.totalDiscount.toLocaleString('fa-IR')} ریال
-                </span>
-                <span className="text-sm font-medium text-purple-700">
-                  مجموع تخفیف:
-                </span>
-              </div>
+              {/* Total Discount Display */}
+              {couponInfo?.totalDiscount > 0 && (
+                <div dir="rtl" className="mt-4 rounded-lg border-2 border-purple-300 bg-purple-50 p-4">
+                  <div className="flex items-center justify-between text-right">
+
+                    <span className="text-sm font-medium text-purple-700">
+                      مجموع تخفیف:
+                    </span>
+
+                    <span className="text-base font-bold text-purple-800 md:text-lg">
+                      {couponInfo.totalDiscount.toLocaleString('fa-IR')}
+                      {' '}
+                      ریال
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      ) : null}
+          ) : null}
     </div>
   );
 }
