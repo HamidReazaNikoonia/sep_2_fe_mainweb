@@ -186,23 +186,23 @@ const ProgramGrid = ({
         )}
 
         <div className="flex items-center space-x-4 space-x-reverse">
-          {program.coach.avatar
+          {program?.coach?.avatar
             ? (
                 <img
-                  src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${program.coach.avatar.file_name}`}
-                  alt={`${program.coach.first_name} ${program.coach.last_name}`}
+                  src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${program?.coach?.avatar?.file_name}`}
+                  alt={`${program?.coach?.first_name} ${program?.coach?.last_name}`}
                   className="size-20 md:size-28 rounded-full border-4 border-white/30 object-cover"
                 />
               )
             : (
                 <div className="size-20 md:size-28 rounded-full border-4 border-white/30 bg-white/20 flex items-center justify-center text-2xl font-bold">
-                  {program.coach.first_name.charAt(0)}
+                  {program?.coach?.first_name?.charAt(0)}
                 </div>
               )}
 
           <div className="flex-1">
             <h3 className=" text-lg md:text-xl font-bold">
-              {`${program.coach.first_name} ${program.coach.last_name}`}
+              {`${program?.coach?.first_name} ${program?.coach?.last_name}`}
             </h3>
             {/* <div className="flex items-center space-x-2 space-x-reverse mt-2">
               <div className="flex">
@@ -219,11 +219,11 @@ const ProgramGrid = ({
               variant="secondary"
               className="bg-white/20 text-white text-xs border-white/30 mb-2"
             >
-              {program.program_type === 'ON-SITE' ? '🏢 حضوری' : '💻 آنلاین'}
+              {program?.program_type === 'ON-SITE' ? '🏢 حضوری' : '💻 آنلاین'}
             </Badge>
             <div className="flex text-xs md:text-sm items-center text-white/90">
               <Users className="size-4  ml-1" />
-              {program.max_member_accept}
+              {program?.max_member_accept}
               {' '}
               نفر
             </div>

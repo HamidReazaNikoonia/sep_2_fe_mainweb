@@ -1,6 +1,6 @@
 import { IProduct } from '@/types/Product';
 
-import {SERVER_API_URL, SERVER_API_TOKEN} from '../../config';
+import {SERVER_API_URL, SERVER_API_TOKEN, getAuthToken} from '../../config';
 
 const API_BASE_URL = SERVER_API_URL;
 const API_TOKEN = SERVER_API_TOKEN;
@@ -16,9 +16,9 @@ async function submitCartToCreateOrder({cartId, shippingAddress}: {cartId: strin
   const options = {
     method: "POST",
     headers: {
-      accept: "application/json",
+      "accept": "application/json",
       'Content-Type': 'application/json',
-      Authorization:
+      "Authorization":
         `Bearer ${API_TOKEN}`,
     },
     body: JSON.stringify({shippingAddress, cartId})
@@ -34,6 +34,39 @@ async function submitCartToCreateOrder({cartId, shippingAddress}: {cartId: strin
   return response;
 }
 
+
+async function calculateOrderSummary({cartId, couponCodes}: {cartId: string, couponCodes?: string[]}) {
+  const requestBody: {
+    cartId: string;
+    couponCodes?: string[];
+  } = {
+    cartId,
+  };
+
+  if (couponCodes?.length) {
+    requestBody.couponCodes = couponCodes;
+  }
+
+  const options = {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization':
+        `Bearer ${getAuthToken() || ''}`,
+    },
+    body: JSON.stringify(requestBody)
+  };
+
+  const response = fetch(
+    `${API_BASE_URL}/order/calculate-order-summary`,
+    options
+  )
+    .then((response) => response.json())
+    .catch((err) => console.error(err));
+
+  return response;
+}
 
 
 // async function getProducts(params: FilterParams = {}): Promise<ProductsResponse> {
@@ -122,6 +155,10 @@ export async function submitCartToCreateOrderRequest(body: {cartId: string, ship
   return data;
 }
 
+export async function calculateOrderSummaryRequest({ cartId, couponCodes }: { cartId: string; couponCodes?: string[] }) {
+  const data = await calculateOrderSummary({cartId, couponCodes});
+  return data;
+}
 
 
 // export async function getCommentsRequest({page, productId}) {
