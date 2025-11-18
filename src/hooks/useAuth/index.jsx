@@ -131,6 +131,7 @@ const useAuth = () => {
       queryKey: ['profile', user.id],
       queryFn: () => getUserProfileRequest({ userId: user.id }),
       staleTime: 0, // Ensure we get fresh data
+      gcTime: 0,
     });
 
     if (result?.profile) {
