@@ -15,14 +15,18 @@ let iranCity = require('iran-city');
 
 const AddressSelector: React.FC<{
   isAddressDataExist: boolean;
+  dir?: 'ltr' | 'rtl';
   addresses: AddressResponse[]
   selectedAddress: AddressResponse | null
   onSelectAddress: (address: Address) => void
   onSubmitAddressForm: (address: Address) => void
-}> = ({ addresses, selectedAddress, onSelectAddress, isAddressDataExist, onSubmitAddressForm }) => {
+  isShowModeCase?: boolean; // New prop
+}> = ({ addresses, selectedAddress, onSelectAddress, isAddressDataExist, onSubmitAddressForm, isShowModeCase = false, dir = 'ltr' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [states, setStates] = useState<string[]>([]);
+  const [isInShowMode, setIsInShowMode] = useState(isShowModeCase); // New state to track current mode
+
   const [addressState, setaddressState] = useState({
     city: 8,
     state: '301',
@@ -40,6 +44,9 @@ const AddressSelector: React.FC<{
 
 
   const AllProvince = iranCity.allProvinces();
+
+
+  console.log({ selectedAddress: selectedAddress })
 
 
   if (!isAddressDataExist) {
@@ -116,59 +123,80 @@ const AddressSelector: React.FC<{
   }
 
   return (
-    <div className="flex flex-col justify-center">
-      <div onClick={() => setShowModal(true)} className="flex items-center align-middle self-end space-x-2 text-purple-800 cursor-pointer hover:text-blue-600 transition-colors duration-200">
-        <span className="font-semibold text-xs"> آدرس جدید</span>
-        <div className="w-5 h-5 bg-purple-800 rounded-full">
-          <Plus color="white" className="w-5 h-5 p-[2px]" />
-        </div>
-      </div>
-
-
-      <div dir="rtl" className="relative mt-3">
-
-        <button
-          dir="rtl"
-          disabled={addresses?.length === 0}
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full p-3 text-right bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-
-          {selectedAddress ? (
-            <div className="text-xs text-gray-600 leading-5">
-              <p className=" text-sm text-gray-900 mb-1">{selectedAddress?.billingAddress?.title}</p>
-              <p>{selectedAddress?.billingAddress?.state && findCityName(selectedAddress?.billingAddress?.state).name} - {selectedAddress?.billingAddress?.city && findCityName(selectedAddress?.billingAddress?.state).province_name}</p>
-              <p style={{maxWidth: '90%'}} className="pl-4 text-gray-500">{selectedAddress?.billingAddress?.addressLine1}</p>
-
-              <p className="text-[11px] text-gray-600">{`کد پستی: ${selectedAddress?.billingAddress?.postalCode}`}</p>
-            </div>
-          ) : (
-            <p className="text-gray-500">
-              {addresses?.length === 0 ? 'آدرس جدید وارد کنید' : 'آدرس انتخاب کنید'}
-            </p>
-          )}
-          <ChevronDown className="absolute left-3 top-1/2 transform -translate-y-1/2" />
-        </button>
-        {isOpen && (
-          <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
-            {addresses.map((address) => (
-              <button
-                key={address._id}
-                onClick={() => {
-                  onSelectAddress(address)
-                  setIsOpen(false)
-                }}
-                className="w-full p-3 text-right  hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-              >
-                <p className="text-sm text-gray-900">{address?.billingAddress?.title}</p>
-                <p className="text-xs text-gray-600 leading-5">{address?.billingAddress?.addressLine1}</p>
-                <p className="text-[10px] mt-1 text-gray-600">{`${findCityName(address?.billingAddress?.state).name}, ${findCityName(address?.billingAddress?.state).province_name} ${address?.billingAddress?.postalCode}`}</p>
-              </button>
-            ))}
+    <div dir={dir} className="flex flex-col justify-center">
+      {/* Show new address button only when NOT in showCase mode */}
+      {!(isInShowMode && selectedAddress) && (
+        <div onClick={() => setShowModal(true)} className="flex items-center align-middle self-end space-x-2 text-purple-800 cursor-pointer hover:text-blue-600 transition-colors duration-200">
+          <span className="font-semibold text-xs"> آدرس جدید</span>
+          <div className="w-5 h-5 bg-purple-800 rounded-full">
+            <Plus color="white" className="w-5 h-5 p-[2px]" />
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
+      {/* Show mode UI */}
+      {isInShowMode && selectedAddress ? (
+        <div className="bg-white border border-gray-300 rounded-lg p-4 shadow-sm mt-3">
+          <div dir="rtl" className="text-xs text-gray-600 leading-5">
+            <div className="flex justify-between items-start mb-2">
+              <p className="text-sm text-gray-900 font-semibold">{selectedAddress?.billingAddress?.title}</p>
+              <button
+                onClick={() => setIsInShowMode(false)}
+                className="text-purple-600 hover:text-purple-800 text-xs font-medium"
+              >
+                ویرایش
+              </button>
+            </div>
+            <p>{selectedAddress?.billingAddress?.state && findCityName(selectedAddress?.billingAddress?.state).name} - {selectedAddress?.billingAddress?.city && findCityName(selectedAddress?.billingAddress?.state).province_name}</p>
+            <p className="text-gray-500 mt-2">{selectedAddress?.billingAddress?.addressLine1}</p>
+            <p className="text-[11px] text-gray-600 mt-1">{`کد پستی: ${selectedAddress?.billingAddress?.postalCode}`}</p>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Current mode UI - Select input */}
+          <div dir="rtl" className="relative mt-3">
+            <button
+              dir="rtl"
+              disabled={addresses?.length === 0}
+              onClick={() => setIsOpen(!isOpen)}
+              className="w-full p-3 text-right bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {selectedAddress ? (
+                <div className="text-xs text-gray-600 leading-5">
+                  <p className=" text-sm text-gray-900 mb-1">{selectedAddress?.billingAddress?.title}</p>
+                  <p>{selectedAddress?.billingAddress?.state && findCityName(selectedAddress?.billingAddress?.state).name} - {selectedAddress?.billingAddress?.city && findCityName(selectedAddress?.billingAddress?.state).province_name}</p>
+                  <p style={{maxWidth: '90%'}} className="pl-4 text-gray-500">{selectedAddress?.billingAddress?.addressLine1}</p>
+                  <p className="text-[11px] text-gray-600">{`کد پستی: ${selectedAddress?.billingAddress?.postalCode}`}</p>
+                </div>
+              ) : (
+                <p className="text-gray-500">
+                  {addresses?.length === 0 ? 'آدرس جدید وارد کنید' : 'آدرس انتخاب کنید'}
+                </p>
+              )}
+              <ChevronDown className="absolute left-3 top-1/2 transform -translate-y-1/2" />
+            </button>
+            {isOpen && (
+              <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
+                {addresses.map((address) => (
+                  <button
+                    key={address._id}
+                    onClick={() => {
+                      onSelectAddress(address)
+                      setIsOpen(false)
+                    }}
+                    className="w-full p-3 text-right  hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                  >
+                    <p className="text-sm text-gray-900">{address?.billingAddress?.title}</p>
+                    <p className="text-xs text-gray-600 leading-5">{address?.billingAddress?.addressLine1}</p>
+                    <p className="text-[10px] mt-1 text-gray-600">{`${findCityName(address?.billingAddress?.state).name}, ${findCityName(address?.billingAddress?.state).province_name} ${address?.billingAddress?.postalCode}`}</p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       {/* Address Modal */}
       {showModal && (

@@ -2,23 +2,26 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, Coins, Package, Receipt, ShoppingBag, TvMinimalPlay, Wallet } from 'lucide-react';
+import type { Address, AddressResponse } from '@/types/Product';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { ArrowRight, Coins, MapPinHouse, Package, Receipt, ShoppingBag, TvMinimalPlay, Wallet } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+
+import { getUserAddressRequest, submitAddresRequest } from '@/API/order/address';
+
 // API
 import { calculateOrderSummaryRequest } from '@/API/order/payment';
-
 import LoadingButton from '@/components/LoadingButton';
-
 // Components
 import LoadingSpinner from '@/components/LoadingSpiner';
 import OrderCoupon from '@/components/OrderCoupon';
+
 import useAuth from '@/hooks/useAuth';
 import useResponsiveEvent from '@/hooks/useResponsiveEvent';
-
+import AddressSelector from '@/sections/cart/AddressSelector';
 // Utils
 import { filterPriceNumber } from '@/utils/Helpers';
 
@@ -63,6 +66,7 @@ export default function CalculateOrderSummaryPage() {
 
   // Get cartId from route params
   const cartId = searchParams.get('cartId');
+  const selectedShippingAddress = searchParams.get('AddressId');
 
   // State for coupon codes
   const [couponCodes, setCouponCodes] = useState<string[]>([]);
@@ -70,11 +74,20 @@ export default function CalculateOrderSummaryPage() {
 
   // State for wallet inclusion
   const [includeWalletAmount, setIncludeWalletAmount] = useState(false);
+  const [userWalletAmount, setUserWalletAmount] = useState(0);
+  // State for selected address
+  const [selectedAddress, setSelectedAddress] = useState<AddressResponse | null>(null);
+  const [editSelectedAddressToggle, setEditSelectedAddressToggle] = useState(false);
 
   const isMobileScreen = useResponsiveEvent(768, 200);
 
   // Get wallet amount from user
-  const walletAmount = user?.wallet_amount || 0;
+  // const walletAmount = user?.wallet_amount || 0;
+  useEffect(() => {
+    if (user) {
+      setUserWalletAmount(user?.wallet_amount || 0);
+    }
+  }, [user]);
 
   // Fetch order summary with React Query
   const {
@@ -94,6 +107,37 @@ export default function CalculateOrderSummaryPage() {
     staleTime: 0, // Always refetch when query key changes
   });
 
+  // Get User Address From API
+  const { data: addressData, isLoading: addressIsLoading, isError: addressIsError, isSuccess: addressIsSuccess } = useQuery({
+    queryFn: async () => getUserAddressRequest(),
+    queryKey: ['order::address'], // Array according to Documentation
+  });
+
+  const submitAddressMutation = useMutation({
+    mutationFn: submitAddresRequest,
+    onSuccess: (res) => {
+      // @ts-expect-error
+      queryClient.invalidateQueries('order::address');
+      if (res && res.billingAddress) {
+        toast.success('آدرس شما ثبت شد');
+
+        setSelectedAddress(res || addressData[0]);
+      }
+      console.log({ response: res });
+    },
+  });
+
+  // select Address Effect
+  useEffect(() => {
+    if (addressIsSuccess && addressData && Array.isArray(addressData)) {
+      if (selectedShippingAddress && !selectedAddress) {
+        setSelectedAddress(addressData?.find((address: AddressResponse) => address._id === selectedShippingAddress));
+      } else if (!selectedAddress) {
+        setSelectedAddress(addressData[0]);
+      }
+    }
+  }, [selectedShippingAddress, addressData, addressIsSuccess]);
+
   // Validate cartId on mount
   useEffect(() => {
     if (!cartId) {
@@ -111,9 +155,8 @@ export default function CalculateOrderSummaryPage() {
   }, [isError, error]);
 
   useEffect(() => {
-    if (user) {
-      fetchUserFromServer();
-    }
+    fetchUserFromServer();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle coupon application
@@ -145,6 +188,19 @@ export default function CalculateOrderSummaryPage() {
     setIncludeWalletAmount(include);
   };
 
+  const submitAddressFormHandler = (address: Address) => {
+    // Submit API
+    submitAddressMutation.mutate({
+      addressLine1: address.address,
+      state: address.state,
+      city: address.city,
+      postalCode: address.postalCode,
+      title: address.title,
+    });
+
+    console.log({ es: address });
+  };
+
   // Calculate final amount after discounts
   // const calculateFinalAmount = () => {
   //   if (!orderSummaryData) {
@@ -162,6 +218,7 @@ export default function CalculateOrderSummaryPage() {
 
     console.log({ kir: validCoupons });
     console.log({ couponCodes, cartId });
+    console.log({ selectedAddress });
     // Navigate to payment or checkout page
     toast.success('در حال انتقال به صفحه پرداخت');
     // You can add your checkout logic here
@@ -196,13 +253,15 @@ export default function CalculateOrderSummaryPage() {
   }
 
   const finalAmount = orderSummaryData.totalAmount;
+  const isAddressDataExist = addressIsSuccess && addressData && Array.isArray(addressData);
+  const hasProductItemProperty = orderSummaryData.products.some(item => 'product' in item);
 
   // Calculate order price with tax and shipping
   // const orderPriceWithTaxAndShipping = orderSummaryData.total + orderSummaryData.tax + orderSummaryData.shippingAmount;
 
   // Determine if we should show wallet section
-  const shouldShowWalletSection = walletAmount > 0;
-  const isWalletLessThanTotal = walletAmount < orderSummaryData.totalAmount;
+  const shouldShowWalletSection = userWalletAmount > 0;
+  const isWalletLessThanTotal = userWalletAmount < orderSummaryData.totalAmount;
 
   return (
     <div dir="rtl" className="primary-gradient-bg min-h-screen py-8">
@@ -223,9 +282,9 @@ export default function CalculateOrderSummaryPage() {
           </h1> */}
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           {/* Left Column - Products List, Wallet, and Coupon */}
-          <div className="space-y-6 lg:col-span-2">
+          <div className="space-y-3 lg:col-span-2">
             {/* Products List */}
             <div className="rounded-xl bg-white p-6 shadow-lg">
               <div className="mb-4 flex items-center gap-2 text-right">
@@ -272,6 +331,32 @@ export default function CalculateOrderSummaryPage() {
               </div>
             </div>
 
+            {/* Address Selector */}
+            {isAddressDataExist && hasProductItemProperty && (
+              <div className="rounded-xl bg-white p-6 shadow-lg">
+                <div className="flex w-full flex-col">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-right">
+                      <MapPinHouse className="text-purple-600" size={25} />
+                      <h2 className="text-lg font-normal text-gray-800">آدرس  انتخاب شده</h2>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <AddressSelector
+                      isAddressDataExist={isAddressDataExist}
+                      addresses={addressData}
+                      onSubmitAddressForm={submitAddressFormHandler}
+                      selectedAddress={selectedAddress}
+                      onSelectAddress={setSelectedAddress}
+                      isShowModeCase
+                    />
+                  </div>
+                </div>
+
+              </div>
+            ) }
+
             {/* Wallet Section - Only show if wallet amount > 0 */}
             {shouldShowWalletSection && (
               <div className="rounded-xl bg-white p-6 shadow-lg">
@@ -284,9 +369,9 @@ export default function CalculateOrderSummaryPage() {
                   {/* Wallet Balance Display */}
                   <div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700">موجودی کیف پول شما:</span>
+                      <span className="text-sm text-gray-700">موجودی کیف پول شما:</span>
                       <span className="text-lg font-bold text-purple-600">
-                        {filterPriceNumber(walletAmount)}
+                        {filterPriceNumber(userWalletAmount)}
                         <span className="mr-1 text-sm">ریال</span>
                       </span>
                     </div>
@@ -304,8 +389,8 @@ export default function CalculateOrderSummaryPage() {
                           className="size-5 cursor-pointer accent-blue-600"
                         />
                         <div className="flex-1">
-                          <div className="font-semibold text-gray-800">پرداخت کامل با درگاه</div>
-                          <div className="text-sm text-gray-600">پرداخت کل مبلغ از طریق درگاه بانکی</div>
+                          <div className="text-sm font-semibold text-gray-800">پرداخت کامل با درگاه</div>
+                          <div className="mt-1 text-xs text-gray-600 md:text-sm">پرداخت کل مبلغ از طریق درگاه بانکی</div>
                         </div>
                       </label>
 
@@ -318,11 +403,11 @@ export default function CalculateOrderSummaryPage() {
                           className="size-5 cursor-pointer accent-purple-600"
                         />
                         <div className="flex-1">
-                          <div className="font-semibold text-gray-800">استفاده از کیف پول + درگاه</div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm font-semibold text-gray-800">استفاده از کیف پول + درگاه</div>
+                          <div className="mt-1 text-xs text-gray-600 md:text-sm">
                             ابتدا
                             {' '}
-                            {filterPriceNumber(walletAmount)}
+                            {filterPriceNumber(userWalletAmount)}
                             {' '}
                             ریال از کیف پول کسر می‌شود و مابقی از درگاه
                           </div>
@@ -335,14 +420,14 @@ export default function CalculateOrderSummaryPage() {
                   {!isWalletLessThanTotal && (
                     <div className="rounded-lg border-2 border-green-300 bg-green-50 p-4">
                       <div className="flex items-center gap-2">
-                        <div className="flex size-8 items-center justify-center rounded-full bg-green-600">
-                          <svg className="size-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div style={{ minWidth: '24px', minHeight: '24px' }} className="flex size-6 items-center justify-center rounded-full bg-green-600 md:size-8">
+                          <svg className="size-4 text-white md:size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                         <div>
-                          <div className="font-bold text-green-800">امکان پرداخت کامل با کیف پول</div>
-                          <div className="text-sm text-green-700">موجودی کیف پول شما برای پرداخت این سفارش کافی است</div>
+                          <div className="text-sm font-bold text-green-800">امکان پرداخت کامل با کیف پول</div>
+                          <div className="mt-1 text-xs leading-5 text-green-700 md:text-sm">موجودی کیف پول شما برای پرداخت این سفارش کافی است</div>
                         </div>
                       </div>
 
@@ -351,9 +436,9 @@ export default function CalculateOrderSummaryPage() {
                           type="checkbox"
                           checked={includeWalletAmount}
                           onChange={e => handleIncludeWalletToggle(e.target.checked)}
-                          className="size-5 cursor-pointer accent-green-600"
+                          className="size-5 cursor-pointer accent-green-600 md:size-6"
                         />
-                        <span className="font-semibold text-gray-800">پرداخت با کیف پول</span>
+                        <span className="text-sm font-semibold text-purple-600 md:text-base">پرداخت با کیف پول</span>
                       </label>
                     </div>
                   )}
@@ -418,7 +503,7 @@ export default function CalculateOrderSummaryPage() {
                 </div>
 
                 {/* Wallet Deduction - Show if wallet is included */}
-                {includeWalletAmount && walletAmount > 0 && (
+                {includeWalletAmount && userWalletAmount > 0 && (
                   <div className="flex flex-row-reverse items-center justify-between rounded-lg border-t border-gray-200 bg-purple-50 p-2 pt-3 text-right">
                     <span className="font-semibold text-purple-600">
                       -
