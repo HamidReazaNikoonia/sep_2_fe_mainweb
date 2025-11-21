@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 import { getUserAddressRequest, submitAddresRequest } from '@/API/order/address';
 
 // API
-import { calculateOrderSummaryRequest } from '@/API/order/payment';
+import { calculateOrderSummaryRequest, submitCartToCreateOrderRequest } from '@/API/order/payment';
 import LoadingButton from '@/components/LoadingButton';
 // Components
 import LoadingSpinner from '@/components/LoadingSpiner';
@@ -24,6 +24,7 @@ import useResponsiveEvent from '@/hooks/useResponsiveEvent';
 import AddressSelector from '@/sections/cart/AddressSelector';
 // Utils
 import { filterPriceNumber } from '@/utils/Helpers';
+import { validateErrResponseFromBank } from '@/utils/validateErrResponseFromBank';
 
 type Product = {
   course?: string;
@@ -77,8 +78,8 @@ export default function CalculateOrderSummaryPage() {
   const [userWalletAmount, setUserWalletAmount] = useState(0);
   // State for selected address
   const [selectedAddress, setSelectedAddress] = useState<AddressResponse | null>(null);
-  const [editSelectedAddressToggle, setEditSelectedAddressToggle] = useState(false);
-
+  // const [editSelectedAddressToggle, setEditSelectedAddressToggle] = useState(false);
+  const [submitCartIsLoading, setSubmitCartIsLoading] = useState(false);
   const isMobileScreen = useResponsiveEvent(768, 200);
 
   // Get wallet amount from user
@@ -127,6 +128,13 @@ export default function CalculateOrderSummaryPage() {
     },
   });
 
+  useEffect(() => {
+    if (isError) {
+      toast.error('خطا در دریافت اطلاعات سفارش');
+      console.error('Order summary error:', error);
+    }
+  }, [isError, error]);
+
   // select Address Effect
   useEffect(() => {
     if (addressIsSuccess && addressData && Array.isArray(addressData)) {
@@ -136,7 +144,47 @@ export default function CalculateOrderSummaryPage() {
         setSelectedAddress(addressData[0]);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedShippingAddress, addressData, addressIsSuccess]);
+
+  const submitCartToCreateOrderMutation = useMutation({
+    mutationFn: submitCartToCreateOrderRequest,
+    onSuccess: (response) => {
+      // console.log({ response });
+
+      // // This line tells React Query to refetch any queries with the key 'order', ensuring data stays up-to-date after the order is created.
+      // queryClient.invalidateQueries('order');
+      // If you want to do something when the order submit mutation succeeds, 
+
+      // response = { newOrder, payment, transaction  }
+      if (response) {
+        // check if response is valid
+        if (!response.newOrder) {
+          toast.error('خطایی رخ داده');
+          setSubmitCartIsLoading(false);
+          return;
+        }
+
+        // navigate to the bank
+        if (!response?.userWalletAmount) {
+          if (response.payment.code === 100 && response.payment.url) {
+            setSubmitCartIsLoading(false);
+            toast.loading('شما در حال انتقال به بانک هستید');
+            window && window.location.replace(response.payment.url);
+          } else {
+            // Server Order Service Success but Payment Error
+            validateErrResponseFromBank(response.payment);
+          }
+        } else if (typeof response?.userWalletAmount === 'number' && !Number.isNaN(response.userWalletAmount)) {
+          toast.success('سفارش با موفقیت ثبت شد');
+          router.push(`/dashboard/orders/${response.newOrder._id}`);
+        }
+      }
+
+      toast.dismiss();
+      // setSubmitCartIsLoading(false);
+    },
+  });
 
   // Validate cartId on mount
   useEffect(() => {
@@ -147,16 +195,16 @@ export default function CalculateOrderSummaryPage() {
   }, [cartId, router]);
 
   // Handle error states
-  useEffect(() => {
-    if (isError) {
-      toast.error('خطا در دریافت اطلاعات سفارش');
-      console.error('Order summary error:', error);
-    }
-  }, [isError, error]);
+  // useEffect(() => {
+  //   if (isError) {
+  //     toast.error('خطا در دریافت اطلاعات سفارش');
+  //     console.error('Order summary error:', error);
+  //   }
+  // }, [isError, error]);
 
   useEffect(() => {
     fetchUserFromServer();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle coupon application
@@ -215,12 +263,37 @@ export default function CalculateOrderSummaryPage() {
 
   const handleProceedToCheckout = () => {
     const validCoupons = orderSummaryData?.couponInfo?.validCoupons?.map(coupon => coupon.code);
+    const hasProductItemProperty = orderSummaryData?.products?.some(item => 'product' in item);
 
     console.log({ kir: validCoupons });
     console.log({ couponCodes, cartId });
     console.log({ selectedAddress });
+
+    // validation
+    if (!cartId) {
+      toast.error('شناسه سبد خرید یافت نشد');
+      return;
+    }
+
+    if (hasProductItemProperty) {
+      // check if address is required for order
+      if (!selectedAddress || !selectedAddress?._id) {
+        toast.error('آدرس یافت نشد');
+        return;
+      }
+    }
+
     // Navigate to payment or checkout page
-    toast.success('در حال انتقال به صفحه پرداخت');
+    toast.loading('در حال انتقال به صفحه پرداخت');
+    setSubmitCartIsLoading(true);
+    submitCartToCreateOrderMutation.mutate(
+      {
+        cartId: cartId as string,
+        shippingAddress: selectedAddress?._id,
+        couponCodes: validCoupons,
+        useUserWallet: includeWalletAmount,
+      },
+    );
     // You can add your checkout logic here
     // router.push(`/checkout?cartId=${cartId}`);
   };
@@ -252,16 +325,16 @@ export default function CalculateOrderSummaryPage() {
     );
   }
 
-  const finalAmount = orderSummaryData.totalAmount;
+  const finalAmount = orderSummaryData?.totalAmount;
   const isAddressDataExist = addressIsSuccess && addressData && Array.isArray(addressData);
-  const hasProductItemProperty = orderSummaryData.products.some(item => 'product' in item);
+  const hasProductItemProperty = orderSummaryData?.products?.some(item => 'product' in item);
 
   // Calculate order price with tax and shipping
   // const orderPriceWithTaxAndShipping = orderSummaryData.total + orderSummaryData.tax + orderSummaryData.shippingAmount;
 
   // Determine if we should show wallet section
   const shouldShowWalletSection = userWalletAmount > 0;
-  const isWalletLessThanTotal = userWalletAmount < orderSummaryData.totalAmount;
+  const isWalletLessThanTotal = userWalletAmount < orderSummaryData?.totalAmount;
 
   return (
     <div dir="rtl" className="primary-gradient-bg min-h-screen py-8">
@@ -355,7 +428,7 @@ export default function CalculateOrderSummaryPage() {
                 </div>
 
               </div>
-            ) }
+            )}
 
             {/* Wallet Section - Only show if wallet amount > 0 */}
             {shouldShowWalletSection && (
@@ -448,7 +521,7 @@ export default function CalculateOrderSummaryPage() {
 
             {/* Coupon Section */}
             <OrderCoupon
-              couponInfo={orderSummaryData.couponInfo}
+              couponInfo={orderSummaryData?.couponInfo}
               onApplyCoupon={handleApplyCoupon}
               isApplying={isApplyingCoupon || isLoading}
             />

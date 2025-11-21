@@ -54,7 +54,8 @@ const CartItemComponent: React.FC<{
         <>
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => onUpdateQuantity(item?.productId._id, item.quantity - 1)}
+              type="button"
+              onClick={() => onUpdateQuantity(item?.productId.id, item.quantity - 1)}
               disabled={(item.quantity <= 1 || quantityLoading)}
               className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition-colors duration-200"
               aria-label="Decrease quantity"
@@ -65,7 +66,8 @@ const CartItemComponent: React.FC<{
             </button>
             <span className="font-semibold text-gray-800 w-8 text-center">{item.quantity}</span>
             <button
-              onClick={() => onUpdateQuantity(item?.productId._id, item.quantity + 1)}
+              type="button"
+              onClick={() => onUpdateQuantity(item?.productId.id, item.quantity + 1)}
               disabled={quantityLoading}
               className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition-colors duration-200"
               aria-label="Increase quantity"

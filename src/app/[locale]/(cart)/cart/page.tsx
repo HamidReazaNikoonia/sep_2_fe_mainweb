@@ -51,7 +51,7 @@ export default function ShoppingCartPage() {
   const [taxPrice, settaxPrice] = useState();
 
   const queryClient = useQueryClient();
-  // const router = useRouter();
+  const router = useRouter();
 
   const isMobileScreen = useResponsiveEvent(768, 200);
 
@@ -107,32 +107,32 @@ export default function ShoppingCartPage() {
     },
   });
 
-  const submitCartToCreateOrderMutation = useMutation({
-    mutationFn: submitCartToCreateOrderRequest,
-    onSuccess: (response) => {
-      // @ts-expect-error
-      queryClient.invalidateQueries("order");
+  // const submitCartToCreateOrderMutation = useMutation({
+  //   mutationFn: submitCartToCreateOrderRequest,
+  //   onSuccess: (response) => {
+  //     // @ts-expect-error
+  //     queryClient.invalidateQueries("order");
 
-      // response = { newOrder, payment, transaction  }
-      if (response) {
-        // order created successfully
-        if (!response.newOrder) {
-          toast.error('خطایی رخ داده');
-          setsubmitCartIsLoading(false);
-        }
+  //     // response = { newOrder, payment, transaction  }
+  //     if (response) {
+  //       // order created successfully
+  //       if (!response.newOrder) {
+  //         toast.error('خطایی رخ داده');
+  //         setsubmitCartIsLoading(false);
+  //       }
 
-        // navigate to the bank
-        if (response.payment && response.payment.code === 100) {
-          toast.success('شما در حال انتقال به بانک هستید');
-          window && window.location.replace(response.payment.url);
-        }
-      } else {
-        toast.error('خطای سرور');
-        setsubmitCartIsLoading(false);
-      }
-      console.log({ response: response });
-    },
-  });
+  //       // navigate to the bank
+  //       if (response.payment && response.payment.code === 100) {
+  //         toast.success('شما در حال انتقال به بانک هستید');
+  //         window && window.location.replace(response.payment.url);
+  //       }
+  //     } else {
+  //       toast.error('خطای سرور');
+  //       setsubmitCartIsLoading(false);
+  //     }
+  //     console.log({ response: response });
+  //   },
+  // });
 
   // Address Efects
   // useEffect(() => {
@@ -185,6 +185,7 @@ export default function ShoppingCartPage() {
     // )
     // console.log({ aaa: id });
     setquantityChangeLoading(id);
+    console.log({ id, newQuantity });
     mutation.mutate({ productId: id, quantity: newQuantity });
   };
 
@@ -209,31 +210,44 @@ export default function ShoppingCartPage() {
   // Payment process
   const continuePaymentHandler = () => {
     // eslint-disable-next-line no-console
-    console.log({ selectedAddress, data });
-    setsubmitCartIsLoading(true);
-    // submit order API endpoint
-    // @params cartId
-    // @params shippingAddress
-    if (!data || !data?._id) {
-      setsubmitCartIsLoading(false);
+
+    const cartId = data?._id;
+    const shippingAddress = selectedAddress?._id;
+
+    console.log({ cartId, shippingAddress });
+
+    // validation
+    if (!cartId) {
       toast.error('مشکلی به وجود آمده, لطفا صفحه را رفرش کنید');
       return false;
     }
+
+    // setsubmitCartIsLoading(true);
+    // submit order API endpoint
+    // @params cartId
+    // @params shippingAddress
+    // if (!data || !data?._id) {
+    //   setsubmitCartIsLoading(false);
+    //   toast.error('مشکلی به وجود آمده, لطفا صفحه را رفرش کنید');
+    //   return false;
+    // }
 
     // Product Exist in The Cart Items
     // Means we should Validate Address
     if (isProductExistInTheList) {
       if (!selectedAddress || !selectedAddress?._id) {
-        setsubmitCartIsLoading(false);
         toast.error('مشکلی پیش آمده, لطفا صفحه را رفرش کنید');
         toast.error('آدرس به درستی انتخاب نشده');
         return false;
       }
     }
 
-    submitCartToCreateOrderMutation.mutate({ cartId: data?._id, ...(selectedAddress && {shippingAddress: selectedAddress._id}) });
+    // submitCartToCreateOrderMutation.mutate({ cartId: data?._id, ...(selectedAddress && {shippingAddress: selectedAddress._id}) });
     toast.success('سفارش در حال ارسال');
-    return true;
+
+    // navigate to the payment page
+    router.push(`/calculate-order-summary?cartId=${cartId}&AddressId=${shippingAddress}`);
+    // return true;
   };
 
   // const subtotal = cartItems.reduce(
