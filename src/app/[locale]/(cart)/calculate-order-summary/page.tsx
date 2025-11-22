@@ -7,7 +7,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ArrowRight, Coins, MapPinHouse, Package, Receipt, ShoppingBag, TvMinimalPlay, Wallet } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { getUserAddressRequest, submitAddresRequest } from '@/API/order/address';
@@ -62,6 +62,7 @@ type OrderSummaryResponse = {
 
 export default function CalculateOrderSummaryPage() {
   const router = useRouter();
+  const hasFetched = useRef(false);
   const searchParams = useSearchParams();
   const { user, fetchUserFromServer } = useAuth();
 
@@ -203,9 +204,11 @@ export default function CalculateOrderSummaryPage() {
   // }, [isError, error]);
 
   useEffect(() => {
-    fetchUserFromServer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!isLoading && user && !hasFetched.current) {
+      hasFetched.current = true;
+      fetchUserFromServer();
+    }
+  }, [isLoading, user, fetchUserFromServer]);
 
   // Handle coupon application
   const handleApplyCoupon = async (newCouponCode: string) => {

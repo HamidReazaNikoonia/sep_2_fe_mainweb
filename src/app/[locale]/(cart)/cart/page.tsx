@@ -185,7 +185,6 @@ export default function ShoppingCartPage() {
     // )
     // console.log({ aaa: id });
     setquantityChangeLoading(id);
-    console.log({ id, newQuantity });
     mutation.mutate({ productId: id, quantity: newQuantity });
   };
 
@@ -214,7 +213,7 @@ export default function ShoppingCartPage() {
     const cartId = data?._id;
     const shippingAddress = selectedAddress?._id;
 
-    console.log({ cartId, shippingAddress });
+    // console.log({ cartId, shippingAddress });
 
     // validation
     if (!cartId) {
@@ -243,7 +242,7 @@ export default function ShoppingCartPage() {
     }
 
     // submitCartToCreateOrderMutation.mutate({ cartId: data?._id, ...(selectedAddress && {shippingAddress: selectedAddress._id}) });
-    toast.success('سفارش در حال ارسال');
+    toast.loading('آماده سازی سفارش');
 
     // navigate to the payment page
     router.push(`/calculate-order-summary?cartId=${cartId}&AddressId=${shippingAddress}`);
