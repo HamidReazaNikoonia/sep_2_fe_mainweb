@@ -2,9 +2,9 @@ import React from "react"
 import { Clock, CheckCircle2, Truck, Flag } from "lucide-react"
 
 type OrderStatus = "waiting" | "confirmed" | "delivered" | "finish"
-
 interface OrderStatusStepsProps {
   orderStatus: OrderStatus
+  withShipping?: boolean
 }
 
 const steps: { status: OrderStatus; label: string; icon: React.ReactNode }[] = [
@@ -14,12 +14,18 @@ const steps: { status: OrderStatus; label: string; icon: React.ReactNode }[] = [
   { status: "finish", label: "دریافت", icon: <Flag className="w-6 h-6" /> },
 ]
 
-const OrderStatusSteps: React.FC<OrderStatusStepsProps> = ({ orderStatus }) => {
-  const currentStepIndex = steps.findIndex((step) => step.status === orderStatus)
+const OrderStatusSteps: React.FC<OrderStatusStepsProps> = ({ orderStatus, withShipping = false }) => {
+  // Filter out "delivered" status when withShipping is true
+  console.log({ withShipping });
+  const filteredSteps = !withShipping 
+    ? steps.filter(step => step.status !== "delivered")
+    : steps
+  
+  const currentStepIndex = filteredSteps.findIndex((step) => step.status === orderStatus)
 
   return (
     <div className="flex items-center justify-between w-full max-w-3xl mx-auto relative">
-      {steps.map((step, index) => {
+      {filteredSteps.map((step, index) => {
         const isCompleted = index <= currentStepIndex
         const isActive = index === currentStepIndex
 
@@ -39,7 +45,7 @@ const OrderStatusSteps: React.FC<OrderStatusStepsProps> = ({ orderStatus }) => {
                 {step.label}
               </span>
             </div>
-            {/* {index < steps.length - 1 && (
+            {/* {index < filteredSteps.length - 1 && (
               <div className="absolute top-6 left-0 right-0 flex items-center justify-center z-0">
                 <div className="w-full h-0.5">
                   <div className={`h-full ${index < currentStepIndex ? "bg-green-500" : "bg-gray-300"}`} />
@@ -53,5 +59,4 @@ const OrderStatusSteps: React.FC<OrderStatusStepsProps> = ({ orderStatus }) => {
   )
 }
 
-export default OrderStatusSteps
-
+export default OrderStatusSteps;

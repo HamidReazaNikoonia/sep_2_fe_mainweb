@@ -94,7 +94,7 @@ export default function OrderPage() {
     return '';
 
   }
-
+;
 
   const orderStatusMap: { [key: string]: any } = {
     waiting: {
@@ -178,7 +178,7 @@ export default function OrderPage() {
                       {orderStatusMap[data?.data.status].describe}
                     </div>
                   </div>
-                  <OrderStatusSteps orderStatus={orderStatus} />
+                  <OrderStatusSteps withShipping={!!data?.data?.shippingAddress} orderStatus={orderStatus} />
                 </section>
               )}
 

@@ -1,3 +1,4 @@
+/* eslint-disable style/multiline-ternary */
 'use client';
 const iranCity = require('iran-city');
 
@@ -5,7 +6,7 @@ import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CircleCheckBig, Ban, ShoppingBasket, MapPinHouse } from 'lucide-react';
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { getUserCartRequest } from '@/API/cart';
 import { filterPriceNumber } from '@/utils/Helpers';
@@ -31,29 +32,24 @@ const Page = () => {
       <CheckoutPage />
     </Suspense>
   );
-}
+};
 
 const CheckoutPage: React.FC = () => {
   const searchParams = useSearchParams();
-  const [orderStatus, setOrderStatus] = useState<"waiting" | "order_accepted" | "delivered" | "finish">("waiting")
+  const [orderStatus, setOrderStatus] = useState<'waiting' | 'order_accepted' | 'delivered' | 'finish'>('waiting');
   const paymentStatus = searchParams.get('payment_status'); // Get the payment status query
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<any>();
-
 
   // const queryClient = useQueryClient();
 
   const orderId = searchParams.get('order_id');
 
-
-
   useEffect(() => {
     if (!orderId) {
-      toast.error('مشکلی از سمت سرور به وجود آمده')
+      toast.error('مشکلی از سمت سرور به وجود آمده');
     }
-
-  }, [])
-
+  }, []);
 
   // get order_id from URL query
   // then send API request for getting order 
@@ -66,100 +62,94 @@ const CheckoutPage: React.FC = () => {
     // @ts-expect-error
     queryFn: async () => getSpecificOrderByIdRequest({ orderId }),
     enabled: !!orderId,
-    queryKey: ["order"], //Array according to Documentation
+    queryKey: ['order'], //Array according to Documentation
   });
-
 
   // Simulate order data fetching
   useEffect(() => {
     if (data?.data && isSuccess) {
       if (Array.isArray(data?.data?.products) && data?.data?.products?.length !== 0) {
-        console.log(data.data.products)
+        console.log(data.data.products);
         setCartItems(data.data.products);
       }
 
       if (data?.data?.shippingAddress) {
-        setSelectedAddress(data?.data?.shippingAddress)
+        setSelectedAddress(data?.data?.shippingAddress);
       }
 
-      setOrderStatus(data?.data?.status)
+      setOrderStatus(data?.data?.status);
     }
     console.log({ cos: data });
     // Mock data (replace with actual API call)
-
   }, [data, isSuccess]);
-
 
   const findCityName = (cityId) => {
     if (cityId) {
-      console.log({ azadeh: iranCity.cityById(parseInt(cityId)) })
+      console.log({ azadeh: iranCity.cityById(parseInt(cityId)) });
       return iranCity.cityById(parseInt(cityId));
     }
 
     return '';
-
-  }
-
+  };
 
   const orderStatusMap = {
     waiting: {
       title: 'وضعیت سفارش : در انتظار تایید',
-      describe: 'سفارش شما در سیستم  ثبت شده است, همکاران ما بعد از بررسی سفارش و تایید سفارش اقدام به ارسال محصولات شما میکنند'
+      describe: 'سفارش شما در سیستم  ثبت شده است, همکاران ما بعد از بررسی سفارش و تایید سفارش اقدام به ارسال محصولات شما میکنند',
     },
     confirmed: {
       title: 'وضعیت سفارش : سفارش شما ثبت شده',
-      describe: 'سفارش شما بعد از بررسی تایید شده و همکاران ما در حال آماده سازی سفارش هستند'
+      describe: 'سفارش شما بعد از بررسی تایید شده و همکاران ما در حال آماده سازی سفارش هستند',
     },
     delivered: {
       title: 'وضعیت سفارش : سفارش شما ارسال شده',
-      describe: 'سفارش شما تحویل پست داده شده و منتظر ارسال آن باشید'
+      describe: 'سفارش شما تحویل پست داده شده و منتظر ارسال آن باشید',
     },
     finish: {
       title: '',
-      describe: ''
-    }
-  }
+      describe: '',
+    },
+  };
+
+  const orderHaveShiping = data?.data?.shippingAddress;
+  // console.log({ orderHaveShiping });
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6" dir="rtl">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-6" dir="rtl">
       {/* Payment Status Section */}
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+      <div className="mb-6 w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
         <div
           className={clsx(
             'p-6 text-center',
-            paymentStatus === 'paid' ? 'bg-green-700 text-white' : 'bg-red-700 text-white'
+            paymentStatus === 'paid' ? 'bg-green-700 text-white' : 'bg-red-700 text-white',
           )}
         >
           {paymentStatus === 'paid' ? (
             <>
               <CircleCheckBig size={60} className=" mx-auto mb-2" />
-              <h2 className="text-lg font-semibold mb-1">پرداخت با موفقیت انجام شد</h2>
+              <h2 className="mb-1 text-lg font-semibold">پرداخت با موفقیت انجام شد</h2>
               <p>سفارش شما با موفقیت ثبت شد.</p>
             </>
-          ) : (
-            <>
-              <Ban size={60} className="text-4xl mx-auto mb-2" />
-              <h2 className="text-lg font-semibold">پرداخت ناموفق بود</h2>
-              <p>لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.</p>
-            </>
-          )}
+          )
+            : (
+                <>
+                  <Ban size={60} className="mx-auto mb-2 text-4xl" />
+                  <h2 className="text-lg font-semibold">پرداخت ناموفق بود</h2>
+                  <p>لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.</p>
+                </>
+              )}
         </div>
       </div>
 
       {/* Order Details Section */}
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="p-6 bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+      <div className="w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
+        <div className="pink-gradient-bg bg-gradient-to-r p-6 text-white">
 
-          <div className='text-center space-y-2'>
+          <div className="space-y-2 text-center">
             <h3>کد پیگیری سفارش</h3>
-            <h2 className='font-bold text-md' >{data?.data?.reference && data?.data?.reference}</h2>
+            <h2 className="text-base font-bold">{data?.data?.reference && data?.data?.reference}</h2>
           </div>
         </div>
-
-
-
-
-
 
         {/* Cart Items Section */}
         <section className="p-6">
@@ -167,46 +157,43 @@ const CheckoutPage: React.FC = () => {
           {/* API LOADING */}
 
           {isLoading && (
-            <div className="w-full flex items-center justify-center py-28">
-              <div className="w-5 h-5 border-2 border-t-transparent border-gray-900 rounded-full animate-spin"></div>
+            <div className="flex w-full items-center justify-center py-28">
+              <div className="size-5 animate-spin rounded-full border-2 border-gray-900 border-t-transparent"></div>
             </div>
           )}
-
 
           {data && (
 
             <>
 
-
               {paymentStatus === 'paid' && (
-                <section className='py-6 px-0 md:px-6'>
-                  <div className='text-sm text-right mb-12 text-gray-500'>
-                    <div className='font-semibold'>
-                      {orderStatusMap[data?.data.status].title}
+                <section className="px-0 py-6 md:px-6">
+                  <div className="mb-12 text-right text-sm text-gray-500">
+                    <div className="font-semibold">
+                      {orderStatusMap[data?.data.status as keyof typeof orderStatusMap].title}
                     </div>
 
-                    <div className='mt-2 text-xs leading-6'>
-                      {orderStatusMap[data?.data.status].describe}
+                    <div className="mt-2 text-xs leading-6">
+                      {orderStatusMap[data?.data.status as keyof typeof orderStatusMap].describe}
                     </div>
                   </div>
-                  <OrderStatusSteps orderStatus={orderStatus} />
+                  <OrderStatusSteps withShipping={!!orderHaveShiping} orderStatus={orderStatus} />
                 </section>
               )}
 
-
-              <h2 className="text-lg flex font-semibold text-gray-700 mb-4">
-                <span className='ml-2'>
+              <h2 className="mb-4 flex text-lg font-semibold text-gray-700">
+                <span className="ml-2">
                   <ShoppingBasket size={25} />
                 </span>
                 سبد خرید
 
               </h2>
-              <table className="w-full border border-gray-200 rounded-md overflow-hidden">
+              <table className="w-full overflow-hidden rounded-md border border-gray-200">
                 <thead>
-                  <tr className="bg-gray-100 text-gray-700 text-right text-xs md:text-md">
+                  <tr className="md:text-md bg-gray-100 text-right text-xs text-gray-700">
                     <th className="px-4 py-3">کالا</th>
-                    <th className="px-2 md:px-4 py-3">تعداد</th>
-                    <th className="px-4 py-3 hidden md:table-cell">قیمت</th>
+                    <th className="px-2 py-3 md:px-4">تعداد</th>
+                    <th className="hidden px-4 py-3 md:table-cell">قیمت</th>
                     <th className="px-4 py-3">مجموع</th>
                   </tr>
                 </thead>
@@ -214,7 +201,7 @@ const CheckoutPage: React.FC = () => {
                   {cartItems.map((item, index) => (
                     <tr
                       key={index}
-                      className="border-t text-xs md:text-sm border-gray-200 hover:bg-gray-50 transition"
+                      className="border-t border-gray-200 text-xs transition hover:bg-gray-50 md:text-sm"
                     >
                       {item?.product && (
                         <td className="px-4 py-3"> محصول  {item.product.title || ''}</td>
@@ -225,7 +212,7 @@ const CheckoutPage: React.FC = () => {
                       )}
 
                       <td className="px-4 py-3">{parseInt(item.quantity).toLocaleString('fa')}</td>
-                      <td className="px-4 py-3 hidden md:table-cell">
+                      <td className="hidden px-4 py-3 md:table-cell">
                         {item.price.toLocaleString('fa')} تومان
                       </td>
                       <td className="px-4 py-3">
@@ -241,21 +228,21 @@ const CheckoutPage: React.FC = () => {
 
         {/* Selected Address Section */}
         {data && selectedAddress && (
-          <section className="p-6 border-t border-gray-200 ">
-            <h2 className="text-lg flex font-semibold text-gray-700 mb-4">
-              <span className='ml-2'>
+          <section className="border-t border-gray-200 p-6 ">
+            <h2 className="mb-4 flex text-lg font-semibold text-gray-700">
+              <span className="ml-2">
                 <MapPinHouse size={25} />
               </span>
 
               آدرس انتخاب شده
 
             </h2>
-            <div className="p-4 text-xs bg-gray-50 border leading-7 border-gray-200 rounded-md text-gray-600">
-              <div className='text-xs mb-2 font-semibold'>
+            <div className="rounded-md border border-gray-200 bg-gray-50 p-4 text-xs leading-7 text-gray-600">
+              <div className="mb-2 text-xs font-semibold">
                 {`${findCityName(selectedAddress?.billingAddress.state).name} - ${findCityName(selectedAddress?.billingAddress.state).province_name}`}
               </div>
 
-              <div className='pl-4'>
+              <div className="pl-4">
                 {selectedAddress?.billingAddress?.addressLine1}
               </div>
 
@@ -267,8 +254,8 @@ const CheckoutPage: React.FC = () => {
 
         {/* Order Total and Actions */}
         {data && (
-          <section className="p-6 border-t border-gray-200 flex flex-col items-end">
-            <div className="flex justify-between w-full text-gray-700 text-lg mb-4">
+          <section className="flex flex-col items-end border-t border-gray-200 p-6">
+            <div className="mb-4 flex w-full justify-between text-lg text-gray-700">
               <span className="font-semibold">مجموع:</span>
               <span className="font-bold">
                 {data?.data?.totalAmount && filterPriceNumber(data?.data?.totalAmount)}
@@ -276,14 +263,13 @@ const CheckoutPage: React.FC = () => {
               </span>
             </div>
 
-
-            <div className='w-full  mt-8 flex justify-center'>
-              <Link href='/' >
+            <div className="mt-8  flex w-full justify-center">
+              <Link href="/" >
                 <button
                   className={clsx(
                     'px-12 py-3 rounded-md font-semibold text-white',
                     'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600',
-                    'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                    'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
                   )}
                 >
                   بازگشت
