@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable style/multiline-ternary */
 'use client';
 const iranCity = require('iran-city');
@@ -145,7 +147,16 @@ const CheckoutPage: React.FC = () => {
       <div className="w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
         <div className="pink-gradient-bg bg-gradient-to-r p-6 text-white">
 
-          <div className="space-y-2 text-center">
+          <div
+            className="cursor-pointer select-none space-y-2 text-center active:opacity-80"
+            onClick={() => {
+              if (data?.data?.reference) {
+                navigator.clipboard.writeText(data.data.reference);
+                toast.success('کد پیگیری کپی شد');
+              }
+            }}
+            title={data?.data?.reference ? 'کپی کد پیگیری سفارش' : ''}
+          >
             <h3>کد پیگیری سفارش</h3>
             <h2 className="text-base font-bold">{data?.data?.reference && data?.data?.reference}</h2>
           </div>
