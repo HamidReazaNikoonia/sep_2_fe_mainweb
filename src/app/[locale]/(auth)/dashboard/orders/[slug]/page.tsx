@@ -161,13 +161,14 @@ export default function OrderPage() {
               paymentStatus === 'paid' ? 'green-gradient-bg text-white' : 'bg-red-700 text-white',
             )}
           >
-            {paymentStatus === 'paid' ? (
-              <>
-                <CircleCheckBig size={60} className=" mx-auto mb-2" />
-                <h2 className="mb-1 text-lg font-semibold">پرداخت با موفقیت انجام شد</h2>
-                <p>سفارش شما با موفقیت ثبت شد.</p>
-              </>
-            )
+            {paymentStatus === 'paid'
+              ? (
+                  <>
+                    <CircleCheckBig size={60} className=" mx-auto mb-2" />
+                    <h2 className="mb-1 text-lg font-semibold">پرداخت با موفقیت انجام شد</h2>
+                    <p>سفارش شما با موفقیت ثبت شد.</p>
+                  </>
+                )
               : (
                   <>
                     <Ban size={60} className="mx-auto mb-2 text-4xl" />
@@ -235,14 +236,24 @@ export default function OrderPage() {
                       className="border-t border-gray-200 text-xs transition hover:bg-gray-50 md:text-sm"
                     >
                       {item?.product && (
-                        <td className="px-4 py-3 text-[10px] md:text-sm"> محصول  {item.product.title || ''}</td>
+                        <td className="px-4 py-3 text-[10px] md:text-sm">
+                          {' '}
+                          محصول
+                          {' '}
+                          {item.product.title || ''}
+                        </td>
                       )}
 
                       {item?.course && (
-                        <td className="px-4 py-3 text-[10px] md:text-sm"> دوره {item.course.title || ''}</td>
+                        <td className="px-4 py-3 text-[10px] md:text-sm">
+                          {' '}
+                          دوره
+                          {' '}
+                          {item.course.title || ''}
+                        </td>
                       )}
 
-                      <td className="px-4 py-3">{parseInt(item.quantity).toLocaleString('fa')}</td>
+                      <td className="px-4 py-3">{Number.parseInt(item.quantity).toLocaleString('fa')}</td>
                       <td className="hidden px-4 py-3 md:table-cell">
                         {item.price.toLocaleString('fa')}
                         {' '}
@@ -297,20 +308,88 @@ export default function OrderPage() {
         {/* Order Total and Actions */}
         {data && (
           <section className="flex flex-col items-end border-t border-gray-200 p-6">
-            <div className="mb-4 flex w-full justify-between text-lg text-gray-700">
-              <span className="font-semibold">مجموع:</span>
-              <span className="font-bold">
-                {data?.data?.totalAmount && filterPriceNumber(data?.data?.totalAmount)}
-                &nbsp; تومان&nbsp;
-              </span>
+            {/* Order Price Information - Bill Style */}
+            <div className="mb-6 w-full rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <h3 className="mb-4 border-b border-dashed border-gray-300 pb-2 text-lg font-semibold text-gray-800">جزئیات پرداخت</h3>
+
+              {/* Total Order Amount */}
+              {!!data?.data?.total && (
+                <div className="mb-3 flex w-full justify-between text-sm text-gray-700">
+                  <span>جمع کل سفارشات:</span>
+                  <span className="font-medium">
+                    {filterPriceNumber(data?.data?.total)}
+                    &nbsp; ریال
+                  </span>
+                </div>
+              )}
+
+              {/* Coupon Discount */}
+              {!!data?.data?.total_discount_price && Number(data?.data?.total_discount_price) > 0 && (
+                <div className="mb-3 flex w-full justify-between text-sm text-red-600">
+                  <span>مبلغ تخفیف کوپن:</span>
+                  <span className="font-medium">
+                    {!!data?.data?.total_discount_price && filterPriceNumber(Number(data?.data?.total_discount_price))}
+&nbsp;-
+                    &nbsp; ریال
+                  </span>
+                </div>
+              )}
+
+              {/* Delivery Fees */}
+              {!!data?.data?.deliveryFees && (
+                <div className="mb-3 flex w-full justify-between text-sm text-gray-700">
+                  <span>هزینه ارسال:</span>
+                  <span className="font-medium">
+                    {filterPriceNumber(data?.data?.deliveryFees)}
+&nbsp;+
+                    &nbsp; ریال
+                  </span>
+                </div>
+              )}
+
+              {/* Taxes */}
+              {!!data?.data?.taxes && (
+                <div className="mb-3 flex w-full justify-between text-sm text-gray-700">
+                  <span>مالیات:</span>
+                  <span className="font-medium">
+                    {filterPriceNumber(data?.data?.taxes)}
+&nbsp;+
+                    &nbsp; ریال
+                  </span>
+                </div>
+              )}
+
+              {/* Wallet Payment */}
+              {!!data?.data?.used_wallet_amount && Number(data?.data?.used_wallet_amount) > 0 && (
+                <div className="mb-3 flex w-full justify-between text-sm text-green-600">
+                  <span>پرداخت از کیف پول:</span>
+                  <span className="font-medium">
+                    {!!data?.data?.used_wallet_amount && filterPriceNumber(Number(data?.data?.used_wallet_amount))}
+&nbsp;-
+                    &nbsp; ریال
+                  </span>
+                </div>
+              )}
+
+              {/* Divider */}
+              <hr className="my-3 border-gray-300" />
+
+              {/* Total Paid Amount */}
+              <div className="flex w-full justify-between text-base font-semibold text-gray-800 md:text-lg">
+                <span>مبلغ  پرداخت شده:</span>
+                <span>
+                  {data?.data?.totalAmount && filterPriceNumber(data?.data?.totalAmount)}
+                  &nbsp; ریال
+                </span>
+              </div>
             </div>
 
             <div className="mt-8  flex w-full justify-center">
-              <Link href="/dashboard/orders" >
+              <Link href="/dashboard/orders">
                 <button
                   type="button"
                   className={clsx(
-                    'flex items-center justify-center gap-2 rounded-md px-6 py-2 text-xs font-semibold text-white md:text-base',
+                    'flex items-center justify-center gap-2 rounded-md px-6 py-2 text-xs font-normal text-white md:text-base',
                     'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600',
                     'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
                   )}
