@@ -6,7 +6,7 @@ const iranCity = require('iran-city');
 
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { CircleCheckBig, Ban, ShoppingBasket, MapPinHouse } from 'lucide-react';
+import { CircleCheckBig, Ban, ShoppingBasket, MapPinHouse, ArrowRight, Logs } from 'lucide-react';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -87,8 +87,8 @@ const CheckoutPage: React.FC = () => {
 
   const findCityName = (cityId) => {
     if (cityId) {
-      console.log({ azadeh: iranCity.cityById(parseInt(cityId)) });
-      return iranCity.cityById(parseInt(cityId));
+      console.log({ azadeh: iranCity.cityById(Number.parseInt(cityId)) });
+      return iranCity.cityById(Number.parseInt(cityId));
     }
 
     return '';
@@ -158,7 +158,7 @@ const CheckoutPage: React.FC = () => {
             title={data?.data?.reference ? 'کپی کد پیگیری سفارش' : ''}
           >
             <h3>کد پیگیری سفارش</h3>
-            <h2 className="text-base font-bold">{data?.data?.reference && data?.data?.reference}</h2>
+            <h2 className="text-base font-bold md:text-xl">{data?.data?.reference && data?.data?.reference}</h2>
           </div>
         </div>
 
@@ -201,7 +201,7 @@ const CheckoutPage: React.FC = () => {
               </h2>
               <table className="w-full overflow-hidden rounded-md border border-gray-200">
                 <thead>
-                  <tr className="md:text-md bg-gray-100 text-right text-xs text-gray-700">
+                  <tr className="bg-gray-100 text-right text-xs text-gray-700 md:text-base">
                     <th className="px-4 py-3">کالا</th>
                     <th className="px-2 py-3 md:px-4">تعداد</th>
                     <th className="hidden px-4 py-3 md:table-cell">قیمت</th>
@@ -209,25 +209,46 @@ const CheckoutPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {cartItems.map((item, index) => (
+                  {cartItems && cartItems.length > 0 && cartItems.map((item: any, index: number) => (
                     <tr
                       key={index}
                       className="border-t border-gray-200 text-xs transition hover:bg-gray-50 md:text-sm"
                     >
                       {item?.product && (
-                        <td className="px-4 py-3"> محصول  {item.product.title || ''}</td>
+                        <td className="px-4 py-3 text-[10px] md:text-sm">
+                          {' '}
+                          محصول
+                          {' '}
+                          {item.product.title || ''}
+                        </td>
                       )}
 
                       {item?.course && (
-                        <td className="px-4 py-3"> دوره {item.course.title || ''}</td>
+                        <td className="px-4 py-3 text-[10px] md:text-sm">
+                          {' '}
+                          دوره
+                          {' '}
+                          {item.course.title || ''}
+                        </td>
                       )}
 
-                      <td className="px-4 py-3">{parseInt(item.quantity).toLocaleString('fa')}</td>
+                      <td className="px-4 py-3">{Number.parseInt(item.quantity).toLocaleString('fa')}</td>
                       <td className="hidden px-4 py-3 md:table-cell">
-                        {item.price.toLocaleString('fa')} تومان
+                        {item.price.toLocaleString('fa')}
+                        {' '}
+                        ریال
                       </td>
-                      <td className="px-4 py-3">
-                        {(item.price * item.quantity).toLocaleString('fa')} تومان
+                      <td className="px-4 py-3 text-[10px] md:text-sm">
+                        {(item.price * item.quantity).toLocaleString('fa')}
+                        {' '}
+                        ریال
+                        <div className="mt-1 text-[9px] text-gray-400 md:text-xs">
+                          {item.price.toLocaleString('fa')}
+                          {' '}
+                          <span className="mx-1">×</span>
+                          {' '}
+                          {Number.parseInt(item.quantity).toLocaleString('fa')}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -274,16 +295,33 @@ const CheckoutPage: React.FC = () => {
               </span>
             </div>
 
-            <div className="mt-8  flex w-full justify-center">
+            <div className="mt-8 gap-4  flex w-full justify-center">
               <Link href="/" >
                 <button
+                  type="button"
                   className={clsx(
-                    'px-12 py-3 rounded-md font-semibold text-white',
+                    'rounded-md flex items-center justify-center gap-2 text-xs md:text-base px-6 py-2 font-semibold text-white',
                     'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600',
                     'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
                   )}
                 >
+                  <ArrowRight size={20} />
                   بازگشت
+                </button>
+              </Link>
+
+
+              <Link href={`/dashboard/orders/${data?.data?._id}`} >
+                <button
+                  type="button"
+                  className={clsx(
+                    'rounded-md flex items-center justify-center gap-2 text-xs md:text-base px-6 py-2 font-semibold text-white',
+                    'pink-gradient-bg hover:bg-primary/90',
+                    'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+                  )}
+                >
+                  <Logs size={20} />
+                  جزئیات سفارش
                 </button>
               </Link>
             </div>
