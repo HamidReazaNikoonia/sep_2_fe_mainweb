@@ -10,7 +10,7 @@ interface OrderStatusStepsProps {
 const steps: { status: OrderStatus; label: string; icon: React.ReactNode }[] = [
   { status: "waiting", label: "بررسی", icon: <Clock className="w-6 h-6" /> },
   { status: "confirmed", label: "تایید", icon: <CheckCircle2 className="w-6 h-6" /> },
-  { status: "delivered", label: "ارسال", icon: <Truck className="w-6 h-6" /> },
+  { status: "shipped", label: "ارسال", icon: <Truck className="w-6 h-6" /> },
   { status: "finish", label: "دریافت", icon: <Flag className="w-6 h-6" /> },
 ]
 
@@ -18,7 +18,7 @@ const OrderStatusSteps: React.FC<OrderStatusStepsProps> = ({ orderStatus, withSh
   // Filter out "delivered" status when withShipping is true
   console.log({ withShipping });
   const filteredSteps = !withShipping 
-    ? steps.filter(step => step.status !== "delivered")
+    ? steps.filter(step => step.status !== "shipped")
     : steps
   
   const currentStepIndex = filteredSteps.findIndex((step) => step.status === orderStatus)
