@@ -1,7 +1,8 @@
+/* eslint-disable react/no-array-index-key */
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { BadgeCheck, Ban, CircleCheckBig, Clock, Flag, Truck, Undo2 } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Ban, CircleCheckBig, Clock, Flag, Truck, Undo2, Wallet } from 'lucide-react';
 
 import moment from 'moment-jalaali';
 import Link from 'next/link';
@@ -71,14 +72,14 @@ export default function OrdersPage() {
       </Card>
     );
   }
-
   return (
     <Card className="mx-2 mb-12 md:mx-8">
       <CardHeader>
         <CardTitle dir="rtl">سفارشات</CardTitle>
       </CardHeader>
       <CardContent>
-        <div dir="rtl" className="overflow-x-auto">
+        {/* Table View - Hidden on mobile, visible on lg and above */}
+        <div dir="rtl" className="hidden overflow-x-auto lg:block">
           <Table className="text-right">
             <TableHeader>
               <TableRow>
@@ -97,10 +98,10 @@ export default function OrdersPage() {
                     {' '}
                     تومان
                   </TableCell>
-                  <TableCell className={clsx('flex items-center justify-start text-xs leading-8', statusMap[order.status].color)}>
-                    {statusMap[order.status] && statusMap[order.status].label }
+                  <TableCell className={clsx('flex items-center justify-start text-xs leading-8', statusMap[order.status as keyof typeof statusMap]?.color)}>
+                    {statusMap[order.status as keyof typeof statusMap] && statusMap[order.status as keyof typeof statusMap].label}
                     {' '}
-                    {statusMap[order.status] && statusMap[order.status].icon }
+                    {statusMap[order.status as keyof typeof statusMap] && statusMap[order.status as keyof typeof statusMap].icon}
                   </TableCell>
                   <TableCell className="text-center">
                     <Link href={`/dashboard/orders/${order._id}`}>
@@ -113,10 +114,141 @@ export default function OrdersPage() {
               ))}
             </TableBody>
           </Table>
-          {orderData?.length === 0 && (
-            <div className="mt-4 py-4 text-center">هیچ سفارشی یافت نشد</div>
-          )}
         </div>
+
+        {/* Card View - Visible on mobile, hidden on lg and above */}
+        <div className="space-y-4 lg:hidden" dir="rtl">
+          {(orderData && orderData?.length > 0) && orderData?.map((order: Order) => (
+            <Card key={order._id} className="border border-pink-300 shadow-sm">
+              <CardContent className="p-4">
+                {/* Reference at top center */}
+                <div className="mb-4 text-center">
+                  <div className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold text-gray-800">
+                    کد پیگیری:
+                    {' '}
+                    {order.reference}
+                  </div>
+                </div>
+
+                {/* Header with date and animated status */}
+                <div className="mb-3 flex items-start justify-between">
+                  <div className="text-sm text-gray-600">
+                    {order.createdAt && moment(order?.createdAt).format('jYYYY jMMMM jD')}
+                  </div>
+                  <div className={clsx(
+                    'flex items-center rounded-full px-2 py-1 text-sm',
+                    statusMap[order.status as keyof typeof statusMap]?.color,
+                    (order.status === 'waiting' || order.status === 'confirmed' || order.status === 'shipped') && 'animate-pulse bg-blue-50',
+                  )}
+                  >
+                    {statusMap[order.status as keyof typeof statusMap]?.icon}
+                    &nbsp;
+                    {statusMap[order.status as keyof typeof statusMap]?.label}
+                  </div>
+                </div>
+
+                {/* Order details */}
+                <div className="mb-4 space-y-2 rounded-lg border border-dashed border-gray-400 px-1.5 py-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">جمع محصولات:</span>
+                    <span className="text-sm font-medium">
+                      {order.total && filterPriceNumber(order.total)}
+                      {' '}
+                      ریال
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">مبلغ پرداختی:</span>
+                    <span className="text-sm font-medium">
+                      {order.totalAmount && filterPriceNumber(order.totalAmount)}
+                      {' '}
+                      ریال
+                    </span>
+                  </div>
+                </div>
+
+                {/* Products section */}
+                {order.products && order.products.length > 0 && (
+                  <div className="mb-4 mt-6">
+                    <h4 className="mb-2 text-center text-sm font-medium text-gray-700">محصولات سفارش:</h4>
+                    <div className="space-y-2">
+                      {order.products.map((item: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between rounded-lg bg-gray-50 p-2">
+                          <div className="flex items-center gap-2">
+                            {item.product && (
+                              <>
+                                <span className="text-sm">{item.product.title}</span>
+                                {item.quantity && (
+                                  <span className="text-xs text-gray-500">
+                                    ×
+                                    {item.quantity}
+                                  </span>
+                                )}
+                              </>
+                            )}
+                            {item.course && (
+                              <span className="text-sm">{item.course.title}</span>
+                            )}
+                          </div>
+                          <div className="flex gap-1">
+                            {item.product && (
+                              <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+                                محصول
+                              </span>
+                            )}
+                            {item.course && (
+                              <span className="inline-flex items-center rounded-full bg-purple-100 px-2 py-1 text-xs text-purple-800">
+                                دوره
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Badges */}
+                <div className="mb-4 flex flex-wrap gap-2">
+                  {order.shippingAddress && (
+                    <div className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+                      <Truck className="size-4" />
+                      <span className="">
+                        مرسوله پستی
+                      </span>
+                    </div>
+                  )}
+                  {order.used_wallet_amount > 0 && (
+                    <div className="inline-flex items-center gap-2 rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">
+                      <Wallet className="size-4" />
+                      <span className="">
+                        پرداخت از کیف پول
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action button */}
+                <div className="flex justify-center">
+                  <Link href={`/dashboard/orders/${order._id}`} className="w-full">
+                    <button
+                      type="button"
+                      className="pink-gradient-bg flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-white transition hover:bg-gray-50"
+                    >
+                      <ArrowRight className="size-4" />
+                      <span>مشاهده جزئیات</span>
+                    </button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Empty state */}
+        {orderData?.length === 0 && (
+          <div className="mt-4 py-4 text-center">هیچ سفارشی یافت نشد</div>
+        )}
       </CardContent>
     </Card>
   );
