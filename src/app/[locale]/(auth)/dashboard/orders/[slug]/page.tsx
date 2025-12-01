@@ -103,9 +103,21 @@ export default function OrderPage() {
       title: 'وضعیت سفارش : سفارش شما ارسال شده',
       describe: 'سفارش شما تحویل پست داده شده و منتظر ارسال آن باشید',
     },
+    cancelled: {
+      title: 'وضعیت سفارش : سفارش شما لغو شده',
+      describe: 'سفارش شما لغو شده است',
+    },
+    returned: {
+      title: 'وضعیت سفارش : سفارش شما برگشت داده شده',
+      describe: 'سفارش شما برگشت داده شده است',
+    },
+    delivered: {
+      title: 'وضعیت سفارش : سفارش شما دریافت شده',
+      describe: 'سفارش شما دریافت شده است',
+    },
     finish: {
-      title: '',
-      describe: '',
+      title: 'وضعیت سفارش : سفارش شما دریافت شده',
+      describe: 'سفارش شما دریافت شده است',
     },
   };
 
@@ -163,23 +175,23 @@ export default function OrderPage() {
           >
             {paymentStatus === 'paid'
               ? (
-                  <>
-                    <CircleCheckBig size={60} className=" mx-auto mb-2" />
-                    <h2 className="mb-1 text-lg font-semibold">پرداخت با موفقیت انجام شد</h2>
-                    <p>سفارش شما با موفقیت ثبت شد.</p>
-                  </>
-                )
+                <>
+                  <CircleCheckBig size={60} className=" mx-auto mb-2" />
+                  <h2 className="mb-1 text-lg font-semibold">پرداخت با موفقیت انجام شد</h2>
+                  <p>سفارش شما با موفقیت ثبت شد.</p>
+                </>
+              )
               : (
-                  <>
-                    <Ban size={60} className="mx-auto mb-2 text-4xl" />
-                    <h2 className="text-lg font-semibold">پرداخت ناموفق بود</h2>
-                    <p className="mt-2 text-sm font-thin">لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.</p>
+                <>
+                  <Ban size={60} className="mx-auto mb-2 text-4xl" />
+                  <h2 className="text-lg font-semibold">پرداخت ناموفق بود</h2>
+                  <p className="mt-2 text-sm font-thin">لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.</p>
 
-                    <h3 className="mt-1 text-xs font-thin">
-                      مبلغ پرداخت شده بعد از ۷۲ ساعت به حساب شما برگشت داده میشود, در غیر این صورت با پشتیبانی تماس بگیرید
-                    </h3>
-                  </>
-                )}
+                  <h3 className="mt-1 text-xs font-thin">
+                    مبلغ پرداخت شده بعد از ۷۲ ساعت به حساب شما برگشت داده میشود, در غیر این صورت با پشتیبانی تماس بگیرید
+                  </h3>
+                </>
+              )}
           </div>
         </div>
 
@@ -323,25 +335,13 @@ export default function OrderPage() {
                 </div>
               )}
 
-              {/* Coupon Discount */}
-              {!!data?.data?.total_discount_price && Number(data?.data?.total_discount_price) > 0 && (
-                <div className="mb-3 flex w-full justify-between text-sm text-red-600">
-                  <span>مبلغ تخفیف کوپن:</span>
-                  <span className="font-medium">
-                    {!!data?.data?.total_discount_price && filterPriceNumber(Number(data?.data?.total_discount_price))}
-&nbsp;-
-                    &nbsp; ریال
-                  </span>
-                </div>
-              )}
-
               {/* Delivery Fees */}
               {!!data?.data?.deliveryFees && (
                 <div className="mb-3 flex w-full justify-between text-sm text-gray-700">
                   <span>هزینه ارسال:</span>
                   <span className="font-medium">
                     {filterPriceNumber(data?.data?.deliveryFees)}
-&nbsp;+
+                    &nbsp;+
                     &nbsp; ریال
                   </span>
                 </div>
@@ -353,7 +353,19 @@ export default function OrderPage() {
                   <span>مالیات:</span>
                   <span className="font-medium">
                     {filterPriceNumber(data?.data?.taxes)}
-&nbsp;+
+                    &nbsp;+
+                    &nbsp; ریال
+                  </span>
+                </div>
+              )}
+
+              {/* Coupon Discount */}
+              {!!data?.data?.total_discount_price && Number(data?.data?.total_discount_price) > 0 && (
+                <div className="mb-3 flex w-full justify-between text-sm text-red-600">
+                  <span>  کسری:</span>
+                  <span className="font-medium">
+                    {!!data?.data?.total_discount_price && filterPriceNumber(Number(data?.data?.total_discount_price))}
+                    &nbsp;-
                     &nbsp; ریال
                   </span>
                 </div>
@@ -365,7 +377,7 @@ export default function OrderPage() {
                   <span>پرداخت از کیف پول:</span>
                   <span className="font-medium">
                     {!!data?.data?.used_wallet_amount && filterPriceNumber(Number(data?.data?.used_wallet_amount))}
-&nbsp;-
+                    &nbsp;-
                     &nbsp; ریال
                   </span>
                 </div>
