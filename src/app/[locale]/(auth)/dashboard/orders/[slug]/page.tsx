@@ -175,23 +175,23 @@ export default function OrderPage() {
           >
             {paymentStatus === 'paid'
               ? (
-                <>
-                  <CircleCheckBig size={60} className=" mx-auto mb-2" />
-                  <h2 className="mb-1 text-lg font-semibold">پرداخت با موفقیت انجام شد</h2>
-                  <p>سفارش شما با موفقیت ثبت شد.</p>
-                </>
-              )
+                  <>
+                    <CircleCheckBig size={60} className=" mx-auto mb-2" />
+                    <h2 className="mb-1 text-lg font-semibold">پرداخت با موفقیت انجام شد</h2>
+                    <p>سفارش شما با موفقیت ثبت شد.</p>
+                  </>
+                )
               : (
-                <>
-                  <Ban size={60} className="mx-auto mb-2 text-4xl" />
-                  <h2 className="text-lg font-semibold">پرداخت ناموفق بود</h2>
-                  <p className="mt-2 text-sm font-thin">لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.</p>
+                  <>
+                    <Ban size={60} className="mx-auto mb-2 text-4xl" />
+                    <h2 className="text-lg font-semibold">پرداخت ناموفق بود</h2>
+                    <p className="mt-2 text-sm font-thin">لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.</p>
 
-                  <h3 className="mt-1 text-xs font-thin">
-                    مبلغ پرداخت شده بعد از ۷۲ ساعت به حساب شما برگشت داده میشود, در غیر این صورت با پشتیبانی تماس بگیرید
-                  </h3>
-                </>
-              )}
+                    <h3 className="mt-1 text-xs font-thin">
+                      مبلغ پرداخت شده بعد از ۷۲ ساعت به حساب شما برگشت داده میشود, در غیر این صورت با پشتیبانی تماس بگیرید
+                    </h3>
+                  </>
+                )}
           </div>
         </div>
 

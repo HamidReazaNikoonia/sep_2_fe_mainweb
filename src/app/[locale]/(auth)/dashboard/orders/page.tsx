@@ -2,7 +2,7 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { ArrowRight, BadgeCheck, Ban, CircleCheckBig, Clock, Flag, Loader2, Truck, Undo2, Wallet, BookOpenCheck, ShoppingBag } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Ban, BookOpenCheck, CircleCheckBig, Clock, Flag, Loader2, ShoppingBag, Truck, Undo2, Wallet } from 'lucide-react';
 
 import moment from 'moment-jalaali';
 import Link from 'next/link';
@@ -252,11 +252,11 @@ export default function OrdersPage() {
                           <div className="flex items-center gap-2">
                             {item.product && (
                               <>
-                                <span className="text-xs inline-flex items-center gap-1.5">
+                                <span className="inline-flex items-center gap-1.5 text-xs">
                                   <ShoppingBag className="size-3.5 text-purple-500" />
                                   {item.product.title}
-                                  
-                                  </span>
+
+                                </span>
                                 {item.quantity && (
                                   <span className="text-xs text-gray-500">
                                     ×
@@ -266,10 +266,10 @@ export default function OrdersPage() {
                               </>
                             )}
                             {item.course && (
-                              <span className="text-xs inline-flex items-center gap-1.5">
-                                      <BookOpenCheck className="size-3.5 text-purple-500" />
+                              <span className="inline-flex items-center gap-1.5 text-xs">
+                                <BookOpenCheck className="size-3.5 text-purple-500" />
                                 {item.course.title}
-                                </span>
+                              </span>
                             )}
                           </div>
                           <div className="flex gap-1">
@@ -300,7 +300,7 @@ export default function OrdersPage() {
                       </span>
                     </div>
                   )}
-                  {order.used_wallet_amount > 0 && (
+                  {!!order?.used_wallet_amount && Number(order?.used_wallet_amount) > 0 && (
                     <div className="inline-flex items-center gap-2 rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">
                       <Wallet className="size-4" />
                       <span className="">
