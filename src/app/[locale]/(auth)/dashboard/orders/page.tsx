@@ -2,7 +2,7 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { ArrowRight, BadgeCheck, Ban, CircleCheckBig, Clock, Flag, Truck, Undo2, Wallet } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Ban, CircleCheckBig, Clock, Flag, Loader2, Truck, Undo2, Wallet, BookOpenCheck, ShoppingBag } from 'lucide-react';
 
 import moment from 'moment-jalaali';
 import Link from 'next/link';
@@ -31,6 +31,7 @@ moment.loadPersian({ usePersianDigits: true });
 
 export default function OrdersPage() {
   const [orderData, setorderData] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   const { data, isLoading, isError, error, isSuccess } = useQuery<Order[]>({
     queryKey: ['orders'],
@@ -43,14 +44,34 @@ export default function OrdersPage() {
     }
   }, [isSuccess, data]);
 
+  // Filter orders based on selected category
+  const filteredOrders = orderData.filter((order: Order) => {
+    if (selectedCategory === 'all') {
+      return true;
+    }
+    return order.status === selectedCategory;
+  });
+
+  // Category buttons configuration
+  const categories = [
+    { key: 'all', label: 'همه', mobile: true, desktop: true },
+    { key: 'waiting', label: 'در انتظار', mobile: true, desktop: true },
+    { key: 'confirmed', label: 'تایید شده', mobile: true, desktop: true },
+    { key: 'shipped', label: 'ارسال شده', mobile: true, desktop: true },
+    { key: 'finish', label: 'اتمام یافته', mobile: false, desktop: true },
+    { key: 'cancelled', label: 'لغو شده', mobile: false, desktop: true },
+    { key: 'returned', label: 'برگشت داده', mobile: false, desktop: true },
+  ];
+
   if (isLoading) {
     return (
-      <Card>
+      <Card className="min-h-svh">
         <CardHeader>
           <CardTitle>سفارشات</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="py-4 text-center">در حال دریافت اطلاعات...</div>
+          <Loader2 className="mx-auto size-10 animate-spin text-gray-400" />
         </CardContent>
       </Card>
     );
@@ -78,6 +99,40 @@ export default function OrdersPage() {
         <CardTitle dir="rtl">سفارشات</CardTitle>
       </CardHeader>
       <CardContent>
+        {/* Category Filter Buttons */}
+        <div className="mb-6" dir="rtl">
+          <div className="flex flex-wrap justify-center gap-2 lg:justify-start">
+            {categories.map(category => (
+              <Button
+                key={category.key}
+                variant={selectedCategory === category.key ? 'default' : 'outline'}
+                size="sm"
+                className={clsx(
+                  'text-xs transition-all duration-200',
+                  selectedCategory === category.key
+                    ? 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
+                    : 'hover:bg-gray-50',
+                  // Hide desktop-only categories on mobile
+                  !category.mobile && 'hidden lg:inline-flex',
+                  // Hide mobile categories on desktop if specified
+                  !category.desktop && 'lg:hidden',
+                )}
+                onClick={() => setSelectedCategory(category.key)}
+              >
+                {category.label}
+                {selectedCategory === category.key && (
+                  <span className="mr-1 text-xs">
+                    (
+                    {filteredOrders.filter((order: Order) =>
+                      category.key === 'all' ? true : order.status === category.key,
+                    ).length}
+                    )
+                  </span>
+                )}
+              </Button>
+            ))}
+          </div>
+        </div>
         {/* Table View - Hidden on mobile, visible on lg and above */}
         <div dir="rtl" className="hidden overflow-x-auto lg:block">
           <Table className="text-right">
@@ -90,7 +145,7 @@ export default function OrdersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(orderData && orderData?.length > 0) && orderData?.map((order: Order) => (
+              {(filteredOrders && filteredOrders?.length > 0) && filteredOrders?.map((order: Order) => (
                 <TableRow key={order._id}>
                   <TableCell className="text-xs">{order.createdAt && moment(order?.createdAt).format('jYYYY jMMMM jD')}</TableCell>
                   <TableCell className="text-xs">
@@ -99,9 +154,9 @@ export default function OrdersPage() {
                     تومان
                   </TableCell>
                   <TableCell className={clsx('flex items-center justify-start text-xs leading-8', statusMap[order.status as keyof typeof statusMap]?.color)}>
-                    {statusMap[order.status as keyof typeof statusMap] && statusMap[order.status as keyof typeof statusMap].label}
+                    {statusMap[order.status as keyof typeof statusMap] && statusMap[order.status as keyof typeof statusMap].label }
                     {' '}
-                    {statusMap[order.status as keyof typeof statusMap] && statusMap[order.status as keyof typeof statusMap].icon}
+                    {statusMap[order.status as keyof typeof statusMap] && statusMap[order.status as keyof typeof statusMap].icon }
                   </TableCell>
                   <TableCell className="text-center">
                     <Link href={`/dashboard/orders/${order._id}`}>
@@ -118,7 +173,7 @@ export default function OrdersPage() {
 
         {/* Card View - Visible on mobile, hidden on lg and above */}
         <div className="space-y-4 lg:hidden" dir="rtl">
-          {(orderData && orderData?.length > 0) && orderData?.map((order: Order) => (
+          {(filteredOrders && filteredOrders?.length > 0) && filteredOrders?.map((order: Order) => (
             <Card key={order._id} className="border border-pink-300 shadow-sm">
               <CardContent className="p-4">
                 {/* Reference at top center */}
@@ -157,6 +212,26 @@ export default function OrdersPage() {
                       ریال
                     </span>
                   </div>
+                  {order?.shippingAddress && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">هزینه ارسال:</span>
+                      <span className="text-sm font-medium">
+                        {order.deliveryFees && filterPriceNumber(order.deliveryFees)}
+                        {' '}
+                        ریال
+                      </span>
+                    </div>
+                  )}
+                  {order?.taxes && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">مالیات:</span>
+                      <span className="text-sm font-medium">
+                        {order.taxes && filterPriceNumber(order.taxes)}
+                        {' '}
+                        ریال
+                      </span>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">مبلغ پرداختی:</span>
                     <span className="text-sm font-medium">
@@ -177,7 +252,11 @@ export default function OrdersPage() {
                           <div className="flex items-center gap-2">
                             {item.product && (
                               <>
-                                <span className="text-sm">{item.product.title}</span>
+                                <span className="text-xs inline-flex items-center gap-1.5">
+                                  <ShoppingBag className="size-3.5 text-purple-500" />
+                                  {item.product.title}
+                                  
+                                  </span>
                                 {item.quantity && (
                                   <span className="text-xs text-gray-500">
                                     ×
@@ -187,17 +266,20 @@ export default function OrdersPage() {
                               </>
                             )}
                             {item.course && (
-                              <span className="text-sm">{item.course.title}</span>
+                              <span className="text-xs inline-flex items-center gap-1.5">
+                                      <BookOpenCheck className="size-3.5 text-purple-500" />
+                                {item.course.title}
+                                </span>
                             )}
                           </div>
                           <div className="flex gap-1">
                             {item.product && (
-                              <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+                              <span className="inline-flex items-center rounded-full bg-purple-100 px-2 py-1 text-[10px] text-purple-800">
                                 محصول
                               </span>
                             )}
                             {item.course && (
-                              <span className="inline-flex items-center rounded-full bg-purple-100 px-2 py-1 text-xs text-purple-800">
+                              <span className="inline-flex items-center rounded-full bg-purple-100 px-2 py-1 text-[10px] text-purple-800">
                                 دوره
                               </span>
                             )}
@@ -246,8 +328,10 @@ export default function OrdersPage() {
         </div>
 
         {/* Empty state */}
-        {orderData?.length === 0 && (
-          <div className="mt-4 py-4 text-center">هیچ سفارشی یافت نشد</div>
+        {filteredOrders?.length === 0 && (
+          <div className="mt-4 py-4 text-center text-xs text-gray-500 md:text-sm">
+            {selectedCategory === 'all' ? 'هیچ سفارشی یافت نشد' : `هیچ سفارشی با وضعیت "${categories.find(c => c.key === selectedCategory)?.label}" یافت نشد`}
+          </div>
         )}
       </CardContent>
     </Card>
