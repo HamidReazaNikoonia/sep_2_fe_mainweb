@@ -16,16 +16,16 @@ import { CirclePause, CirclePlay, Headset, Phone } from 'lucide-react';
 import Image from 'next/image';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { SERVER_API_URL } from '@/API/config';
+import { SERVER_API_URL, SERVER_FILES_URL } from '@/API/config';
+import CommentLayout from '@/components/Comment';
 import { Button } from '@/components/ui/button';
-import testPosterImg from '@/public/assets/images/webmaster-course-cover-1.png';
+import useResponsiveEvent from '@/hooks/useResponsiveEvent';
+// import testPosterImg from '@/public/assets/images/webmaster-course-cover-1.png';
 // import CourseScheduleV1 from '@/sections/course/CourseSchedule/CourseScheduleV1';
 // import CourseScheduleV2 from '@/sections/course/CourseSchedule/CourseScheduleV2';
 import CourseScheduleV3 from '@/sections/course/CourseSchedule/CourseScheduleV3';
 import TabularSection from '@/sections/courseSessionSpecific/TabularSection';
 import { truncateDescription } from '@/utils/Helpers';
-import CommentLayout from '@/components/Comment';
-import useResponsiveEvent from '@/hooks/useResponsiveEvent';
 
 const courseSessionData = {
   title: 'دوره وبمستر',
@@ -57,9 +57,6 @@ const courseSessionData = {
     },
   ],
 };
-
-const SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL || '';
-
 
 export default function page({ params }: { params: { slug: string } }) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -119,9 +116,12 @@ export default function page({ params }: { params: { slug: string } }) {
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isMobileScreen = useResponsiveEvent(768, 200);
+
+  const isMediaImageAvailable = !!dataFromServer?.preview_media?.preview_image_mobile?.file_name && !!dataFromServer?.preview_media?.preview_image_desktop?.file_name;
 
   return (
     <div dir="rtl" className="w-full bg-gray-200">
@@ -137,7 +137,7 @@ export default function page({ params }: { params: { slug: string } }) {
             <div className="rounded-2xl p-6 ">
               <div className="flex flex-col">
                 <h1 className="w-full text-xl md:text-2xl font-semibold text-white">
-                  {courseSessionData.title}
+                  {dataFromServer?.title || ''}
                 </h1>
 
                 <ul style={{ transform: 'translateY(15px)' }} className="flex flex-wrap justify-start gap-x-4 rounded-2xl bg-white px-4 py-1.5 md:py-2.5">
@@ -163,35 +163,62 @@ export default function page({ params }: { params: { slug: string } }) {
 
           {/* Video */}
           <div className="w-full">
-            <div className="top-5 flex h-96 w-full justify-center rounded-2xl bg-transparent relative">
+            <div className="top-5 flex h-96 w-full justify-center bg-transparent relative">
               {/* Play/Pause Button */}
-              <div
-                onClick={handleVideoToggle}
-                className="absolute left-2/4 top-2/4 size-16 -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
-              >
-                <span className={`aticon ${isPlaying ? 'hidden' : 'block'}`} data-icon=""></span>
-                <CirclePlay className={`size-20 text-white ${isPlaying ? 'hidden' : 'block'} hover:scale-110 transition-transform drop-shadow-lg`} color="white" />
-                <CirclePause className={`size-20 text-white ${isPlaying ? 'block' : 'hidden'} hover:scale-110 transition-transform drop-shadow-lg`} color="white" />
-              </div>
-
+              {!!dataFromServer?.preview_media?.video_file?.file_name && (
+                <div
+                  onClick={handleVideoToggle}
+                  className="absolute left-2/4 top-2/4 size-16 -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
+                >
+                  <span className={`aticon ${isPlaying ? 'hidden' : 'block'}`} data-icon=""></span>
+                  <CirclePlay className={`size-20 text-white ${isPlaying ? 'hidden' : 'block'} hover:scale-110 transition-transform drop-shadow-lg`} color="white" />
+                  <CirclePause className={`size-20 text-white ${isPlaying ? 'block' : 'hidden'} hover:scale-110 transition-transform drop-shadow-lg`} color="white" />
+                </div>
+              )}
               {/* Poster Image - Only visible when video is not shown */}
-              <Image
-                src={testPosterImg}
-                className={`${showVideo ? 'hidden' : 'block'} w-full h-52 sm:h-56 md:h-64 lg:h-80 xl:h-96 object-cover rounded-2xl`}
-                alt="Course poster"
-              />
+
+              {/* If Media Image is Available */}
+              {!isMediaImageAvailable && (
+                <Image
+                  src={`${SERVER_FILES_URL}/${dataFromServer?.tumbnail?.file_name}`}
+                  width={100}
+                  height={100}
+                  className={`${showVideo ? 'hidden' : 'block'} w-full h-full object-cover`}
+                  alt={dataFromServer?.title || ''}
+                />
+              )}
+              {/* Poster Image - Only visible when video is not shown */}
+              {!!dataFromServer?.preview_media?.preview_image_mobile?.file_name && isMobileScreen && (
+                <Image
+                  src={`${SERVER_FILES_URL}/${dataFromServer?.preview_media?.preview_image_mobile?.file_name}`}
+                  width={100}
+                  height={100}
+                  className={`${showVideo ? 'hidden' : 'block'} w-full h-full object-cover`}
+                  alt={dataFromServer?.title || ''}
+                />
+              )}
+              {!!dataFromServer?.preview_media?.preview_image_desktop?.file_name && !isMobileScreen && (
+                <Image
+                  src={`${SERVER_FILES_URL}/${dataFromServer?.preview_media?.preview_image_desktop?.file_name}`}
+                  width={100}
+                  height={100}
+                  className={`${showVideo ? 'hidden' : 'block'} w-full h-52 sm:h-56 md:h-64 lg:h-80 xl:h-96 object-cover`}
+                  alt={dataFromServer?.title || ''}
+                />
+              )}
 
               {/* Video Player - Only visible after first play click */}
-              <video
-                ref={videoRef}
-                className={`${showVideo ? 'block' : 'hidden'} w-full h-full object-cover`}
-                poster="https://www.aryatehran.com/wp-content/uploads/2022/04/webmaster-course-poster.jpg"
-                src="https://d1.aryatehran.com/coursevideos/teaser-course-wordpress.mp4"
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-                onEnded={() => setIsPlaying(false)}
-                controls
-              />
+              {!!dataFromServer?.preview_media?.video_file?.file_name && (
+                <video
+                  ref={videoRef}
+                  className={`${showVideo ? 'block' : 'hidden'} w-full h-full object-cover`}
+                  src={`${SERVER_FILES_URL}/${dataFromServer?.preview_media?.video_file?.file_name}`}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onEnded={() => setIsPlaying(false)}
+                  controls
+                />
+              )}
             </div>
           </div>
 

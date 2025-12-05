@@ -4,9 +4,24 @@ export interface ICourseTypes {
   id: string;
   _id: string;
   createdAt: any;
+  preview_media: {
+    video_file: {
+      _id?: string;
+      file_name: string;
+    };
+    preview_image_mobile: {
+      _id?: string;
+      file_name: string;
+    };
+    preview_image_desktop: {
+      _id?: string;
+      file_name: string;
+    };
+  };
   title: string;
   sub_title?: string;
-  tumbnail_image: string; // Reference to 'Upload'
+  tumbnail_image?: string; // Reference to 'Upload'
+  tumbnail: string; // Reference to 'Upload'
   sample_media: {
     media_type: string;
     media_title: string;
