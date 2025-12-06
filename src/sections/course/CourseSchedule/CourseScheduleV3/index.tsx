@@ -169,13 +169,26 @@ const ProgramGrid = ({
   const [activeTab, setActiveTab] = useState<'sessions' | 'media' | 'subjects'>('sessions');
   const hasDiscount = program.price_discounted && program.price_discounted !== program.price_real;
 
+  const scrollToPackagesSection = () => {
+    const targetId = 'packages-section';
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const selectHandler = () => {
+    onSelect();
+    scrollToPackagesSection();
+  }
+
   return (
     <div
       className={`relative rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer h-[700px] md:h-[500px] flex flex-col ${isSelected
         ? 'ring-4 ring-primary/30 shadow-2xl scale-[1.02]'
         : 'shadow-lg hover:shadow-xl hover:scale-[1.01]'
-        }`}
-      onClick={onSelect}
+      }`}
+      onClick={selectHandler}
       id={`schedule-coach-${program?._id}`}
     >
       {/* Header with gradient - Fixed height */}
@@ -366,6 +379,7 @@ export default function TimelineGridLayout({
   });
 
   const handleProgramSelect = (program: Program) => {
+    console.log('program', program);
     setSelectedProgram(program);
     setSelectedPackages([]);
     onProgramSelect?.(program);
@@ -510,7 +524,7 @@ export default function TimelineGridLayout({
 
       {/* Packages Section */}
       {selectedProgram?.packages?.length > 0 && (
-        <div className="bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-2xl p-8 mb-8">
+        <div id="packages-section" className="bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-2xl p-8 mb-8">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-2">پکیج‌های تکمیلی</h3>
             <p className="text-gray-600">پکیج‌های اضافی برای تجربه بهتر یادگیری</p>
