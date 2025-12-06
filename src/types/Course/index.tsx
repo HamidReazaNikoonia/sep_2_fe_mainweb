@@ -20,6 +20,7 @@ export interface ICourseTypes {
   };
   title: string;
   sub_title?: string;
+  description?: string;
   tumbnail_image?: string; // Reference to 'Upload'
   tumbnail: string; // Reference to 'Upload'
   sample_media: {

@@ -12,7 +12,7 @@
 /* eslint-disable style/jsx-one-expression-per-line */
 'use client';
 import type { ICourseTypes } from '@/types/Course';
-import { CirclePause, CirclePlay, Headset, Phone } from 'lucide-react';
+import { CirclePause, CirclePlay, CircleX, Headset, Phone, User } from 'lucide-react';
 import Image from 'next/image';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -26,10 +26,26 @@ import useResponsiveEvent from '@/hooks/useResponsiveEvent';
 import CourseScheduleV3 from '@/sections/course/CourseSchedule/CourseScheduleV3';
 import TabularSection from '@/sections/courseSessionSpecific/TabularSection';
 import { truncateDescription } from '@/utils/Helpers';
+import { getCourseSessionPrograms } from '@/API/course';
+import { useQuery } from '@tanstack/react-query';
+
+const flattenCoachData = (response: any) => {
+  return response
+    .filter((item: any) => item.status === 'active')
+    .map((item: any) => ({
+      first_name: item.coach.first_name,
+      last_name: item.coach.last_name,
+      avatar: item.coach.avatar,
+      price_real: item.price_real,
+      price_discounted: item.price_discounted,
+      program_type: item.program_type,
+      is_fire_sale: item.is_fire_sale,
+    }));
+};
 
 const courseSessionData = {
   title: 'دوره وبمستر',
-  description: 'آموزش گیمبال دوربین به صورت حضوری و خصوصی از جمله دوره های آموزشی هدا استودیو به شمار می رود. اگر شما نیز به دنبال یادگیری حرفه‌ای کار با گیمبال و ارتقای مهارت‌های فیلم‌برداری خود هستید؟ هدا استودیو با افتخار دوره آموزشی آشنایی و کار با گیمبال دوربین را به صورت حضوری و خصوصی برگزار می‌کند.',
+  description: '',
   coaches: [
     {
       name: 'حمید نیکونیا',
@@ -65,10 +81,20 @@ export default function page({ params }: { params: { slug: string } }) {
 
   const [dataFromServer, setDataFromServer] = useState<ICourseTypes | null>(null);
 
+  // coach data from server
+  const [coaches, setCoaches] = useState<any[]>([]);
+
+  const { data: programs, isLoading, error } = useQuery({
+    queryKey: ['coursePrograms', dataFromServer?.id],
+    queryFn: () => getCourseSessionPrograms(dataFromServer?.id as string),
+    enabled: !!dataFromServer?.id,
+  });
 
   const formatPrice = (price: number) => {
     return price.toLocaleString('fa-IR');
   };
+
+  console.log('programs', programs);
 
   const originalPrice = 9000000;
   const price = 800000;
@@ -118,6 +144,15 @@ export default function page({ params }: { params: { slug: string } }) {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (programs?.data?.programs) {
+      if (programs?.data?.programs?.length > 0) {
+        const coaches = flattenCoachData(programs?.data?.programs as any);
+        setCoaches(coaches);
+      }
+    }
+  }, [programs]);
 
   const isMobileScreen = useResponsiveEvent(768, 200);
 
@@ -227,13 +262,13 @@ export default function page({ params }: { params: { slug: string } }) {
         {/* Left Section */}
         <div className="p-2 md:p-3 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl shadow-xl md:w-2/5">
           <div className="gradient-to-r flex size-full rounded-2xl bg-white">
-            <div className="flex w-full flex-col justify-between px-4 py-6">
+            <div className="flex w-full flex-col gap-y-6 px-4 py-6">
 
               <div className="w-full">
 
                 {/* Course Session Description */}
                 <div className="w-full border-y border-r border-r-red-500 py-2 pr-3 text-right text-sm leading-7">
-                  {courseSessionData.description && truncateDescription(courseSessionData.description, 350)}
+                  {dataFromServer?.description && truncateDescription(dataFromServer?.description as string, 350)}
                 </div>
 
                 {/* Action Button */}
@@ -251,45 +286,68 @@ export default function page({ params }: { params: { slug: string } }) {
               {/* Coaches */}
               <div className="flex w-full flex-col">
                 {/* Header */}
-                <h3 className="mt-8 text-right text-lg font-semibold text-gray-800 md:mt-0">
-                  لیست اساتید این دوره آموزشی
-                </h3>
+                {coaches?.length > 0 && (
+                  <h3 className="mt-8 text-right text-sm font-semibold text-gray-800 md:mt-0">
+                    لیست اساتید این دوره آموزشی
+                  </h3>
+                )}
 
                 {/* Lists */}
                 <ul className="flex flex-col gap-y-2  pt-4">
 
-                  {courseSessionData.coaches.map(coach => (
+                  {coaches?.length === 0 && (
+                    <div className="flex flex-row py-6 items-center gap-x-2 text-gray-500 text-sm">
+                      <span>
+                        <CircleX className="text-gray-300" />
+                      </span>
+                      <span>
+                        در حال حاضر اساتیدی برای این دوره آموزشی در دسترس نیست.
+                      </span>
+                    </div>
+                  )}
+
+                  {coaches?.length > 0 && coaches?.map((coach: any) => (
                     <li className=" flex w-full flex-col items-center border-y border-r-4 border-gray-300 border-r-red-500 py-1.5 pr-2 md:flex-row">
                       <div className="flex w-full flex-row items-center">
                         {/* Avatar */}
                         <div>
-                          <div className="mx-1 flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-purple-700 shadow-lg md:size-8">
+                          <div className="mx-1 flex size-11 items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-purple-600 via-pink-500 to-purple-700 shadow-lg md:size-12">
                             {coach?.avatar?.file_name ? (
-                              <img src={`${SERVER_FILES_URL}/${coach?.avatar?.file_name}`} className="rounded-full" />
-
-                            )
-                              : (
-                                  <img src="https://png.pngtree.com/png-vector/20240910/ourmid/pngtree-business-women-avatar-png-image_13805764.png" className="rounded-full" />
-                                )}
+                              <img alt={coach?.first_name} src={`${SERVER_FILES_URL}/${coach?.avatar?.file_name}`} className="rounded-full" />
+                            ) : (
+                              <User className="size-8 text-gray-100" />
+                            )}
                           </div>
                         </div>
 
                         {/* Coach Name */}
-                        <div className="mr-2 text-xs md:text-sm">
-                          {coach?.first_name} {coach?.last_name}
+                        <div className="mr-2 flex flex-col items-start gap-y-1 text-xs md:text-sm">
+                          <span className="text-gray-900 md:text-sm">
+                            {coach?.first_name} {coach?.last_name}
+                          </span>
+                          <span className="text-gray-500 gap-x-1 flex flex-row items-center md:text-xs">
+                            <span>نوع دوره:</span>
+                            <span>
+                              {coach?.program_type === 'ON-SITE' ? 'حضوری' : 'آنلاین'}
+                            </span>
+                          </span>
                         </div>
 
                         {/* Price */}
                         <div className="ml-0 mr-1 flex flex-1 flex-row-reverse items-center gap-3 text-left md:ml-4">
-                          <div className="flex items-center gap-1">
-                            <span className="text-sm font-bold text-gray-900 md:text-lg">{coach?.price_discount ? formatPrice(coach?.price_discount) : formatPrice(coach?.price_real)}</span>
-                            <span className="text-xs text-gray-500">تومان</span>
-                          </div>
-                          {coach?.price_discount && (
-                            <div className="text-[10px] text-gray-400 line-through">
-                              {formatPrice(coach?.price_real)} تومان
+                          <div className="flex flex-col items-center gap-1">
+                            <div>
+                              <span className="text-sm font-bold text-gray-900 md:text-base">{coach?.is_fire_sale ? formatPrice(coach?.price_discounted) : formatPrice(coach?.price_real)}</span>
+                              <span className="text-xs text-gray-500">ریال</span>
                             </div>
-                          )}
+
+                            {coach?.price_discounted && coach?.is_fire_sale && (
+                              <div className="text-[10px] text-gray-400 line-through">
+                                {formatPrice(coach?.price_real)} ریال
+                              </div>
+                            )}
+                          </div>
+
                         </div>
                       </div>
 
@@ -318,9 +376,11 @@ export default function page({ params }: { params: { slug: string } }) {
                     </li>
                   ))}
 
-                  <li className="mt-4 w-full cursor-pointer items-center  rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 py-2 text-center text-xs text-white hover:from-pink-600 hover:to-purple-700 md:mt-0 md:text-sm">
-                    مشاهده لیست کامل اساتید این دوره آموزشی
-                  </li>
+                  {coaches?.length > 0 && (
+                    <li className="mt-4 w-full cursor-pointer items-center  rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 py-2 text-center text-xs text-white hover:from-pink-600 hover:to-purple-700 md:mt-0 md:text-sm">
+                      مشاهده لیست کامل اساتید این دوره آموزشی
+                    </li>
+                  )}
                 </ul>
               </div>
 
