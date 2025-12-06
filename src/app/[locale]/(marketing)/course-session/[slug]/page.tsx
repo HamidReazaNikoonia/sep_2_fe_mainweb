@@ -33,6 +33,7 @@ const flattenCoachData = (response: any) => {
   return response
     .filter((item: any) => item.status === 'active')
     .map((item: any) => ({
+      _id: item._id,
       first_name: item.coach.first_name,
       last_name: item.coach.last_name,
       avatar: item.coach.avatar,
@@ -84,7 +85,7 @@ export default function page({ params }: { params: { slug: string } }) {
   // coach data from server
   const [coaches, setCoaches] = useState<any[]>([]);
 
-  const { data: programs, isLoading, error } = useQuery({
+  const { data: programs, isLoading, error, isSuccess } = useQuery({
     queryKey: ['coursePrograms', dataFromServer?.id],
     queryFn: () => getCourseSessionPrograms(dataFromServer?.id as string),
     enabled: !!dataFromServer?.id,
@@ -153,6 +154,35 @@ export default function page({ params }: { params: { slug: string } }) {
       }
     }
   }, [programs]);
+
+  const scrollToCourseScheduleSection = () => {
+    const targetId = 'course-schedule-section';
+    const element = document.getElementById(targetId);
+    if (element) {
+      const top = (element?.getBoundingClientRect().top || 0) + window.pageYOffset;
+      window.scrollTo({ behavior: 'smooth', top: top - 80 });
+    }
+  };
+  const scrollToCoach = (coachId: string) => {
+    // eslint-disable-next-line curly
+    if (typeof window === 'undefined') return;
+    const targetId = `schedule-coach-${coachId}`;
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    const tryScroll = () => {
+      const element = document.getElementById(targetId);
+      const top = (element?.getBoundingClientRect().top || 0) + window.pageYOffset;
+      if (element) {
+        window.scrollTo({ behavior: 'smooth', top: top - 80 });
+      } else if (attempts < maxAttempts) {
+        attempts++;
+        setTimeout(tryScroll, 300); // retry after 300ms
+      }
+    };
+
+    tryScroll();
+  };
 
   const isMobileScreen = useResponsiveEvent(768, 200);
 
@@ -298,7 +328,11 @@ export default function page({ params }: { params: { slug: string } }) {
                     {/* Lists */}
                     <ul className="flex flex-col gap-y-2  pt-4">
 
-                      {coaches?.length === 0 && (
+                      {isLoading ? (
+                        <div className="flex justify-center py-6">
+                          <div className="size-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                      ) : isSuccess && coaches?.length === 0 && (
                         <div className="flex flex-row py-6 items-center gap-x-2 text-gray-500 text-sm">
                           <span>
                             <CircleX className="text-gray-300" />
@@ -310,7 +344,7 @@ export default function page({ params }: { params: { slug: string } }) {
                       )}
 
                       {coaches?.length > 0 && coaches?.map((coach: any) => (
-                        <li className=" flex w-full flex-col items-center border-y border-r-4 border-gray-300 border-r-red-500 py-1.5 pr-2 md:flex-row">
+                        <li key={coach?._id} className=" flex w-full flex-col items-center border-y border-r-4 border-gray-300 border-r-red-500 py-1.5 pr-2 md:flex-row">
                           <div className="flex w-full flex-row items-center">
                             {/* Avatar */}
                             <div>
@@ -357,6 +391,7 @@ export default function page({ params }: { params: { slug: string } }) {
                           {/* Buttons Mobile Screen */}
                           <div className="mt-4 flex w-full items-center justify-end gap-2 md:hidden">
                             <Button
+                              onClick={() => scrollToCoach(coach?._id)}
                               className="w-full bg-gradient-to-r from-pink-500 to-purple-600 px-8 text-xs hover:from-pink-600 hover:to-purple-700 md:w-auto"
                             >
                               جزيیات
@@ -373,24 +408,25 @@ export default function page({ params }: { params: { slug: string } }) {
                           {/* Button Desktop Screen */}
                           <Button
                             className="mt-3 hidden w-full bg-gradient-to-r from-pink-500 to-purple-600 px-8 text-xs hover:from-pink-600 hover:to-purple-700 md:mt-0 md:block md:w-auto"
+                            onClick={() => scrollToCoach(coach?._id)}
                           >
                             جزيیات
                           </Button>
                         </li>
                       ))}
 
-                     
+
                     </ul>
                   </div>
                 </div>
 
                 <div>
-                {coaches?.length > 0 && (
-                        <div className="mt-4 w-full cursor-pointer flex items-center justify-center rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 py-2 text-center text-xs text-white hover:from-pink-600 hover:to-purple-700 md:mt-0 md:text-sm">
-                          <GraduationCap className="ml-2 size-6 inline-block" />
-                          <span>مشاهده لیست کامل اساتید این دوره آموزشی</span>
-                        </div>
-                      )}
+                  {coaches?.length > 0 && (
+                    <div onClick={() => scrollToCourseScheduleSection()} className="mt-4 w-full cursor-pointer flex items-center justify-center rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 py-2 text-center text-xs text-white hover:from-pink-600 hover:to-purple-700 md:mt-0 md:text-sm">
+                      <GraduationCap className="ml-2 size-6 inline-block" />
+                      <span>مشاهده لیست کامل اساتید این دوره آموزشی</span>
+                    </div>
+                  )}
                 </div>
 
               </div>
@@ -407,7 +443,7 @@ export default function page({ params }: { params: { slug: string } }) {
 
       {/* CourseSchedule */}
       <div className="w-full py-8 bg-gray-300">
-        <div className="w-full  container mx-auto ">
+        <div id="course-schedule-section" className="w-full  container mx-auto ">
           <CourseScheduleV3 courseId={dataFromServer?.id || ''} />
         </div>
       </div>

@@ -112,25 +112,25 @@ const MediaShowcase = ({ media }: { media: any[] }) => (
       <div key={item._id || index} className="group max-w-28 border-2 border-gray-500 shadow-lg md:max-w-48 relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
         {item.media_type === 'IMAGE'
           ? (
-              <img
-                src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`}
-                alt={item.media_title}
-                className="size-full object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-            )
+            <img
+              src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`}
+              alt={item.media_title}
+              className="size-full object-cover group-hover:scale-110 transition-transform duration-300"
+            />
+          )
           : item.media_type === 'VIDEO'
             ? (
-                <div className="relative size-full">
-                  <video className="size-full object-cover" preload="none">
-                    <source src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`} type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-colors">
-                    <div className="size-12 rounded-full bg-white/90 flex items-center justify-center">
-                      <Play className="size-6 text-gray-800 mr-0.5" />
-                    </div>
+              <div className="relative size-full">
+                <video className="size-full object-cover" preload="none">
+                  <source src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`} type="video/mp4" />
+                </video>
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-colors">
+                  <div className="size-12 rounded-full bg-white/90 flex items-center justify-center">
+                    <Play className="size-6 text-gray-800 mr-0.5" />
                   </div>
                 </div>
-              )
+              </div>
+            )
             : null}
 
         <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-3">
@@ -174,8 +174,9 @@ const ProgramGrid = ({
       className={`relative rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer h-[700px] md:h-[500px] flex flex-col ${isSelected
         ? 'ring-4 ring-primary/30 shadow-2xl scale-[1.02]'
         : 'shadow-lg hover:shadow-xl hover:scale-[1.01]'
-      }`}
+        }`}
       onClick={onSelect}
+      id={`schedule-coach-${program?._id}`}
     >
       {/* Header with gradient - Fixed height */}
       <div className="relative bg-gradient-to-r from-pink-500 to-purple-600 text-white p-6 shrink-0">
@@ -188,17 +189,17 @@ const ProgramGrid = ({
         <div className="flex items-center space-x-4 space-x-reverse">
           {program?.coach?.avatar
             ? (
-                <img
-                  src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${program?.coach?.avatar?.file_name}`}
-                  alt={`${program?.coach?.first_name} ${program?.coach?.last_name}`}
-                  className="size-20 md:size-28 rounded-full border-4 border-white/30 object-cover"
-                />
-              )
+              <img
+                src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${program?.coach?.avatar?.file_name}`}
+                alt={`${program?.coach?.first_name} ${program?.coach?.last_name}`}
+                className="size-20 md:size-28 rounded-full border-4 border-white/30 object-cover"
+              />
+            )
             : (
-                <div className="size-20 md:size-28 rounded-full border-4 border-white/30 bg-white/20 flex items-center justify-center text-2xl font-bold">
-                  {program?.coach?.first_name?.charAt(0)}
-                </div>
-              )}
+              <div className="size-20 md:size-28 rounded-full border-4 border-white/30 bg-white/20 flex items-center justify-center text-2xl font-bold">
+                {program?.coach?.first_name?.charAt(0)}
+              </div>
+            )}
 
           <div className="flex-1">
             <h3 className=" text-lg md:text-xl font-bold">
@@ -235,26 +236,26 @@ const ProgramGrid = ({
           <div>
             {hasDiscount
               ? (
-                  <div>
-                    <div className="text-white/70 line-through text-sm">
-                      {filterPriceNumber(program.price_real)}
-                      {' '}
-                      تومان
-                    </div>
-                    <div className="text-2xl font-bold">
-                      {filterPriceNumber(program.price_discounted)}
-                      {' '}
-                      تومان
-                    </div>
-                  </div>
-                )
-              : (
-                  <div className="text-2xl font-bold">
+                <div>
+                  <div className="text-white/70 line-through text-sm">
                     {filterPriceNumber(program.price_real)}
                     {' '}
-                    تومان
+                    ریال
                   </div>
-                )}
+                  <div className="text-2xl font-bold">
+                    {filterPriceNumber(program.price_discounted)}
+                    {' '}
+                    ریال
+                  </div>
+                </div>
+              )
+              : (
+                <div className="text-2xl font-bold">
+                  {filterPriceNumber(program.price_real)}
+                  {' '}
+                  ریال
+                </div>
+              )}
           </div>
 
           <div className="block md:hidden">
@@ -294,9 +295,9 @@ const ProgramGrid = ({
                 }}
                 className={`flex flex-1 items-center justify-center space-x-2 space-x-reverse py-3 text-sm font-medium transition-colors
                   ${activeTab === key
-                ? 'text-primary border-primary bg-primary/5 md:border-b-2 border-r-4 md:border-r-0'
-                : 'text-gray-500 hover:text-gray-700'
-              }
+                    ? 'text-primary border-primary bg-primary/5 md:border-b-2 border-r-4 md:border-r-0'
+                    : 'text-gray-500 hover:text-gray-700'
+                  }
                 `}
               >
                 <Icon className="size-4" />
@@ -316,27 +317,27 @@ const ProgramGrid = ({
             {activeTab === 'media' && (
               program.sample_media?.length > 0
                 ? (
-                    <MediaShowcase media={program.sample_media} />
-                  )
+                  <MediaShowcase media={program.sample_media} />
+                )
                 : (
-                    <div className="text-center py-12 text-gray-500">
-                      <Play className="size-12 mx-auto text-gray-300 mb-4" />
-                      <p>نمونه کاری موجود نیست</p>
-                    </div>
-                  )
+                  <div className="text-center py-12 text-gray-500">
+                    <Play className="size-12 mx-auto text-gray-300 mb-4" />
+                    <p>نمونه کاری موجود نیست</p>
+                  </div>
+                )
             )}
 
             {activeTab === 'subjects' && (
               program.subjects?.length > 0
                 ? (
-                    <SubjectsGrid subjects={program.subjects} />
-                  )
+                  <SubjectsGrid subjects={program.subjects} />
+                )
                 : (
-                    <div className="text-center py-12 text-gray-500">
-                      <Award className="size-12 mx-auto text-gray-300 mb-4" />
-                      <p>سرفصل موجود نیست</p>
-                    </div>
-                  )
+                  <div className="text-center py-12 text-gray-500">
+                    <Award className="size-12 mx-auto text-gray-300 mb-4" />
+                    <p>سرفصل موجود نیست</p>
+                  </div>
+                )
             )}
           </div>
         </div>
@@ -407,17 +408,92 @@ export default function TimelineGridLayout({
   return (
     <div className="max-w-7xl mx-auto px-4 py-8" dir="rtl">
       {/* Hero Header */}
-      <div className="text-center mb-16">
+      {/* <div className="text-center mb-16">
         <div className="inline-flex items-center justify-center size-20 bg-gradient-to-br from-primary to-primary/80 rounded-full mb-6">
           <Users className="size-10 text-white" />
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          انتخاب استاد دوره
+        <h1 className="text-xl md:text-2xl font-bold text-primary mb-4">
+          انتخاب استاد مورد نظر خود
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
           از میان بهترین اساتید ما، استاد مورد نظر خود را انتخاب کنید و سفر یادگیری خود را آغاز کنید
         </p>
         <ArrowDown className="size-6 mx-auto mt-8 text-primary animate-bounce" />
+      </div> */}
+
+      {/* Hero Header with 3-Step Guide */}
+      <div className="text-center mb-12 md:mb-16">
+        <div className="inline-flex items-center justify-center size-16 md:size-20 pink-gradient-bg rounded-full mb-4 md:mb-6">
+          <Users className="size-8 md:size-10 text-white" />
+        </div>
+        <h1 className="text-lg md:text-2xl font-bold text-primary mb-3 md:mb-4 px-4">
+          انتخاب استاد مورد نظر خود
+        </h1>
+        <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto mb-8 md:mb-12 px-4">
+          از میان بهترین اساتید ما، استاد مورد نظر خود را انتخاب کنید و یادگیری خود را آغاز کنید
+        </p>
+
+        {/* 3-Step Guide */}
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8 my-6 md:mt-12 md:mb-8 px-4">
+          {/* Step 1 */}
+          <div className="flex flex-col items-center p-4 md:p-6 rounded-xl md:rounded-2xl bg-gradient-to-br from-blue-50 to-white border border-blue-100 hover:shadow-lg transition-all duration-300 group">
+            <div className="relative mb-3 md:mb-4">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full opacity-20 group-hover:opacity-30 blur transition-opacity"></div>
+              <div className="relative inline-flex items-center justify-center size-12 md:size-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full">
+                <Users className="size-6 md:size-8 text-white" />
+              </div>
+              <div className="absolute -top-1 md:-top-2 -right-1 md:-right-2 flex items-center justify-center size-6 md:size-8 bg-blue-600 text-white rounded-full font-bold text-xs md:text-sm border-2 border-white shadow-lg">
+                ۱
+              </div>
+            </div>
+            <h3 className="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2">
+              انتخاب استاد
+            </h3>
+            <p className="text-xs md:text-sm text-gray-600 text-center leading-relaxed">
+              استاد مورد نظر خود را از میان اساتید انتخاب کنید
+            </p>
+          </div>
+
+          {/* Step 2 */}
+          <div className="flex flex-col items-center p-4 md:p-6 rounded-xl md:rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 hover:shadow-lg transition-all duration-300 group">
+            <div className="relative mb-3 md:mb-4">
+              <div className="absolute -inset-1 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full opacity-20 group-hover:opacity-30 blur transition-opacity"></div>
+              <div className="relative inline-flex items-center justify-center size-12 md:size-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full">
+                <Calendar className="size-6 md:size-8 text-white" />
+              </div>
+              <div className="absolute -top-1 md:-top-2 -right-1 md:-right-2 flex items-center justify-center size-6 md:size-8 bg-purple-600 text-white rounded-full font-bold text-xs md:text-sm border-2 border-white shadow-lg">
+                ۲
+              </div>
+            </div>
+            <h3 className="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2">
+              انتخاب جلسه
+            </h3>
+            <p className="text-xs md:text-sm text-gray-600 text-center leading-relaxed">
+              زمان و جلسه مناسب خود را برای شروع دوره انتخاب
+            </p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="flex flex-col items-center p-4 md:p-6 rounded-xl md:rounded-2xl bg-gradient-to-br from-green-50 to-white border border-green-100 hover:shadow-lg transition-all duration-300 group">
+            <div className="relative mb-3 md:mb-4">
+              <div className="absolute -inset-1 bg-gradient-to-r from-green-400 to-green-600 rounded-full opacity-20 group-hover:opacity-30 blur transition-opacity"></div>
+              <div className="relative inline-flex items-center justify-center size-12 md:size-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full">
+                <CheckCircle className="size-6 md:size-8 text-white" />
+              </div>
+              <div className="absolute -top-1 md:-top-2 -right-1 md:-right-2 flex items-center justify-center size-6 md:size-8 bg-green-600 text-white rounded-full font-bold text-xs md:text-sm border-2 border-white shadow-lg">
+                ۳
+              </div>
+            </div>
+            <h3 className="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2">
+              تکمیل ثبت‌نام
+            </h3>
+            <p className="text-xs md:text-sm text-gray-600 text-center leading-relaxed">
+              پرداخت کنید و سفر یادگیری خود را با اعتماد آغاز کنید
+            </p>
+          </div>
+        </div>
+
+        <ArrowDown className="size-5 md:size-6 mx-auto mt-6 md:mt-8 text-primary animate-bounce" />
       </div>
 
       {/* Programs Grid */}
@@ -447,7 +523,7 @@ export default function TimelineGridLayout({
                 className={`relative overflow-hidden rounded-xl border-2 p-6 transition-all cursor-pointer group ${selectedPackages.includes(pkg._id)
                   ? 'border-primary bg-primary/5 scale-105'
                   : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
-                }`}
+                  }`}
                 onClick={() => {
                   setSelectedPackages(prev =>
                     prev.includes(pkg._id)
@@ -465,17 +541,17 @@ export default function TimelineGridLayout({
                 <div className="relative">
                   {pkg.image
                     ? (
-                        <img
-                          src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${pkg.image.file_name}`}
-                          alt={pkg.title}
-                          className="size-16 rounded-lg object-cover mb-4"
-                        />
-                      )
+                      <img
+                        src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${pkg.image.file_name}`}
+                        alt={pkg.title}
+                        className="size-16 rounded-lg object-cover mb-4"
+                      />
+                    )
                     : (
-                        <div className="size-16 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4">
-                          <Award className="size-8 text-primary" />
-                        </div>
-                      )}
+                      <div className="size-16 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4">
+                        <Award className="size-8 text-primary" />
+                      </div>
+                    )}
 
                   <h4 className="font-bold text-gray-900 mb-2">{pkg.title}</h4>
                   <div className="text-2xl font-bold text-primary">
@@ -515,15 +591,15 @@ export default function TimelineGridLayout({
               const pkg = selectedProgram.packages.find((p: any) => p._id === packageId);
               return pkg
                 ? (
-                    <div key={pkg._id} className="flex justify-between py-2 text-gray-600 text-sm md:text-base">
-                      <span>{pkg.title}</span>
-                      <span>
-                        {filterPriceNumber(pkg.price)}
-                        {' '}
-                        ریال
-                      </span>
-                    </div>
-                  )
+                  <div key={pkg._id} className="flex justify-between py-2 text-gray-600 text-sm md:text-base">
+                    <span>{pkg.title}</span>
+                    <span>
+                      {filterPriceNumber(pkg.price)}
+                      {' '}
+                      ریال
+                    </span>
+                  </div>
+                )
                 : null;
             })}
 
