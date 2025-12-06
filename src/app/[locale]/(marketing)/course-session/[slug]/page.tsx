@@ -12,7 +12,7 @@
 /* eslint-disable style/jsx-one-expression-per-line */
 'use client';
 import type { ICourseTypes } from '@/types/Course';
-import { CirclePause, CirclePlay, CircleX, Headset, Phone, User } from 'lucide-react';
+import { CirclePause, CirclePlay, CircleX, GraduationCap, Headset, Phone, User } from 'lucide-react';
 import Image from 'next/image';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -262,126 +262,137 @@ export default function page({ params }: { params: { slug: string } }) {
         {/* Left Section */}
         <div className="p-2 md:p-3 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl shadow-xl md:w-2/5">
           <div className="gradient-to-r flex size-full rounded-2xl bg-white">
+            {/* Item */}
             <div className="flex w-full flex-col gap-y-6 px-4 py-6">
 
-              <div className="w-full">
+              <div className='w-full flex flex-col justify-between h-full'>
+                <div>
+                  <div className="w-full">
 
-                {/* Course Session Description */}
-                <div className="w-full border-y border-r border-r-red-500 py-2 pr-3 text-right text-sm leading-7">
-                  {dataFromServer?.description && truncateDescription(dataFromServer?.description as string, 350)}
-                </div>
-
-                {/* Action Button */}
-                <div className="mt-4 hidden w-full justify-end md:flex">
-                  <Button
-                    variant="outline"
-                    className="flex-1  bg-gradient-to-r from-pink-500 to-purple-600 text-sm text-white hover:text-white hover:from-pink-600 hover:to-purple-700"
-                  >
-                    <Phone className="ml-0 size-10" />
-                    مشاوره رایگان
-                  </Button>
-                </div>
-              </div>
-
-              {/* Coaches */}
-              <div className="flex w-full flex-col">
-                {/* Header */}
-                {coaches?.length > 0 && (
-                  <h3 className="mt-8 text-right text-sm font-semibold text-gray-800 md:mt-0">
-                    لیست اساتید این دوره آموزشی
-                  </h3>
-                )}
-
-                {/* Lists */}
-                <ul className="flex flex-col gap-y-2  pt-4">
-
-                  {coaches?.length === 0 && (
-                    <div className="flex flex-row py-6 items-center gap-x-2 text-gray-500 text-sm">
-                      <span>
-                        <CircleX className="text-gray-300" />
-                      </span>
-                      <span>
-                        در حال حاضر اساتیدی برای این دوره آموزشی در دسترس نیست.
-                      </span>
+                    {/* Course Session Description */}
+                    <div className="w-full border-y border-r border-r-red-500 py-2 pr-3 text-right text-sm leading-7">
+                      {dataFromServer?.description && truncateDescription(dataFromServer?.description as string, 350)}
                     </div>
-                  )}
 
-                  {coaches?.length > 0 && coaches?.map((coach: any) => (
-                    <li className=" flex w-full flex-col items-center border-y border-r-4 border-gray-300 border-r-red-500 py-1.5 pr-2 md:flex-row">
-                      <div className="flex w-full flex-row items-center">
-                        {/* Avatar */}
-                        <div>
-                          <div className="mx-1 flex size-11 items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-purple-600 via-pink-500 to-purple-700 shadow-lg md:size-12">
-                            {coach?.avatar?.file_name ? (
-                              <img alt={coach?.first_name} src={`${SERVER_FILES_URL}/${coach?.avatar?.file_name}`} className="rounded-full" />
-                            ) : (
-                              <User className="size-8 text-gray-100" />
-                            )}
-                          </div>
-                        </div>
+                    {/* Action Button */}
+                    <div className="mt-4 hidden w-full justify-end md:flex">
+                      <Button
+                        variant="outline"
+                        className="flex-1  bg-gradient-to-r from-pink-500 to-purple-600 text-sm text-white hover:text-white hover:from-pink-600 hover:to-purple-700"
+                      >
+                        <Phone className="ml-0 size-10" />
+                        مشاوره رایگان
+                      </Button>
+                    </div>
+                  </div>
 
-                        {/* Coach Name */}
-                        <div className="mr-2 flex flex-col items-start gap-y-1 text-xs md:text-sm">
-                          <span className="text-gray-900 md:text-sm">
-                            {coach?.first_name} {coach?.last_name}
+                  {/* Coaches */}
+                  <div className="flex w-full flex-col">
+                    {/* Header */}
+                    {coaches?.length > 0 && (
+                      <h3 className="mt-4 text-right text-sm font-semibold text-gray-800">
+                        لیست اساتید این دوره آموزشی
+                      </h3>
+                    )}
+
+                    {/* Lists */}
+                    <ul className="flex flex-col gap-y-2  pt-4">
+
+                      {coaches?.length === 0 && (
+                        <div className="flex flex-row py-6 items-center gap-x-2 text-gray-500 text-sm">
+                          <span>
+                            <CircleX className="text-gray-300" />
                           </span>
-                          <span className="text-gray-500 gap-x-1 flex flex-row items-center md:text-xs">
-                            <span>نوع دوره:</span>
-                            <span>
-                              {coach?.program_type === 'ON-SITE' ? 'حضوری' : 'آنلاین'}
-                            </span>
+                          <span>
+                            در حال حاضر اساتیدی برای این دوره آموزشی در دسترس نیست.
                           </span>
                         </div>
+                      )}
 
-                        {/* Price */}
-                        <div className="ml-0 mr-1 flex flex-1 flex-row-reverse items-center gap-3 text-left md:ml-4">
-                          <div className="flex flex-col items-center gap-1">
+                      {coaches?.length > 0 && coaches?.map((coach: any) => (
+                        <li className=" flex w-full flex-col items-center border-y border-r-4 border-gray-300 border-r-red-500 py-1.5 pr-2 md:flex-row">
+                          <div className="flex w-full flex-row items-center">
+                            {/* Avatar */}
                             <div>
-                              <span className="text-sm font-bold text-gray-900 md:text-base">{coach?.is_fire_sale ? formatPrice(coach?.price_discounted) : formatPrice(coach?.price_real)}</span>
-                              <span className="text-xs text-gray-500">ریال</span>
+                              <div className="mx-1 flex size-11 items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-purple-600 via-pink-500 to-purple-700 shadow-lg md:size-12">
+                                {coach?.avatar?.file_name ? (
+                                  <img alt={coach?.first_name} src={`${SERVER_FILES_URL}/${coach?.avatar?.file_name}`} className="rounded-full" />
+                                ) : (
+                                  <User className="size-8 text-gray-100" />
+                                )}
+                              </div>
                             </div>
 
-                            {coach?.price_discounted && coach?.is_fire_sale && (
-                              <div className="text-[10px] text-gray-400 line-through">
-                                {formatPrice(coach?.price_real)} ریال
+                            {/* Coach Name */}
+                            <div className="mr-2 flex flex-col items-start gap-y-1 text-xs md:text-sm">
+                              <span className="text-gray-900 md:text-sm">
+                                {coach?.first_name} {coach?.last_name}
+                              </span>
+                              <span className="text-gray-500 gap-x-1 flex flex-row items-center md:text-xs">
+                                <span>نوع دوره:</span>
+                                <span>
+                                  {coach?.program_type === 'ON-SITE' ? 'حضوری' : 'آنلاین'}
+                                </span>
+                              </span>
+                            </div>
+
+                            {/* Price */}
+                            <div className="ml-0 mr-1 flex flex-1 flex-row-reverse items-center gap-3 text-left md:ml-4">
+                              <div className="flex flex-col items-center gap-1">
+                                <div>
+                                  <span className="text-sm font-bold text-gray-900 md:text-base">{coach?.is_fire_sale ? formatPrice(coach?.price_discounted) : formatPrice(coach?.price_real)}</span>
+                                  <span className="text-xs text-gray-500">ریال</span>
+                                </div>
+
+                                {coach?.price_discounted && coach?.is_fire_sale && (
+                                  <div className="text-[10px] text-gray-400 line-through">
+                                    {formatPrice(coach?.price_real)} ریال
+                                  </div>
+                                )}
                               </div>
-                            )}
+
+                            </div>
                           </div>
 
+                          {/* Buttons Mobile Screen */}
+                          <div className="mt-4 flex w-full items-center justify-end gap-2 md:hidden">
+                            <Button
+                              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 px-8 text-xs hover:from-pink-600 hover:to-purple-700 md:w-auto"
+                            >
+                              جزيیات
+                            </Button>
+                            <Button
+                              variant="outline"
+                              className="flex-1 border-pink-500 text-xs text-pink-500 hover:bg-pink-50"
+                            >
+                              <Phone className="ml-0 size-4" />
+                              مشاوره
+                            </Button>
+                          </div>
+
+                          {/* Button Desktop Screen */}
+                          <Button
+                            className="mt-3 hidden w-full bg-gradient-to-r from-pink-500 to-purple-600 px-8 text-xs hover:from-pink-600 hover:to-purple-700 md:mt-0 md:block md:w-auto"
+                          >
+                            جزيیات
+                          </Button>
+                        </li>
+                      ))}
+
+                     
+                    </ul>
+                  </div>
+                </div>
+
+                <div>
+                {coaches?.length > 0 && (
+                        <div className="mt-4 w-full cursor-pointer flex items-center justify-center rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 py-2 text-center text-xs text-white hover:from-pink-600 hover:to-purple-700 md:mt-0 md:text-sm">
+                          <GraduationCap className="ml-2 size-6 inline-block" />
+                          <span>مشاهده لیست کامل اساتید این دوره آموزشی</span>
                         </div>
-                      </div>
+                      )}
+                </div>
 
-                      {/* Buttons Mobile Screen */}
-                      <div className="mt-4 flex w-full items-center justify-end gap-2 md:hidden">
-                        <Button
-                          className="w-full bg-gradient-to-r from-pink-500 to-purple-600 px-8 text-xs hover:from-pink-600 hover:to-purple-700 md:w-auto"
-                        >
-                          جزيیات
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="flex-1 border-pink-500 text-xs text-pink-500 hover:bg-pink-50"
-                        >
-                          <Phone className="ml-0 size-4" />
-                          مشاوره
-                        </Button>
-                      </div>
-
-                      {/* Button Desktop Screen */}
-                      <Button
-                        className="mt-3 hidden w-full bg-gradient-to-r from-pink-500 to-purple-600 px-8 text-xs hover:from-pink-600 hover:to-purple-700 md:mt-0 md:block md:w-auto"
-                      >
-                        جزيیات
-                      </Button>
-                    </li>
-                  ))}
-
-                  {coaches?.length > 0 && (
-                    <li className="mt-4 w-full cursor-pointer items-center  rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 py-2 text-center text-xs text-white hover:from-pink-600 hover:to-purple-700 md:mt-0 md:text-sm">
-                      مشاهده لیست کامل اساتید این دوره آموزشی
-                    </li>
-                  )}
-                </ul>
               </div>
 
             </div>
