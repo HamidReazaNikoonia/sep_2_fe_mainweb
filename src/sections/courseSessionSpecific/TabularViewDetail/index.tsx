@@ -1,17 +1,13 @@
+/* eslint-disable react-dom/no-dangerously-set-innerhtml */
 'use client';
 
+import he from 'he';
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import he from 'he';
 
-interface ContentItem {
-  title: string;
-  content: string;
-}
-
-interface TabularViewProps {
-  content: ContentItem[];
-}
+type TabularViewProps = {
+  content: any[];
+};
 
 export default function TabularView({ content }: TabularViewProps) {
   // Create tab values from array indices to ensure uniqueness
@@ -30,7 +26,7 @@ export default function TabularView({ content }: TabularViewProps) {
                   value={`tab-${index}`}
                   className="h-auto w-full justify-start py-3 text-xs data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white"
                 >
-                  <span className="text-right text-base">{item.title}</span>
+                  <span className="text-right text-base">{item.header_title}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -41,10 +37,10 @@ export default function TabularView({ content }: TabularViewProps) {
                   <div className="rounded-lg">
                     <div className="rounded-lg bg-gray-50 p-4">
                       <h4 className="mb-3 flex items-center gap-2 font-medium text-gray-900">
-                        {item.title}
+                        {item.header_title}
                       </h4>
                       <div
-                        dangerouslySetInnerHTML={{ __html: he.decode(item.content || '') }}
+                        dangerouslySetInnerHTML={{ __html: he.decode(item.description || '') }}
                         className="text-sm leading-7 text-gray-700"
                       />
                     </div>

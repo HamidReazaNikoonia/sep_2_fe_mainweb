@@ -12,11 +12,13 @@
 /* eslint-disable style/jsx-one-expression-per-line */
 'use client';
 import type { ICourseTypes } from '@/types/Course';
+import { useQuery } from '@tanstack/react-query';
 import { CirclePause, CirclePlay, CircleX, GraduationCap, Headset, Phone, User } from 'lucide-react';
-import Image from 'next/image';
 
+import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import { SERVER_API_URL, SERVER_FILES_URL } from '@/API/config';
+import { getCourseSessionPrograms } from '@/API/course';
 import CommentLayout from '@/components/Comment';
 import { Button } from '@/components/ui/button';
 import useResponsiveEvent from '@/hooks/useResponsiveEvent';
@@ -26,8 +28,6 @@ import useResponsiveEvent from '@/hooks/useResponsiveEvent';
 import CourseScheduleV3 from '@/sections/course/CourseSchedule/CourseScheduleV3';
 import TabularSection from '@/sections/courseSessionSpecific/TabularSection';
 import { truncateDescription } from '@/utils/Helpers';
-import { getCourseSessionPrograms } from '@/API/course';
-import { useQuery } from '@tanstack/react-query';
 
 const flattenCoachData = (response: any) => {
   return response
@@ -438,7 +438,7 @@ export default function page({ params }: { params: { slug: string } }) {
 
       {/* Description Tabular Section */}
       <div className="container mx-auto pb-0 md:pb-20">
-        <TabularSection />
+        <TabularSection sampleMedia={dataFromServer?.sample_media} details={dataFromServer?.details} />
       </div>
 
       {/* CourseSchedule */}

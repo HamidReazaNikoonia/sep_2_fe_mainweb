@@ -27,7 +27,12 @@ const MediaItem = ({ media }: { media: SampleMedia }) => {
     switch (media.media_type) {
       case 'IMAGE':
         return (
-          <div className="group relative aspect-video overflow-hidden rounded-lg">
+          <a
+            href={media.url_address || `/uploads/${media.file?.file_name}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative block aspect-video overflow-hidden rounded-lg"
+          >
             <img
               src={media.url_address || `/uploads/${media.file?.file_name}`}
               alt={media.media_title}
@@ -35,7 +40,7 @@ const MediaItem = ({ media }: { media: SampleMedia }) => {
               loading="lazy"
             />
             <div className="absolute inset-0 bg-black bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-20" />
-          </div>
+          </a>
         );
 
       case 'VIDEO':
@@ -45,12 +50,12 @@ const MediaItem = ({ media }: { media: SampleMedia }) => {
             onClick={handleVideoClick}
           >
             {/* Video thumbnail/poster */}
-            <img
+            {/* <img
               src={media.file?.file_name ? `/uploads/${media.file.file_name}` : '/api/placeholder/300/200'}
               alt={media.media_title}
               className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
               loading="lazy"
-            />
+            /> */}
 
             {/* Play overlay */}
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 transition-all duration-300 group-hover:bg-opacity-50">

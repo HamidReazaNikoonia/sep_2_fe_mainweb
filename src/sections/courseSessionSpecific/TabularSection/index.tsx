@@ -34,7 +34,7 @@ type SampleMedia = {
 };
 
 type TabularSectionProps = {
-  courseData?: {
+  details?: {
     description?: string;
     images?: string[];
     specifications?: Record<string, string>;
@@ -45,6 +45,7 @@ type TabularSectionProps = {
     };
     sample_media?: SampleMedia[];
   };
+  sampleMedia?: SampleMedia[];
 };
 
 // Update the MobileTabsUICards component to handle both mobile and md layouts
@@ -79,10 +80,10 @@ const CardStyleTabs = ({ activeTab, onTabChange, layout = 'column' }: {
 
   return (
     <div className={clsx(
-      'gap-4 p-4',
+      'px-6 py-2',
       {
-        'flex flex-col md:flex-row-reverse': layout === 'row',
-        'grid grid-cols-1': layout === 'column',
+        'gap-3 flex flex-col md:flex-row-reverse': layout === 'row',
+        'gap-2 grid grid-cols-1': layout === 'column',
       },
     )}
     >
@@ -102,7 +103,7 @@ const CardStyleTabs = ({ activeTab, onTabChange, layout = 'column' }: {
             `bg-gradient-to-r ${tab.gradient} relative text-white`,
             {
               'p-4': layout === 'row',
-              'p-6': layout === 'column',
+              'p-3': layout === 'column',
             },
           )}
           >
@@ -173,7 +174,7 @@ const CardStyleTabs = ({ activeTab, onTabChange, layout = 'column' }: {
   );
 };
 
-export default function TabularSection({ courseData }: TabularSectionProps) {
+export default function TabularSection({ details, sampleMedia }: TabularSectionProps) {
   // Mock data for demonstration
   const mockData = {
     description: 'این دوره جامع طراحی وب‌سایت با WordPress برای مبتدیان طراحی شده است. در این دوره شما با مفاهیم پایه طراحی وب، نحوه کار با WordPress، ایجاد قالب‌های حرفه‌ای و بهینه‌سازی سایت آشنا خواهید شد.',
@@ -262,29 +263,31 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
     },
   ];
 
-  const data = courseData || mockData;
+  const data = details || mockData;
+
+  console.log('data', data);
 
   // Add this state for mobile tab handling
   const [activeMobileTab, setActiveMobileTab] = useState('description');
 
   return (
-    <div dir="ltr" className="w-full space-y-6 shadow-lg">
+    <div dir="ltr" className="w-full space-y-1 shadow-lg">
       {/* Main Tabs Section with Gradient Border */}
-      <div className="rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 md:p-3">
-        <div className="rounded-lg bg-white pt-2 pb-8">
+      <div className="rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 md:p-2">
+        <div className="rounded-lg bg-white pb-4 pt-2">
           <Tabs value={activeMobileTab} onValueChange={setActiveMobileTab} className="w-full">
             {/* Desktop Tabs - Standard horizontal tabs for large screens */}
             <div className="hidden">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="description" className="flex items-center gap-2 text-sm">
+                <TabsTrigger value="description" className="flex items-center gap-2 text-xs">
                   <FileText className="size-4" />
                   توضیحات
                 </TabsTrigger>
-                <TabsTrigger value="images" className="flex items-center gap-2 text-sm">
+                <TabsTrigger value="images" className="flex items-center gap-2 text-xs">
                   <ImageIcon className="size-4" />
                   نمونه کار برای دوره
                 </TabsTrigger>
-                <TabsTrigger value="support" className="flex items-center gap-2 text-sm">
+                <TabsTrigger value="support" className="flex items-center gap-2 text-xs">
                   <MessageCircle className="size-4" />
                   پشتیبانی
                 </TabsTrigger>
@@ -310,21 +313,21 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
             </div>
 
             {/* Tab Contents */}
-            <TabsContent value="description" className="mt-6">
+            <TabsContent value="description" className="mt-0 md:mt-2">
               <Card className="border-0 shadow-none">
                 {/* Show TabularView on medium and larger screens */}
                 <div className="hidden md:block">
-                  <TabularView content={mockContent} />
+                  {details && details?.length > 0 && <TabularView content={details} />}
                 </div>
 
                 {/* Show AccordionView on mobile screens */}
                 <div className="block md:hidden">
-                  <AccordionView content={mockContent} />
+                  {details && details?.length > 0 && <AccordionView content={details} />}
                 </div>
               </Card>
             </TabsContent>
 
-            <TabsContent value="images" className="mt-6">
+            <TabsContent value="images" className="mt-0 md:mt-2">
               <Card dir="rtl" className="border-0 shadow-none">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -333,10 +336,10 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {data.sample_media && data.sample_media.length > 0
+                  {sampleMedia && sampleMedia.length > 0
                     ? (
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                          {data.sample_media.map((media, index) => (
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                          {sampleMedia.map((media, index) => (
                             <div key={index} className="space-y-2">
                               <MediaItem media={media} />
                             </div>
@@ -353,7 +356,7 @@ export default function TabularSection({ courseData }: TabularSectionProps) {
               </Card>
             </TabsContent>
 
-            <TabsContent value="support" className="mt-6">
+            <TabsContent value="support" className="mt-0 md:mt-2">
               <Card className="border-0 shadow-none">
                 <CardHeader>
                   <CardTitle dir="rtl" className="flex items-center gap-2">
