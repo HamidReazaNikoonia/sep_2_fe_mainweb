@@ -568,7 +568,7 @@ export default function TimelineGridLayout({
       </div>
 
       {/* Programs Grid */}
-      <div className="grid gap-8 lg:grid-cols-1 mb-8">
+      <div className="grid gap-8 lg:grid-cols-1 mb-12 md:mb-16">
         {programsData.map((program: Program) => (
           <ProgramGrid
             key={program._id}
@@ -579,77 +579,81 @@ export default function TimelineGridLayout({
         ))}
       </div>
 
-      {/* Packages Section */}
-      {selectedProgram?.packages?.length > 0 && (
-        <div id="packages-section" className="bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-2xl p-8 mb-8">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">پکیج‌های تکمیلی</h3>
-            <p className="text-gray-600">پکیج‌های اضافی برای تجربه بهتر یادگیری</p>
-          </div>
+      <div id="packages-section">
+        {/* Packages Section */}
+        {selectedProgram?.packages?.length > 0 && (
+          <div className="bg-gradient-to-r shadow-lg from-gray-50 via-white to-gray-50 rounded-2xl p-6 mb-4">
+            <div className="text-center mb-8">
+              <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">پکیج‌های تکمیلی</h3>
+              <p className="text-sm text-gray-600">پکیج‌های اضافی برای تجربه بهتر یادگیری</p>
+            </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {selectedProgram.packages.map((pkg: any) => (
-              <div
-                key={pkg._id}
-                className={`relative overflow-hidden rounded-xl border-2 p-6 transition-all cursor-pointer group ${selectedPackages.includes(pkg._id)
-                  ? 'border-primary bg-primary/5 scale-105'
-                  : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
-                }`}
-                onClick={() => {
-                  setSelectedPackages(prev =>
-                    prev.includes(pkg._id)
-                      ? prev.filter(id => id !== pkg._id)
-                      : [...prev, pkg._id],
-                  );
-                }}
-              >
-                <div className="absolute -left-4 -top-4 size-16 bg-gradient-to-br from-primary/20 to-transparent rounded-full"></div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {selectedProgram.packages.map((pkg: any) => (
+                <div
+                  key={pkg._id}
+                  className={`relative overflow-hidden rounded-xl border-2 p-4 md:p-6 transition-all cursor-pointer group ${selectedPackages.includes(pkg._id)
+                    ? 'border-primary bg-primary/5 scale-105'
+                    : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
+                  }`}
+                  onClick={() => {
+                    setSelectedPackages(prev =>
+                      prev.includes(pkg._id)
+                        ? prev.filter(id => id !== pkg._id)
+                        : [...prev, pkg._id],
+                    );
+                  }}
+                >
+                  <div className="absolute -left-4 -top-4 size-16 bg-gradient-to-br from-primary/20 to-transparent rounded-full"></div>
 
-                {selectedPackages.includes(pkg._id) && (
-                  <CheckCircle className="absolute left-3 top-3 size-6 text-primary" />
-                )}
+                  {selectedPackages.includes(pkg._id) && (
+                    <CheckCircle className="absolute left-3 top-3 size-6 text-primary" />
+                  )}
 
-                <div className="relative">
-                  {pkg.image
-                    ? (
-                        <img
-                          src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${pkg.image.file_name}`}
-                          alt={pkg.title}
-                          className="size-16 rounded-lg object-cover mb-4"
-                        />
-                      )
-                    : (
-                        <div className="size-16 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4">
-                          <Award className="size-8 text-primary" />
-                        </div>
-                      )}
+                  <div className="relative">
+                    {pkg.image
+                      ? (
+                          <img
+                            src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${pkg.image.file_name}`}
+                            alt={pkg.title}
+                            className="size-16 rounded-lg object-cover mb-4"
+                          />
+                        )
+                      : (
+                          <div className="size-16 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4">
+                            <Award className="size-8 text-primary" />
+                          </div>
+                        )}
 
-                  <h4 className="font-bold text-gray-900 mb-2">{pkg.title}</h4>
-                  <div className="text-2xl font-bold text-primary">
-                    {filterPriceNumber(pkg.price)}
-                    {' '}
-                    ریال
+                    <h4 className="font-bold text-gray-900 mb-2">{pkg.title}</h4>
+                    <div className="text-xl md:text-2xl font-bold text-primary">
+                      {filterPriceNumber(pkg.price)}
+                      {' '}
+                      ریال
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+      </div>
+
 
       {/* Final Invoice */}
       {selectedProgram && (
-        <div className="bg-white rounded-2xl border-2 border-dashed border-primary/30 p-8 mb-8 w-full">
+        <div className="bg-white rounded-2xl border-2 border-dashed border-primary/30 p-8 mb-6 w-full">
           <div className="flex items-center justify-center mb-6">
             <div className="size-12 bg-primary/10 rounded-full flex items-center justify-center">
               <CheckCircle className="size-6 text-primary" />
             </div>
           </div>
 
-          <h3 className="text-lg md:text-2xl font-bold text-center mb-6">صورت‌ حساب نهایی</h3>
+          <h3 className="text-lg md:text-2xl font-bold text-center mb-6">صورت‌ حساب دوره</h3>
 
           <div className="space-y-4 max-w-2xl mx-auto">
-            <div className="flex justify-between py-3 border-b">
+            <div className="flex justify-between py-3 ">
               <span className="font-medium text-sm md:text-base ">دوره انتخابی:</span>
               <span className="font-bold text-sm md:text-base">
                 {selectedProgram.price_discounted && selectedProgram.price_discounted !== selectedProgram.price_real
@@ -662,7 +666,7 @@ export default function TimelineGridLayout({
               const pkg = selectedProgram.packages.find((p: any) => p._id === packageId);
               return pkg
                 ? (
-                    <div key={pkg._id} className="flex justify-between py-2 text-gray-600 text-sm md:text-base">
+                    <div key={pkg._id} className="flex border-t justify-between pt-3 text-gray-600 text-sm md:text-base">
                       <span>{pkg.title}</span>
                       <span>
                         {filterPriceNumber(pkg.price)}
@@ -676,7 +680,7 @@ export default function TimelineGridLayout({
 
             <div className="flex items-center justify-between py-4 border-t-2 border-primary/20 text-sm md:text-xl font-bold">
               <span>مجموع کل:</span>
-              <span className="bg-primary text-white px-4 py-2 rounded-lg">
+              <span className="bg-purple-200 text-purple-900 px-4 py-2 rounded-lg">
                 {(() => {
                   const programPrice = selectedProgram.price_discounted || selectedProgram.price_real;
                   const packagesPrice = selectedPackages.reduce((sum, packageId) => {
@@ -697,7 +701,7 @@ export default function TimelineGridLayout({
           <button
             type="button"
             onClick={handleSubmit}
-            className="inline-flex items-center space-x-3 space-x-reverse bg-gradient-to-r from-primary to-primary/80 text-white px-12 py-4 rounded-2xl text-sm md:text-lg font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+            className="inline-flex items-center space-x-3 space-x-reverse pink-gradient-bg text-white px-12 py-4 rounded-2xl text-sm md:text-lg font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105"
           >
             <CheckCircle className="size-6" />
             <span>تایید نهایی و ادامه خرید</span>
