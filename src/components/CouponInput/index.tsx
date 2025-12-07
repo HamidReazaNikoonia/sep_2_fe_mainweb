@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { AlertCircle, Check, X } from 'lucide-react';
+import { AlertCircle, Check, CirclePlus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import useResponsiveEvent from '@/hooks/useResponsiveEvent';
 
@@ -113,21 +113,21 @@ export default function CouponInput({ onApplyCoupon, couponResult }: CouponInput
       {/* Applied Coupons Display Section */}
       {hasAppliedCoupons && (
         <div className="mb-6">
-          <h4 className="mb-3 text-sm font-medium text-gray-300">کدهای تخفیف اعمال شده:</h4>
+          <h4 className="mb-3 text-xs md:text-sm font-medium text-gray-800">کدهای تخفیف اعمال شده</h4>
           <div className="space-y-2">
             {/* Valid Coupons */}
             {couponResult?.valid?.map(validCoupon => (
               <div
                 key={validCoupon.couponId}
-                className="relative flex items-center justify-between rounded-lg border border-green-600/30 bg-green-600/20 px-4 py-3"
+                className="relative flex items-center justify-between rounded-lg border border-green-600/10 bg-green-700/20 px-4 py-3"
               >
                 <div className="flex items-center gap-3">
-                  <Check className="size-4 text-green-400 md:size-6" />
+                  <Check className="size-4 text-green-800 md:size-6" />
                   <div className="flex flex-col">
-                    <span className="text-xs font-medium text-green-300 md:text-base" style={{ letterSpacing: '1px' }}>
+                    <span className="text-xs font-medium text-green-800 md:text-base" style={{ letterSpacing: '1px' }}>
                       {validCoupon.code}
                     </span>
-                    <span className="text-xs text-green-400 md:text-base">
+                    <span className="text-xs text-green-700 md:text-base">
                       تخفیف:
                       {' '}
                       {validCoupon.discountAmount.toLocaleString('fa-IR')}
@@ -172,7 +172,10 @@ export default function CouponInput({ onApplyCoupon, couponResult }: CouponInput
 
       {/* Coupon Input Form Section */}
       <div>
-        <h4 className="mb-3 text-sm font-medium text-gray-300">افزودن کد تخفیف جدید:</h4>
+        <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-900">
+          <CirclePlus className="size-5 text-gray-600" />
+          <span>افزودن کد تخفیف جدید</span>
+        </h4>
 
         {coupons.map(coupon => (
           <div key={coupon.id} className="mb-4 flex items-center gap-2">
@@ -183,7 +186,7 @@ export default function CouponInput({ onApplyCoupon, couponResult }: CouponInput
                 onChange={e => handleInputChange(coupon.id, e.target.value)}
                 placeholder="کد تخفیف را وارد کنید"
                 className={clsx(
-                  'max-w-[60%] rounded-r-lg border bg-gray-800 px-3 py-2 text-white outline-none placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 sm:flex-1',
+                  'max-w-[60%] rounded-r-lg border bg-gray-100 px-3 py-2 text-gray-800 outline-none placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 sm:flex-1',
                   {
                     'border-red-500': coupon.status === 'error',
                     'border-green-500': coupon.status === 'success',
@@ -197,40 +200,40 @@ export default function CouponInput({ onApplyCoupon, couponResult }: CouponInput
 
               {coupon.status === 'success'
                 ? (
-                    <div className="flex items-center gap-2 rounded-r-lg border border-l-0 border-green-500 bg-gray-800 px-3 py-2">
-                      <Check className="size-5 text-green-500" />
-                      <div className="flex flex-col text-sm text-green-500">
-                        <span>اعمال شد</span>
-                        {coupon.discountAmount && (
-                          <span className="text-xs">
-                            تخفیف:
-                            {' '}
-                            {coupon.discountAmount.toLocaleString('fa-IR')}
-                            {' '}
-                            ریال
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )
-                : (
-                    <button
-                      type="button"
-                      onClick={() => handleApplyCoupon(coupon.id)}
-                      disabled={!coupon.code.trim()}
-                      className={clsx(
-                        'rounded-l-lg border border-r-0 px-4 py-2 text-white hover:bg-blue-700',
-                        'disabled:cursor-not-allowed disabled:bg-gray-600',
-                        {
-                          'border-red-500 bg-blue-600': coupon.status === 'error',
-                          'border-gray-600 bg-blue-600': coupon.status !== 'error',
-                          'text-[12px]': isLessThan300Screen,
-                        },
+                  <div className="flex items-center gap-2 rounded-r-lg border border-l-0 border-green-500 bg-gray-800 px-3 py-2">
+                    <Check className="size-5 text-green-500" />
+                    <div className="flex flex-col text-sm text-green-500">
+                      <span>اعمال شد</span>
+                      {coupon.discountAmount && (
+                        <span className="text-xs">
+                          تخفیف:
+                          {' '}
+                          {coupon.discountAmount.toLocaleString('fa-IR')}
+                          {' '}
+                          ریال
+                        </span>
                       )}
-                    >
-                      اعمال
-                    </button>
-                  )}
+                    </div>
+                  </div>
+                )
+                : (
+                  <button
+                    type="button"
+                    onClick={() => handleApplyCoupon(coupon.id)}
+                    disabled={!coupon.code.trim()}
+                    className={clsx(
+                      'rounded-l-lg border border-r-0 px-4 py-2 text-white hover:bg-purple-700',
+                      'disabled:cursor-not-allowed disabled:bg-gray-500',
+                      {
+                        'border-red-500 bg-blue-600': coupon.status === 'error',
+                        'border-gray-600 bg-purple-600': coupon.status !== 'error',
+                        'text-[12px]': isLessThan300Screen,
+                      },
+                    )}
+                  >
+                    اعمال
+                  </button>
+                )}
             </div>
 
             {coupons.length > 1 && (
