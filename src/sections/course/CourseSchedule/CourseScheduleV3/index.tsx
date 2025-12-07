@@ -58,83 +58,130 @@ type Program = {
   status: string;
 };
 
+const sortSessionsByDate = (sessions: Session[]) => {
+  return sessions.sort((a, b) => {
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
+};
+
 // Timeline Components
-const SessionTimeline = ({ sessions }: { sessions: Session[] }) => (
-  <div className="relative">
-    {/* <div className="absolute right-6 inset-y-0 w-0.5 bg-gradient-to-b from-primary to-primary/30"></div> */}
-    <div className="grid gap-x-4 grid-cols-1 md:grid-cols-2">
-      {sessions.map((session, index) => (
-        <div key={session._id} className="relative mb-3 flex items-start space-x-4 space-x-reverse">
-          {/* <div className={`relative z-10 size-3 rounded-full ${session.status === 'scheduled' ? 'bg-primary' : 'bg-green-500'
-          }`}
-          >
-            <div className={`absolute -inset-1 rounded-full animate-pulse ${session.status === 'scheduled' ? 'bg-primary/20' : 'bg-green-500/20'
-            }`}
-            >
-            </div>
-          </div> */}
+const SessionTimeline = ({ sessions }: { sessions: Session[] }) => {
+  const sortedSessions = sortSessionsByDate(sessions);
+  if (sortedSessions.length === 0) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        <p>جلسات موجود نیست</p>
+      </div>
+    );
+  }
+  return (
 
-          <div className="flex justify-between items-center  bg-yellow-500 rounded-lg border border-gray-200 p-4 shadow-sm w-full">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-2 space-x-reverse">
-                <Calendar className="size-4 text-primary" />
-                <span className="font-medium">{toPersianDigits(session.date)}</span>
-              </div>
-              <Badge className="mx-3 hidden md:block" variant={session.status === 'scheduled' ? 'default' : 'secondary'}>
-                جلسه
-                {' '}
-                {index + 1}
-              </Badge>
-            </div>
+    <div className="relative">
+      {/* <div className="absolute right-6 inset-y-0 w-0.5 bg-gradient-to-b from-primary to-primary/30"></div> */}
+      <div className="grid gap-x-4 grid-cols-1 md:grid-cols-2">
+        {sortedSessions.length > 0 && sortedSessions.map((session, index) => (
+          <div key={session._id} className="relative mb-3 flex items-start space-x-4 space-x-reverse">
 
-            <div className="flex items-center text-sm text-gray-600 space-x-4 space-x-reverse">
-              <div className="flex items-center space-x-1 space-x-reverse">
-                <Clock className="size-4" />
-                <span>{`${toPersianDigits(session.startTime)} - ${toPersianDigits(session.endTime)}`}</span>
+            <div className="flex items-center  bg-blue-100 rounded-lg border border-gray-200 p-4 shadow-sm w-full">
+
+              <div
+                style={{ top: '-26px', right: '-8px' }}
+                className={`relative z-10 size-3 rounded-full ${session.status === 'scheduled' ? 'bg-blue-600' : 'bg-gray-500'
+                }`}
+              >
+
+                {session.status === 'scheduled' && (
+                  <div className="absolute -inset-1 rounded-full animate-pulse-scale bg-green-800/20"
+                  >
+                  </div>
+                )}
+
               </div>
-              {session.location && (
-                <div className="flex items-center space-x-1 space-x-reverse">
-                  <MapPin className="size-4" />
-                  <span>{session.location}</span>
+
+              <div className="flex-1 flex justify-between w-full items-center">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2 space-x-reverse">
+                    <Calendar className="size-4 text-primary" />
+                    <span className="font-medium">{toPersianDigits(session.date)}</span>
+                  </div>
+                  <Badge className="mx-3 hidden md:block" variant={session.status === 'scheduled' ? 'default' : 'secondary'}>
+                    جلسه
+                    {' '}
+                    {index + 1}
+                  </Badge>
                 </div>
-              )}
+
+                <div className="flex items-center text-sm text-gray-600 space-x-4 space-x-reverse">
+                  <div className="flex flex-row-reverse items-center space-x-2">
+                    <Clock className="size-4" />
+                    <span>{`${toPersianDigits(session.startTime)} - ${toPersianDigits(session.endTime)}`}</span>
+                  </div>
+                  {session.location && (
+                    <div className="flex items-center space-x-1 space-x-reverse">
+                      <span>{session.location}</span>
+                      <MapPin className="size-4" />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const MediaShowcase = ({ media }: { media: any[] }) => (
-  <div className="flex flex-wrap gap-4">
+  <div className="flex justify-center md:justify-start flex-wrap gap-3 md:gap-4">
     {[...media, ...media].map((item, index) => (
-      <div key={item._id || index} className="group max-w-28 border-2 border-gray-500 shadow-lg md:max-w-48 relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+      <div key={item._id || index} className="group max-w-[150px] border-2 border-gray-500 shadow-lg md:max-w-48 relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
         {item.media_type === 'IMAGE'
           ? (
-            <img
-              src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`}
-              alt={item.media_title}
-              className="size-full object-cover group-hover:scale-110 transition-transform duration-300"
-            />
-          )
+              <a
+                href={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                tabIndex={-1}
+                style={{ display: 'block', height: '100%' }}
+                onClick={e => e.stopPropagation()}
+              >
+                <img
+                  src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`}
+                  alt={item.media_title}
+                  className="size-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  style={{ pointerEvents: 'none' }}
+                />
+              </a>
+            )
           : item.media_type === 'VIDEO'
             ? (
-              <div className="relative size-full">
-                <video className="size-full object-cover" preload="none">
-                  <source src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`} type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-colors">
-                  <div className="size-12 rounded-full bg-white/90 flex items-center justify-center">
-                    <Play className="size-6 text-gray-800 mr-0.5" />
+                <div
+                  className="relative size-full cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(
+                      `${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`,
+                      '_blank',
+                    );
+                  }}
+                  tabIndex={0}
+                  role="button"
+                >
+                  <video className="size-full object-cover pointer-events-none" preload="none">
+                    <source src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${item?.file?.file_name}`} type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-colors">
+                    <div className="size-12 rounded-full bg-white/90 flex items-center justify-center">
+                      <Play className="size-6 text-gray-800 mr-0.5" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
+              )
             : null}
 
         <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-3">
-          <p className="text-white text-sm font-medium truncate">{item.media_title}</p>
+          <p className="text-white text-xs md:text-sm font-medium truncate">{item.media_title}</p>
         </div>
       </div>
     ))}
@@ -142,15 +189,15 @@ const MediaShowcase = ({ media }: { media: any[] }) => (
 );
 
 const SubjectsGrid = ({ subjects }: { subjects: any[] }) => (
-  <div className="grid gap-4 sm:grid-cols-2">
+  <div className="grid gap-2 md:gap-4 sm:grid-cols-2">
     {subjects.map((subject, index) => (
       <div key={subject._id || index} className="flex items-start space-x-3 space-x-reverse p-4 bg-gradient-to-l from-primary/5 to-transparent rounded-lg border border-primary/20">
         <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
           <Award className="size-5 text-primary" />
         </div>
         <div>
-          <h4 className="font-medium text-gray-900">{subject.title}</h4>
-          <p className="text-sm text-gray-600 mt-1">{subject.sub_title}</p>
+          <h4 className="font-medium text-sm text-gray-900">{subject.title}</h4>
+          <p className="text-xs md:text-sm text-gray-600 mt-1">{subject.sub_title}</p>
         </div>
       </div>
     ))}
@@ -173,14 +220,16 @@ const ProgramGrid = ({
     const targetId = 'packages-section';
     const element = document.getElementById(targetId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const yOffset = -80;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
   const selectHandler = () => {
     onSelect();
     scrollToPackagesSection();
-  }
+  };
 
   return (
     <div
@@ -188,31 +237,39 @@ const ProgramGrid = ({
         ? 'ring-4 ring-primary/30 shadow-2xl scale-[1.02]'
         : 'shadow-lg hover:shadow-xl hover:scale-[1.01]'
       }`}
-      onClick={selectHandler}
       id={`schedule-coach-${program?._id}`}
     >
       {/* Header with gradient - Fixed height */}
-      <div className="relative bg-gradient-to-r from-pink-500 to-purple-600 text-white p-6 shrink-0">
-        {isSelected && (
-          <div className="absolute left-4 top-4 size-8 bg-white rounded-full flex items-center justify-center">
-            <CheckCircle className="size-6 text-primary" />
-          </div>
-        )}
-
-        <div className="flex items-center space-x-4 space-x-reverse">
-          {program?.coach?.avatar
-            ? (
-              <img
-                src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${program?.coach?.avatar?.file_name}`}
-                alt={`${program?.coach?.first_name} ${program?.coach?.last_name}`}
-                className="size-20 md:size-28 rounded-full border-4 border-white/30 object-cover"
-              />
+      <div onClick={selectHandler} className="relative bg-gradient-to-r from-pink-500 to-purple-600 text-white p-6 shrink-0">
+        {isSelected
+          ? (
+              <div className="absolute left-4 top-4 size-8 bg-white rounded-full flex items-center justify-center">
+                <CheckCircle className="size-6 text-primary" />
+              </div>
             )
-            : (
-              <div className="size-20 md:size-28 rounded-full border-4 border-white/30 bg-white/20 flex items-center justify-center text-2xl font-bold">
-                {program?.coach?.first_name?.charAt(0)}
+          : (
+              <div
+                className="absolute left-4 top-4 opacity-60 bg-white text-black rounded-full px-4 py-1 text-xs font-medium shadow-lg transition-all ring-2 ring-primary/10"
+                onClick={selectHandler}
+              >
+                انتخاب این استاد
               </div>
             )}
+
+        <div className="flex items-center space-x-3 space-x-reverse">
+          {program?.coach?.avatar
+            ? (
+                <img
+                  src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${program?.coach?.avatar?.file_name}`}
+                  alt={`${program?.coach?.first_name} ${program?.coach?.last_name}`}
+                  className="size-20 md:size-28 rounded-full border-4 border-white/30 object-cover"
+                />
+              )
+            : (
+                <div className="size-20 md:size-28 rounded-full border-4 border-white/30 bg-white/20 flex items-center justify-center text-2xl font-bold">
+                  {program?.coach?.first_name?.charAt(0)}
+                </div>
+              )}
 
           <div className="flex-1">
             <h3 className=" text-lg md:text-xl font-bold">
@@ -249,26 +306,26 @@ const ProgramGrid = ({
           <div>
             {hasDiscount
               ? (
-                <div>
-                  <div className="text-white/70 line-through text-sm">
+                  <div>
+                    <div className="text-white/70 line-through text-sm">
+                      {filterPriceNumber(program.price_real)}
+                      {' '}
+                      ریال
+                    </div>
+                    <div className="text-2xl font-bold">
+                      {filterPriceNumber(program.price_discounted)}
+                      {' '}
+                      ریال
+                    </div>
+                  </div>
+                )
+              : (
+                  <div className="text-2xl font-bold">
                     {filterPriceNumber(program.price_real)}
                     {' '}
                     ریال
                   </div>
-                  <div className="text-2xl font-bold">
-                    {filterPriceNumber(program.price_discounted)}
-                    {' '}
-                    ریال
-                  </div>
-                </div>
-              )
-              : (
-                <div className="text-2xl font-bold">
-                  {filterPriceNumber(program.price_real)}
-                  {' '}
-                  ریال
-                </div>
-              )}
+                )}
           </div>
 
           <div className="block md:hidden">
@@ -308,9 +365,9 @@ const ProgramGrid = ({
                 }}
                 className={`flex flex-1 items-center justify-center space-x-2 space-x-reverse py-3 text-sm font-medium transition-colors
                   ${activeTab === key
-                    ? 'text-primary border-primary bg-primary/5 md:border-b-2 border-r-4 md:border-r-0'
-                    : 'text-gray-500 hover:text-gray-700'
-                  }
+                ? 'text-primary border-primary bg-primary/5 md:border-b-2 border-r-4 md:border-r-0'
+                : 'text-gray-500 hover:text-gray-700'
+              }
                 `}
               >
                 <Icon className="size-4" />
@@ -324,33 +381,33 @@ const ProgramGrid = ({
         <div className="flex-1 overflow-y-auto">
           <div className="p-6">
             {activeTab === 'sessions' && (
-              <SessionTimeline sessions={[...program.sessions, ...program.sessions, ...program.sessions, ...program.sessions]} />
+              <SessionTimeline sessions={program.sessions || []} />
             )}
 
             {activeTab === 'media' && (
               program.sample_media?.length > 0
                 ? (
-                  <MediaShowcase media={program.sample_media} />
-                )
+                    <MediaShowcase media={program.sample_media} />
+                  )
                 : (
-                  <div className="text-center py-12 text-gray-500">
-                    <Play className="size-12 mx-auto text-gray-300 mb-4" />
-                    <p>نمونه کاری موجود نیست</p>
-                  </div>
-                )
+                    <div className="text-center py-12 text-gray-500">
+                      <Play className="size-12 mx-auto text-gray-300 mb-4" />
+                      <p>نمونه کاری موجود نیست</p>
+                    </div>
+                  )
             )}
 
             {activeTab === 'subjects' && (
               program.subjects?.length > 0
                 ? (
-                  <SubjectsGrid subjects={program.subjects} />
-                )
+                    <SubjectsGrid subjects={program.subjects} />
+                  )
                 : (
-                  <div className="text-center py-12 text-gray-500">
-                    <Award className="size-12 mx-auto text-gray-300 mb-4" />
-                    <p>سرفصل موجود نیست</p>
-                  </div>
-                )
+                    <div className="text-center py-12 text-gray-500">
+                      <Award className="size-12 mx-auto text-gray-300 mb-4" />
+                      <p>سرفصل موجود نیست</p>
+                    </div>
+                  )
             )}
           </div>
         </div>
@@ -420,7 +477,7 @@ export default function TimelineGridLayout({
   const programsData = programs?.data?.programs || [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8" dir="rtl">
+    <div className="max-w-7xl mx-auto px-4 py-2" dir="rtl">
       {/* Hero Header */}
       {/* <div className="text-center mb-16">
         <div className="inline-flex items-center justify-center size-20 bg-gradient-to-br from-primary to-primary/80 rounded-full mb-6">
@@ -436,7 +493,7 @@ export default function TimelineGridLayout({
       </div> */}
 
       {/* Hero Header with 3-Step Guide */}
-      <div className="text-center mb-12 md:mb-16">
+      <div className="text-center mb-4 md:mb-10">
         <div className="inline-flex items-center justify-center size-16 md:size-20 pink-gradient-bg rounded-full mb-4 md:mb-6">
           <Users className="size-8 md:size-10 text-white" />
         </div>
@@ -511,7 +568,7 @@ export default function TimelineGridLayout({
       </div>
 
       {/* Programs Grid */}
-      <div className="grid gap-8 lg:grid-cols-1 mb-16">
+      <div className="grid gap-8 lg:grid-cols-1 mb-8">
         {programsData.map((program: Program) => (
           <ProgramGrid
             key={program._id}
@@ -537,7 +594,7 @@ export default function TimelineGridLayout({
                 className={`relative overflow-hidden rounded-xl border-2 p-6 transition-all cursor-pointer group ${selectedPackages.includes(pkg._id)
                   ? 'border-primary bg-primary/5 scale-105'
                   : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
-                  }`}
+                }`}
                 onClick={() => {
                   setSelectedPackages(prev =>
                     prev.includes(pkg._id)
@@ -555,17 +612,17 @@ export default function TimelineGridLayout({
                 <div className="relative">
                   {pkg.image
                     ? (
-                      <img
-                        src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${pkg.image.file_name}`}
-                        alt={pkg.title}
-                        className="size-16 rounded-lg object-cover mb-4"
-                      />
-                    )
+                        <img
+                          src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${pkg.image.file_name}`}
+                          alt={pkg.title}
+                          className="size-16 rounded-lg object-cover mb-4"
+                        />
+                      )
                     : (
-                      <div className="size-16 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4">
-                        <Award className="size-8 text-primary" />
-                      </div>
-                    )}
+                        <div className="size-16 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4">
+                          <Award className="size-8 text-primary" />
+                        </div>
+                      )}
 
                   <h4 className="font-bold text-gray-900 mb-2">{pkg.title}</h4>
                   <div className="text-2xl font-bold text-primary">
@@ -605,15 +662,15 @@ export default function TimelineGridLayout({
               const pkg = selectedProgram.packages.find((p: any) => p._id === packageId);
               return pkg
                 ? (
-                  <div key={pkg._id} className="flex justify-between py-2 text-gray-600 text-sm md:text-base">
-                    <span>{pkg.title}</span>
-                    <span>
-                      {filterPriceNumber(pkg.price)}
-                      {' '}
-                      ریال
-                    </span>
-                  </div>
-                )
+                    <div key={pkg._id} className="flex justify-between py-2 text-gray-600 text-sm md:text-base">
+                      <span>{pkg.title}</span>
+                      <span>
+                        {filterPriceNumber(pkg.price)}
+                        {' '}
+                        ریال
+                      </span>
+                    </div>
+                  )
                 : null;
             })}
 
