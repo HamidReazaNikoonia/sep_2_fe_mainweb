@@ -32,7 +32,7 @@ export default function CourseSessionCheckout() {
   const [appliedCouponCodes, setAppliedCouponCodes] = useState<string[]>([]);
 
   const { data: orderSummaryData, isLoading: isOrderSummaryLoading, isSuccess: isOrderSummarySuccess, refetch } = useQuery({
-    queryKey: ['orderSummary', programId, appliedCouponCodes],
+    queryKey: ['orderSummary', programId],
     queryFn: () => calculateOrderSummaryRequest({
       classProgramId: programId as string,
       packages: packageIds,
@@ -288,6 +288,7 @@ export default function CourseSessionCheckout() {
               <CouponInput
                 onApplyCoupon={applyCouponCodeHandler}
                 couponResult={orderSummaryData?.coupons}
+                isLoading={isOrderSummaryLoading}
               />
             </div>
 
