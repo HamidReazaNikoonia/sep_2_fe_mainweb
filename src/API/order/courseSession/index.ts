@@ -26,13 +26,15 @@ async function calculateOrderSummary({ classProgramId, couponCodes, packages, us
   return response;
 }
 
-async function createOrder({ classProgramId, couponCodes, packages }: { classProgramId: string; couponCodes?: string[]; packages?: string[] }) {
+async function createOrder({ classProgramId, couponCodes, packages, useUserWallet }: { classProgramId: string; couponCodes?: string[]; packages?: string[]; useUserWallet?: boolean }) {
   const requestBody: {
     classProgramId: string;
     couponCodes?: string[];
     packages?: string[];
+    useUserWallet?: boolean;
   } = {
     classProgramId,
+    useUserWallet,
   };
 
   if (couponCodes?.length) {
@@ -183,7 +185,7 @@ export async function calculateOrderSummaryRequest(body: { classProgramId: strin
   return data;
 }
 
-export async function createOrderRequest(body: { classProgramId: string; couponCodes?: string[]; packages?: string[] }) {
+export async function createOrderRequest(body: { classProgramId: string; couponCodes?: string[]; packages?: string[]; useUserWallet?: boolean }) {
   const data = await createOrder(body);
   return data;
 }

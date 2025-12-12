@@ -116,7 +116,7 @@ const SidebarContent = ({ user, pathname, onLinkClick }: {
         <div className="mt-2 flex w-full flex-col items-center justify-center">
           <span className="pb-1 pt-2 text-xs text-gray-500 md:pb-2">موجودی کیف پول شما</span>
           <span className="w-full border-t pt-2 text-center text-xs font-medium text-gray-900">
-            {user?.wallet?.amount ? user?.wallet?.amount?.toLocaleString('fa-IR') : (0).toLocaleString('fa-IR')}
+            {user?.wallet_amount ? user?.wallet_amount?.toLocaleString('fa-IR') : (0).toLocaleString('fa-IR')}
             {' '}
             تومان
           </span>

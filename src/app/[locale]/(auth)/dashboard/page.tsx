@@ -91,7 +91,7 @@ export default function DashboardPage() {
               <h1 className="text-[11px] font-medium md:text-xs">موجودی کیف پول</h1>
             </div>
             <span className="text-rigth w-full text-[11px] font-medium text-gray-500 md:text-xs">
-              {user?.wallet?.amount ? user?.wallet?.amount?.toLocaleString('fa-IR') : (0).toLocaleString('fa-IR')}
+              {user?.wallet_amount ? user?.wallet_amount?.toLocaleString('fa-IR') : (0).toLocaleString('fa-IR')}
               {' '}
               تومان
             </span>
