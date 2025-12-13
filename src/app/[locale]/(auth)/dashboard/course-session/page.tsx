@@ -1,16 +1,18 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { CalendarDays, Clock, MapPin, User, Video, Download, X } from 'lucide-react';
+import { CalendarDays, Clock, Download, MapPin, User, Video } from 'lucide-react';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getUserProfileRequest } from '@/API/auth';
+import EnrollmentCardItem from '@/components/EnrollmentCardItem';
 import LoadingSpiner from '@/components/LoadingSpiner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import UserAvatar from '@/components/UserAvatar';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
 import useAuth from '@/hooks/useAuth';
 
 type FilterType = 'active' | 'completed' | 'all';
@@ -32,7 +34,7 @@ export default function CourseSessionPage() {
       }
       return getUserProfileRequest({ userId: user.id });
     },
-    enabled: !!user, // Prevents query execution when user is null
+    enabled: !!user,
   });
 
   useEffect(() => {
@@ -51,20 +53,19 @@ export default function CourseSessionPage() {
   // eslint-disable-next-line no-console
   console.log(profileData, 'profileData----');
 
-  // TASK 1: Filter enrollments based on selected filter
-  const filteredEnrollments = courseSessionEnrollments.filter(enrollment => {
+  const filteredEnrollments = courseSessionEnrollments.filter((enrollment: any) => {
     if (filterType === 'active') {
       return enrollment.is_completed === false && enrollment.is_active === true;
     } else if (filterType === 'completed') {
       return enrollment.is_completed === true;
     }
-    return true; // 'all'
+    return true;
   });
 
-  // TASK 2: Get user attendance status for a session
   const getUserAttendanceStatus = (session: any) => {
-    if (!session.attendance || !user?.id) return null;
-    
+    if (!session.attendance || !user?.id) {
+      return null;
+    }
     const userAttendance = session.attendance.find((att: any) => att.user === user.id || att.user?._id === user.id);
     return userAttendance?.status || null;
   };
@@ -95,7 +96,6 @@ export default function CourseSessionPage() {
     }
   };
 
-  // TASK 3: Handle session report modal
   const handleViewReport = (sessionReport: any) => {
     setSelectedSessionReport(sessionReport);
     setIsReportModalOpen(true);
@@ -163,6 +163,7 @@ export default function CourseSessionPage() {
       </div>
     );
   }
+
   if (courseSessionEnrollments.length === 0) {
     return (
       <div className="p-8 text-center">
@@ -172,9 +173,9 @@ export default function CourseSessionPage() {
   }
 
   return (
-    <div className="container mx-auto space-y-6 p-6">
+    <div className="container mx-auto space-y-6 p-4 md:p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-right text-lg font-bold">کلاس های من</h1>
+        <h1 className="text-right text-base font-bold md:text-lg">کلاس های من</h1>
         <Badge variant="outline">
           {courseSessionEnrollments?.length}
           {' '}
@@ -182,12 +183,12 @@ export default function CourseSessionPage() {
         </Badge>
       </div>
 
-      {/* TASK 1: Category Buttons */}
-      <div dir="rtl" className="flex gap-2 flex-wrap">
+      {/* Category Buttons */}
+      <div dir="rtl" className="flex flex-wrap gap-2">
         <Button
           variant={filterType === 'active' ? 'default' : 'outline'}
           onClick={() => setFilterType('active')}
-          className="text-sm"
+          className="text-xs md:text-sm"
         >
           دوره های در حال برگذاری
           <Badge variant="secondary" className="mr-2">
@@ -197,7 +198,7 @@ export default function CourseSessionPage() {
         <Button
           variant={filterType === 'completed' ? 'default' : 'outline'}
           onClick={() => setFilterType('completed')}
-          className="text-sm"
+          className="text-xs md:text-sm"
         >
           دوره های برگذار شده
           <Badge variant="secondary" className="mr-2">
@@ -207,7 +208,7 @@ export default function CourseSessionPage() {
         <Button
           variant={filterType === 'all' ? 'default' : 'outline'}
           onClick={() => setFilterType('all')}
-          className="text-sm"
+          className="text-xs md:text-sm"
         >
           همه دوره ها
           <Badge variant="secondary" className="mr-2">
@@ -216,14 +217,32 @@ export default function CourseSessionPage() {
         </Button>
       </div>
 
-      {/* Show message if no courses match the filter */}
       {filteredEnrollments.length === 0 && (
         <div className="p-8 text-center">
           <p className="text-gray-500">هیچ دوره‌ای در این دسته یافت نشد</p>
         </div>
       )}
 
-      <div dir="rtl" className="grid gap-6">
+      {/* Mobile View - Card Items */}
+      <div dir="rtl" className="grid gap-4 md:hidden">
+        {filteredEnrollments.map(enrollment => (
+          <EnrollmentCardItem
+            key={enrollment._id}
+            enrollment={enrollment}
+            formatDate={formatDate}
+            formatTime={formatTime}
+            getStatusColor={getStatusColor}
+            getSessionStatusColor={getSessionStatusColor}
+            getUserAttendanceStatus={getUserAttendanceStatus}
+            getAttendanceStatusColor={getAttendanceStatusColor}
+            getAttendanceStatusLabel={getAttendanceStatusLabel}
+            handleViewReport={handleViewReport}
+          />
+        ))}
+      </div>
+
+      {/* Desktop View - Table */}
+      <div dir="rtl" className="hidden gap-6 md:grid">
         {filteredEnrollments.map(enrollment => (
           <Card key={enrollment._id} className="w-full">
             <CardHeader>
@@ -258,16 +277,27 @@ export default function CourseSessionPage() {
             <CardContent className="space-y-4">
               {/* Coach Information */}
               <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
-                <UserAvatar
-                  src={enrollment?.coach?.avatar}
-                  alt={`${enrollment?.coach?.first_name} ${enrollment?.coach?.last_name || ''}`}
-                  className="size-14"
-                />
+                <div className="flex size-20 items-center justify-center overflow-hidden rounded-full bg-gray-200">
+                  {enrollment?.coach?.avatar?.file_name
+                    ? (
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${enrollment.coach.avatar.file_name}`}
+                          alt={`${enrollment?.coach?.first_name} ${enrollment?.coach?.last_name || ''}`}
+                          className="size-full rounded-full object-cover"
+                          width={86}
+                          height={86}
+                        />
+                      )
+                    : (
+                        <span className="text-xl text-gray-500">
+                          {enrollment?.coach?.first_name?.[0] || ''}
+                          {enrollment?.coach?.last_name?.[0] || ''}
+                        </span>
+                      )}
+                </div>
                 <div>
                   <p className="font-medium">
-                    {enrollment?.coach?.first_name}
-                    {' '}
-                    {enrollment?.coach?.last_name || ''}
+                    {enrollment?.coach?.first_name} {enrollment?.coach?.last_name || ''}
                   </p>
                   <p className="flex items-center gap-1 text-sm text-gray-600">
                     <User className="size-4" />
@@ -280,8 +310,7 @@ export default function CourseSessionPage() {
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <CalendarDays className="size-4" />
                 <span>
-                  کلاس:
-                  {enrollment?.class_id?.class_title}
+                  کلاس: {enrollment?.class_id?.class_title}
                 </span>
               </div>
 
@@ -297,9 +326,7 @@ export default function CourseSessionPage() {
                         <TableHead className="text-right">زمان پایان</TableHead>
                         <TableHead className="text-right">مکان/لینک</TableHead>
                         <TableHead className="text-right">وضعیت</TableHead>
-                        {/* TASK 2: Add Attendance Column */}
                         <TableHead className="text-right">حضور و غیاب</TableHead>
-                        {/* TASK 3: Add Actions Column */}
                         <TableHead className="text-right">عملیات</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -355,7 +382,6 @@ export default function CourseSessionPage() {
                                 : session.status === 'completed' ? 'تکمیل شده' : 'لغو شده'}
                             </Badge>
                           </TableCell>
-                          {/* TASK 2: Show User Attendance Status */}
                           <TableCell className="text-right">
                             <Badge
                               variant="outline"
@@ -364,19 +390,20 @@ export default function CourseSessionPage() {
                               {getAttendanceStatusLabel(getUserAttendanceStatus(session))}
                             </Badge>
                           </TableCell>
-                          {/* TASK 3: Show Report Button for Completed Sessions */}
                           <TableCell className="text-right">
-                            {session.status === 'completed' && session.sessionReport ? (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleViewReport(session.sessionReport)}
-                              >
-                                مشاهده گزارش
-                              </Button>
-                            ) : (
-                              <span className="text-gray-400 text-sm">-</span>
-                            )}
+                            {session.status === 'completed' && session.sessionReport
+                              ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleViewReport(session.sessionReport)}
+                                  >
+                                    مشاهده گزارش
+                                  </Button>
+                                )
+                              : (
+                                  <span className="text-sm text-gray-400">-</span>
+                                )}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -389,30 +416,28 @@ export default function CourseSessionPage() {
         ))}
       </div>
 
-      {/* TASK 3: Session Report Modal */}
+      {/* Session Report Modal */}
       <Dialog open={isReportModalOpen} onOpenChange={setIsReportModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto" dir="rtl">
+        <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto" dir="rtl">
           <DialogHeader>
             <DialogTitle className="text-right text-xl font-bold">گزارش جلسه</DialogTitle>
           </DialogHeader>
-          
+ 
           {selectedSessionReport && (
             <div className="space-y-6 py-4">
-              {/* Description */}
               {selectedSessionReport.description && (
                 <div className="space-y-2">
-                  <h3 className="font-semibold text-right">توضیحات جلسه</h3>
-                  <p className="text-gray-700 text-right leading-7">
+                  <h3 className="text-right font-semibold">توضیحات جلسه</h3>
+                  <p className="text-right leading-7 text-gray-700">
                     {selectedSessionReport.description}
                   </p>
                 </div>
               )}
 
-              {/* Topics Covered */}
               {selectedSessionReport.topics_covered && selectedSessionReport.topics_covered.length > 0 && (
                 <div className="space-y-2">
-                  <h3 className="font-semibold text-right">نکاتی که در این جلسه مطرح شد</h3>
-                  <ul className="list-disc list-inside space-y-1 text-right">
+                  <h3 className="text-right font-semibold">نکاتی که در این جلسه مطرح شد</h3>
+                  <ul className="list-inside list-disc space-y-1 text-right">
                     {selectedSessionReport.topics_covered.map((topic: string, index: number) => (
                       <li key={index} className="text-gray-700">
                         {topic}
@@ -422,11 +447,10 @@ export default function CourseSessionPage() {
                 </div>
               )}
 
-              {/* Learning Objectives Met */}
               {selectedSessionReport.learning_objectives_met && selectedSessionReport.learning_objectives_met.length > 0 && (
                 <div className="space-y-2">
-                  <h3 className="font-semibold text-right">اهداف یادگیری</h3>
-                  <ul className="list-disc list-inside space-y-1 text-right">
+                  <h3 className="text-right font-semibold">اهداف یادگیری</h3>
+                  <ul className="list-inside list-disc space-y-1 text-right">
                     {selectedSessionReport.learning_objectives_met.map((objective: string, index: number) => (
                       <li key={index} className="text-gray-700">
                         {objective}
@@ -436,13 +460,12 @@ export default function CourseSessionPage() {
                 </div>
               )}
 
-              {/* Attachments */}
               {selectedSessionReport.attachments && selectedSessionReport.attachments.length > 0 && (
                 <div className="space-y-2">
-                  <h3 className="font-semibold text-right">فایل های پیوست</h3>
+                  <h3 className="text-right font-semibold">فایل های پیوست</h3>
                   <div className="space-y-2">
                     {selectedSessionReport.attachments.map((attachment: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between gap-3 rounded-lg border p-3 bg-gray-50">
+                      <div key={index} className="flex items-center justify-between gap-3 rounded-lg border bg-gray-50 p-3">
                         <div className="flex-1 text-right">
                           <p className="text-sm text-gray-700">
                             {attachment.description || `فایل ${index + 1}`}
