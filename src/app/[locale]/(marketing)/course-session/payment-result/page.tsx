@@ -103,7 +103,7 @@ const PaymentResultPage = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-600 pb-0 pt-16 md:pb-12 md:pt-28" dir="rtl">
       <Card className={clsx(
-        'mx-0 w-full max-w-full overflow-hidden rounded-xl pb-8 md:mx-4 md:max-w-lg',
+        'mx-0 w-full max-w-full overflow-hidden rounded-none pb-8 md:mx-4 md:max-w-lg md:rounded-xl',
         isPaymentSuccess ? 'border-green-500' : 'border-red-500',
       )}
       >
@@ -188,7 +188,7 @@ const PaymentResultPage = () => {
               ? (
                   <button
                     type="button"
-                    className="w-full rounded-lg bg-green-600 px-4 py-3 font-medium text-white transition-colors hover:bg-green-700"
+                    className="w-full rounded-lg bg-purple-600 px-4 py-3 font-medium text-white transition-colors hover:bg-purple-700"
                     onClick={() => router.push('/dashboard/course-session')}
                   >
                     مشاهده دوره‌های من
