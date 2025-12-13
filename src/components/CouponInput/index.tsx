@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { AlertCircle, Check, CirclePlus, Loader2 } from 'lucide-react';
+import { AlertCircle, Check, CirclePlus, Loader2, Tags } from 'lucide-react';
 import { useState, type Key } from 'react';
 import useResponsiveEvent from '@/hooks/useResponsiveEvent';
 
@@ -55,8 +55,11 @@ export default function CouponInput({ onApplyCoupon, couponResult, isLoading = f
     && (couponResult.valid?.length > 0 || couponResult.invalid?.length > 0);
 
   return (
-    <div className="pb-4">
-      <h3 className="mb-1 text-lg font-medium"> کد تخفیف</h3>
+    <div className="pb-4 bg-white ">
+      <h3 className="mb-1 flex items-center gap-2 text-lg font-medium text-purple-600">
+        <Tags className="size-6 text-purple-600 md:size-7" />
+        کد تخفیف
+      </h3>
       <p className="mb-4 text-xs text-gray-500">
         کد تخفیف یا کد معرف را میتوانید اعمال کنید.
       </p>
@@ -64,7 +67,7 @@ export default function CouponInput({ onApplyCoupon, couponResult, isLoading = f
       {/* Applied Coupons Display Section */}
       {hasAppliedCoupons && (
         <div className="mb-6 mt-1">
-          <h4 className="mb-3 text-xs font-medium text-gray-800 md:text-sm">کدهای تخفیف اعمال شده</h4>
+          <h4 className="mb-3 text-xs font-medium text-purple-600 md:text-sm">کدهای تخفیف اعمال شده</h4>
           <div className="space-y-2">
             {/* Valid Coupons */}
             {couponResult?.valid?.map(validCoupon => (
@@ -138,8 +141,8 @@ export default function CouponInput({ onApplyCoupon, couponResult, isLoading = f
 
       {/* Coupon Input Form Section */}
       <div>
-        <h4 className="mb-3 flex items-center gap-2 text-sm font-normal text-gray-900">
-          <CirclePlus className="size-5 text-gray-600" />
+        <h4 className="mb-3 flex items-center gap-2 text-sm font-normal text-purple-600">
+          <CirclePlus className="size-5 text-purple-600" />
           <span>افزودن کد تخفیف (کد معرف)</span>
         </h4>
 

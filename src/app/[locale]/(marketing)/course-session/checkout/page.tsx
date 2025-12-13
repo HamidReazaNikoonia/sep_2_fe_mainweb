@@ -1,11 +1,14 @@
+/* eslint-disable react/jsx-no-duplicate-props */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable style/jsx-one-expression-per-line */
 'use client';
 
 import { useMutation, useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Book, Calendar, User } from 'lucide-react';
+import { Book, BookOpenCheck, Calendar, Coins, Package, Plus, ReceiptText, User, Wallet } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { calculateOrderSummaryRequest, createOrderRequest } from '@/API/order/courseSession';
 import CouponInput from '@/components/CouponInput';
@@ -13,15 +16,20 @@ import LoadingButton from '@/components/LoadingButton';
 import LoadingSpinner from '@/components/LoadingSpiner';
 import useAuth from '@/hooks/useAuth';
 import { CourseSessioonProgramHelper } from '@/utils/CourseSession';
-import { convertDateToPersian } from '@/utils/Helpers';
+import { convertDateToPersian, filterPriceNumber } from '@/utils/Helpers';
 
 export default function CourseSessionCheckout() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isAuthenticated, userProfileData, isLoading, isUserCompleteProfile, fetchUserFromServer } = useAuth();
+  const hasFetched = useRef(false);
+  const { isAuthenticated, userProfileData, isLoading, isUserCompleteProfile, fetchUserFromServer, user } = useAuth();
 
   // Add this useState hook
   const [useWallet, setUseWallet] = useState(false);
+
+  const [isProgramAlreadyEnrolled, setIsProgramAlreadyEnrolled] = useState(false);
+
+  const [showPaidStatusModal, setShowPaidStatusModal] = useState(false);
 
   // Get query parameters
   const programId = searchParams.get('programId');
@@ -32,7 +40,7 @@ export default function CourseSessionCheckout() {
   const [appliedCouponCodes, setAppliedCouponCodes] = useState<string[]>([]);
 
   const { data: orderSummaryData, isLoading: isOrderSummaryLoading, isSuccess: isOrderSummarySuccess, refetch } = useQuery({
-    queryKey: ['orderSummary', programId],
+    queryKey: ['orderSummary', programId, useWallet],
     queryFn: () => calculateOrderSummaryRequest({
       classProgramId: programId as string,
       packages: packageIds,
@@ -48,6 +56,7 @@ export default function CourseSessionCheckout() {
       classProgramId: programId as string,
       packages: packageIds,
       couponCodes: appliedCouponCodes,
+      useUserWallet: useWallet,
     }),
     onSuccess: (data) => {
       // Handle successful order creation
@@ -63,7 +72,20 @@ export default function CourseSessionCheckout() {
         } else {
           toast.error('خطا در انتقال به صفحه پرداخت');
         }
-      } else {
+      } else if (!data.payment && data.order) {
+        if (data.order.paymentStatus === 'paid') {
+          toast.success('سفارش با موفقیت ثبت شد');
+          setShowPaidStatusModal(true);
+          setTimeout(() => {
+            router.push(`/dashboard/course-session/${data.order.classProgramId}`);
+          }, 4000);
+          toast.loading('در حال انتقال به دوره خریداری شده');
+          router.push(`/dashboard/course-session/${data.order.classProgramId}`);
+        } else {
+          toast.error('خطا در ثبت سفارش');
+        }
+      }
+      else {
         toast.error('خطا در ثبت سفارش');
       }
       // You may want to redirect to a success page or order details page
@@ -98,8 +120,24 @@ export default function CourseSessionCheckout() {
   }, [isAuthenticated, userProfileData, programId, isUserCompleteProfile, packageIds, router, isLoading]);
 
   useEffect(() => {
-    fetchUserFromServer();
-  }, []);
+    if (user && programId) {
+      if (user?.course_session_program_enrollments && user?.course_session_program_enrollments?.length > 0) {
+        // check if this program is already enrolled
+        const isEnrolled = user?.course_session_program_enrollments?.some((enrollment: any) => enrollment?.program === programId);
+        if (isEnrolled) {
+          setIsProgramAlreadyEnrolled(true);
+          toast.error('این دوره قبلاً ثبت نام کرده اید');
+        }
+      }
+    }
+  }, [user, programId]);
+
+  useEffect(() => {
+    if (!isLoading && user && !hasFetched.current) {
+      hasFetched.current = true;
+      fetchUserFromServer();
+    }
+  }, [isLoading, user, fetchUserFromServer]);
 
   // Get first session date
   const firstSessionDate = orderSummaryData?.program ? CourseSessioonProgramHelper(orderSummaryData?.program).getFirstSessionDate() : null;
@@ -184,28 +222,45 @@ export default function CourseSessionCheckout() {
     // we should navigate user to thhe bank
   };
 
-  const handleWalletCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = e.target.checked;
-    setUseWallet(isChecked);
-    // Refetch order summary whenever checkbox state changes
-    refetch();
+  const handleWalletRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value !== 'full-payment') {
+      setUseWallet(true);
+    } else {
+      setUseWallet(false);
+    }
+    // Refetch order summary whenever radio state changes
+    // refetch();
   };
 
-  const userWalletAmount = userProfileData?.user?.wallet?.amount;
+  const userWalletAmount = user?.wallet_amount || 0;
 
+  // Add these logic variables
+  const shouldShowWalletSection = userWalletAmount > 0;
+  const isWalletLessThanTotal = userWalletAmount < orderSummaryData?.summary?.finalAmount;
   // If all validations pass, render the checkout content
   return (
     <div className="min-h-screen w-full overflow-hidden bg-gradient-to-r from-violet-500 to-purple-500  pt-20 text-white" dir="rtl">
       {(isLoading || isOrderSummaryLoading) && <LoadingSpinner />}
       {isOrderSummarySuccess && orderSummaryData?.program && (
-        <div className="mx-auto my-1 md:my-8  max-w-4xl px-3 py-2 md:px-6">
+        <div className="mx-auto my-1 max-w-4xl  px-3 py-2 md:my-8 md:px-6">
           <div className="rounded-lg bg-gradient-to-r from-fuchsia-50 to-gray-50 px-4 py-6 shadow-lg md:px-6">
-            <h2 className="mb-8 text-center text-xl md:text-2xl font-bold text-gray-800">  فاکتور سفارش </h2>
+            <div className="mb-10 flex flex-col items-center justify-center">
+              <div className="mb-2 flex items-center justify-center gap-3">
+                <ReceiptText className="size-7 text-purple-800 md:size-10" />
+                <h2 className="text-center text-2xl font-extrabold tracking-tight text-purple-900 drop-shadow-sm md:text-3xl">
+                  فاکتور سفارش
+                </h2>
+              </div>
+              <p className="text-xs font-medium text-purple-700 md:text-base">
+                لطفا جزییات سفارش خود را بررسی کنید
+              </p>
+            </div>
 
             {/* Course Information */}
-            <div className="mb-6 text-gray-800 border-b border-green-600/20 pb-4">
-              <h3 className="mb-12 flex items-center gap-2 text-base md:text-xl font-semibold">
-                <Book className="size-5 md:size-6" />
+            <div className="mb-6 border-b border-green-600/20 pb-4 text-purple-600">
+              <h3 className="mb-6 flex items-center gap-2 text-base font-semibold md:text-xl">
+                <Book className="size-6 text-purple-600 md:size-7" />
                 اطلاعات دوره
               </h3>
               {courseProgramData?.course
@@ -224,8 +279,8 @@ export default function CourseSessionCheckout() {
             {firstSessionDate && (
               <div className="mb-6 border-b border-green-600/20 pb-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-800 md:text-lg">
-                    <Calendar className="size-5 md:size-6" />
+                  <h3 className="flex items-center gap-2 text-sm font-semibold text-purple-600 md:text-lg">
+                    <Calendar className="size-6 text-purple-600 md:size-7" />
                     شروع دوره از
                   </h3>
                   <span style={{ letterSpacing: '2px' }} className="rounded-2xl border border-green-600/20 px-4 py-2 text-sm font-medium text-gray-800 md:text-lg">
@@ -237,17 +292,20 @@ export default function CourseSessionCheckout() {
 
             {/* Coach Information */}
             <div className="mb-6 border-b border-green-600/20 pb-4">
-              <h3 className="mb-2 flex items-center gap-2 md:text-base text-sm font-semibold text-gray-800 md:text-lg">
-                <User className="size-5 md:size-6" />
+              <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-purple-600 md:text-lg">
+                <User className="size-6 text-purple-600 md:size-7" />
                 مدرس
               </h3>
               <p className="text-sm text-gray-800 md:text-base">{`${courseProgramData?.coach?.first_name} ${courseProgramData?.coach?.last_name}`}</p>
             </div>
 
             {/* Price Information */}
-            <div className="mb-6 border-b border-green-600/20 pb-4 text-gray-800">
-              <h3 className="mb-4 text-sm font-semibold md:text-lg">قیمت دوره</h3>
-              <div className="flex items-center justify-between">
+            <div className="mb-6 border-b border-green-600/20 pb-4 text-purple-600">
+              <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold md:text-lg">
+                <Coins className="size-6 text-purple-600 md:size-7" />
+                قیمت دوره
+              </h3>
+              <div className="flex items-center justify-between text-gray-800">
                 <span className="text-sm md:text-base">قیمت اصلی</span>
                 <span className={clsx(courseProgramData?.price_discounted ? 'text-gray-400 line-through' : '', 'text-sm font-semibold md:text-lg')}>
                   {courseProgramData?.price_real.toLocaleString('fa-IR')}
@@ -269,7 +327,10 @@ export default function CourseSessionCheckout() {
             {/* Packages Information */}
             {orderSummaryData?.packages && orderSummaryData?.packages.length > 0 && (
               <div className="mb-4 pb-2 text-gray-800">
-                <h3 className="mb-4 text-sm md:text-base font-semibold">پکیج‌های انتخاب شده</h3>
+                <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold md:text-lg">
+                  <Package size={20} className="size-5 text-purple-600 md:size-6" />
+                  پکیج‌های انتخاب شده
+                </h3>
                 {orderSummaryData?.packages.map((pkg: any) => (
                   <div key={pkg._id} className="mb-2 flex items-center justify-between text-sm md:text-base">
                     <span>* {pkg.title}</span>
@@ -284,7 +345,7 @@ export default function CourseSessionCheckout() {
             )}
 
             {/* Coupon Input Section */}
-            <div className="my-6 rounded-lg border border-green-800/20 px-6 py-4 md:px-6 text-gray-700">
+            <div className="my-6 rounded-xl border border-green-300/10 bg-white px-6 py-4 text-gray-700 shadow-md md:px-6">
               <CouponInput
                 onApplyCoupon={applyCouponCodeHandler}
                 couponResult={orderSummaryData?.coupons}
@@ -341,38 +402,100 @@ export default function CourseSessionCheckout() {
                   </div>
                 </div>
 
-                <div className="mt-6 flex w-full flex-col items-center justify-between  space-y-4 border-t border-gray-300 pt-6 font-semibold md:flex-row md:space-y-0">
+                <div className="mt-6 flex w-full flex-col items-center justify-between  space-y-4 border-t border-gray-300 pt-6 font-semibold ">
                   <span className="text-lg text-gray-800 md:text-xl">مجموع قابل پرداخت </span>
-                  <span style={{ letterSpacing: '1px' }} className="rounded-2xl  bg-green-600/80 px-4 py-2 text-lg md:text-xl">
+                  <span style={{ letterSpacing: '1px' }} className="green-gradient-bg min-w-[80%] rounded-2xl   px-4 py-2 text-center text-lg font-semibold md:text-xl">
                     {orderSummaryData?.summary?.finalAmount.toLocaleString('fa-IR')}
                     {' '}
                     ریال
                   </span>
                 </div>
 
-                {userWalletAmount > 0 && (
-                  <div className="mt-6 flex w-full flex-col items-center justify-between border-t border-gray-600 pt-6">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs md:text-sm">موجودی کیف پول : </span>
-                      <span style={{ letterSpacing: '1px' }} className="mr-4 rounded-2xl  bg-green-600/20 px-4 py-2 text-sm md:text-lg">
-                        {userWalletAmount.toLocaleString('fa-IR')}
-                        {' '}
-                        ریال
-                      </span>
+                {shouldShowWalletSection && (
+                  <div className="mt-6 w-full rounded-xl bg-white p-6 shadow-md">
+                    <div className="mb-4 flex items-center gap-2 text-right">
+                      <Wallet className="text-purple-600" size={25} />
+                      <h2 className="text-lg font-normal text-purple-600">پرداخت با کیف پول</h2>
                     </div>
 
-                    {/* INPUT */}
-                    <div className="mt-4 flex items-center border-gray-600">
-                      <input
-                        type="checkbox"
-                        id="useWallet"
-                        checked={useWallet}
-                        onChange={handleWalletCheckboxChange}
-                        className="size-4 rounded border-gray-800 text-purple-600 focus:ring-purple-500"
-                      />
-                      <label htmlFor="useWallet" className="pr-4 text-sm font-medium text-gray-300">
-                        پرداخت از کیف پول
-                      </label>
+                    <div className="space-y-3">
+                      {/* Wallet Balance Display */}
+                      <div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-700">موجودی کیف پول شما:</span>
+                          <span className="text-lg font-bold text-purple-600">
+                            {userWalletAmount && filterPriceNumber(userWalletAmount || 0)}
+                            <span className="mr-1 text-sm">ریال</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Radio Buttons - Only show if wallet < total */}
+                      {isWalletLessThanTotal && (
+                        <div className="space-y-2">
+                          <label className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-gray-200 p-4 transition-all hover:bg-gray-50">
+                            <input
+                              type="radio"
+                              name="walletPayment"
+                              value="full-payment"
+                              checked={!useWallet}
+                              onChange={(e) => handleWalletRadioChange(e)}
+                              className="size-5 cursor-pointer accent-blue-600"
+                            />
+                            <div className="flex-1">
+                              <div className="text-sm font-semibold text-gray-800">پرداخت کامل با درگاه</div>
+                              <div className="mt-2 text-xs text-gray-600 md:text-sm">پرداخت کل مبلغ از طریق درگاه بانکی</div>
+                            </div>
+                          </label>
+
+                          <label className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-purple-300 bg-purple-50 p-4 transition-all hover:bg-purple-100">
+                            <input
+                              type="radio"
+                              name="walletPayment"
+                              checked={useWallet}
+                              onChange={e => handleWalletRadioChange(e)}
+                              className="size-5 cursor-pointer accent-purple-600"
+                            />
+                            <div className="flex-1">
+                              <div className="text-sm font-semibold text-gray-800">استفاده از کیف پول + درگاه</div>
+                              <div className="mt-2 text-xs leading-5 text-gray-600 md:text-sm">
+                                ابتدا
+                                {' '}
+                                {userWalletAmount && filterPriceNumber(userWalletAmount || 0)}
+                                {' '}
+                                ریال از کیف پول کسر می‌شود و مابقی از درگاه
+                              </div>
+                            </div>
+                          </label>
+                        </div>
+                      )}
+
+                      {/* If wallet >= total, show full payment option */}
+                      {!isWalletLessThanTotal && (
+                        <div className="rounded-lg border-2 border-green-300 bg-green-50 p-4">
+                          <div className="flex items-center gap-2">
+                            <div style={{ minWidth: '24px', minHeight: '24px' }} className="flex size-6 items-center justify-center rounded-full bg-green-600 md:size-8">
+                              <svg className="size-4 text-white md:size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                            <div>
+                              <div className="text-sm font-bold text-green-800">امکان پرداخت کامل با کیف پول</div>
+                              <div className="mt-1 text-xs leading-5 text-green-700 md:text-sm">موجودی کیف پول شما برای پرداخت این سفارش کافی است</div>
+                            </div>
+                          </div>
+
+                          <label className="mt-3 flex cursor-pointer items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={useWallet}
+                              onChange={e => setUseWallet(e.target.checked)}
+                              className="size-5 cursor-pointer accent-green-600 md:size-6"
+                            />
+                            <span className="text-sm font-semibold text-purple-600 md:text-base">پرداخت از طریق کیف پول</span>
+                          </label>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -396,6 +519,110 @@ export default function CourseSessionCheckout() {
               ادامه فرآیند پرداخت
             </LoadingButton>
           </div>
+        </div>
+      )}
+
+      {showPaidStatusModal && (
+        <div className="fixed inset-0 z-[200] flex min-h-full w-screen items-center justify-center bg-black/80">
+          <div className="mx-auto flex w-full max-w-md flex-col items-center justify-center rounded-none bg-white px-8 py-12 shadow-xl md:rounded-2xl">
+            {/* Success SVG */}
+            <div className="mb-6 flex items-center justify-center rounded-full bg-green-100 p-4">
+              <div className="flex justify-around">
+                <div>
+                  <svg
+                    className="size-16 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 48 48"
+                  >
+                    <circle cx="24" cy="24" r="22" strokeWidth="3" stroke="currentColor" fill="#dcfce7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={4}
+                      d="M15 25l7 7 13-13"
+                      stroke="#22c55e"
+                      fill="none"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <Plus className="size-12 text-green-400" />
+                </div>
+
+                <div>
+                  <BookOpenCheck className="size-16 text-green-600" />
+                </div>
+
+              </div>
+            </div>
+            {/* Success Text */}
+            <div className="mb-6 text-center">
+              <div className="text-lg font-semibold text-green-700">
+                {`دوره (${courseProgramData?.course?.title}) با مدرس ${courseProgramData?.coach?.first_name} ${courseProgramData?.coach?.last_name} `}
+              </div>
+              <div className="mt-2 text-sm text-gray-700 md:text-base">
+                به پروفایل شما قسمت کلاس ها اضافه شد به همراه ساعت دقیق کلاس و جزییات بیشتر
+              </div>
+            </div>
+            {/* Animation & Inform Text */}
+            <div className="my-8 flex flex-col items-center gap-2">
+              <span className="text-xs font-medium text-purple-600 md:text-sm">
+                شما در حال انتقال به صفحه کلاس ها هستید
+              </span>
+              {/* Loading Animation */}
+              <svg className="mt-1 size-7 animate-spin text-purple-600" fill="none" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                >
+                </circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                >
+                </path>
+              </svg>
+            </div>
+            {/* Manual Link */}
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-xs text-gray-400 md:text-sm">در صورت عدم انتقال
+                <span className="px-1 font-bold text-purple-800"> اینجا </span>
+                را کلیک کنید
+              </span>
+              <Link
+                href="/dashboard/course-session"
+                className="rounded-xl bg-purple-800 px-5 py-2 font-semibold text-white transition hover:bg-purple-700"
+              >
+                <>
+                  <span className="flex items-center gap-2">
+                    رفتن به صفحه کلاس ها
+                    <BookOpenCheck className="inline-block size-5 text-white" />
+                  </span>
+                </>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* When this program exists in enrolled programs */}
+      {isProgramAlreadyEnrolled && (
+        <div
+          style={{ boxShadow: '0 -2px 4px rgba(0, 0, 0, 0.2)', minHeight: '56px' }}
+          className="blue-gradient-bg fixed  inset-x-0 bottom-0 z-50 flex items-center justify-center gap-2 px-4 py-3"
+        >
+          <BookOpenCheck className="size-5 text-purple-800" />
+          <div className="flex items-center gap-2 text-sm font-semibold text-purple-800">
+            این کلاس آموزشی قبلا ثبت نام شده
+          </div>
+
         </div>
       )}
     </div>
