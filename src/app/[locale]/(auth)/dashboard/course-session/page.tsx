@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Ban, CalendarCheck, CheckCheck, Clock, Download, MapPin, School, User, Video } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getUserProfileRequest } from '@/API/auth';
 import EnrollmentCardItem from '@/components/EnrollmentCardItem';
@@ -21,6 +22,11 @@ type FilterType = 'active' | 'completed' | 'all';
 
 export default function CourseSessionPage() {
   const { user } = useAuth();
+
+  // Get `program_id` query from url
+
+  const searchParams = useSearchParams();
+  const programId = searchParams.get('program_id');
 
   const [courseSessionEnrollments, setCourseSessionEnrollments] = useState([]);
   const [filterType, setFilterType] = useState<FilterType>('active');
@@ -54,6 +60,19 @@ export default function CourseSessionPage() {
 
   // eslint-disable-next-line no-console
   console.log(profileData, 'profileData----');
+
+  // scroll to specifc enrollment card
+  useEffect(() => {
+    if (programId && profileIsSuccess && profileData) {
+      // eslint-disable-next-line react-web-api/no-leaked-timeout
+      setTimeout(() => {
+        const enrollmentCard = document.getElementById(`enrollment-${programId}`);
+        if (enrollmentCard) {
+          enrollmentCard.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 2000);
+    }
+  }, [programId, profileIsSuccess, profileData]);
 
   const filteredEnrollments = courseSessionEnrollments.filter((enrollment: any) => {
     if (filterType === 'active') {
@@ -229,7 +248,8 @@ export default function CourseSessionPage() {
       <div dir="rtl" className="grid gap-4 md:hidden">
         {filteredEnrollments.map(enrollment => (
           <EnrollmentCardItem
-            key={enrollment._id}
+            id={enrollment.id}
+            key={enrollment.id}
             enrollment={enrollment}
             formatDate={formatDate}
             formatTime={formatTime}
@@ -246,7 +266,7 @@ export default function CourseSessionPage() {
       {/* Desktop View - Table */}
       <div dir="rtl" className="hidden gap-6 md:grid">
         {filteredEnrollments.map(enrollment => (
-          <Card key={enrollment._id} className="w-full">
+          <Card id={`enrollment-${enrollment.id}`} key={enrollment._id} className="w-full">
             <CardHeader>
               <div className="mb-4">
                 {!enrollment?.is_completed

@@ -72,7 +72,7 @@ const PaymentResultPage = () => {
   // const classProgramId = data?.classProgramId;
   const reference = data?.reference;
   const transactionId = data?.transactionId;
-
+  const classProgramId = data?.classProgramId;
   // Show loading spinner
   if (isLoading) {
     return (
@@ -189,7 +189,7 @@ const PaymentResultPage = () => {
                   <button
                     type="button"
                     className="w-full rounded-lg bg-purple-600 px-4 py-3 font-medium text-white transition-colors hover:bg-purple-700"
-                    onClick={() => router.push('/dashboard/course-session')}
+                    onClick={() => router.push(`/dashboard/course-session?program_id=${classProgramId}`)}
                   >
                     مشاهده دوره‌های من
                   </button>

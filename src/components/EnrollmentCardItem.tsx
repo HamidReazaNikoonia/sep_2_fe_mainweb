@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { toPersianDigits } from '@/utils/Helpers';
 
 type EnrollmentCardItemProps = {
+  id: string;
   enrollment: any;
   formatDate: (date: string) => string;
   formatTime: (time: string) => string;
@@ -21,6 +22,7 @@ type EnrollmentCardItemProps = {
 };
 
 export default function EnrollmentCardItem({
+  id,
   enrollment,
   formatDate,
   formatTime,
@@ -53,7 +55,7 @@ export default function EnrollmentCardItem({
   };
 
   return (
-    <Card className="w-full rounded-lg">
+    <Card id={`enrollment-${id}`} className="w-full rounded-lg">
       {/* Header Section */}
       <div className="test-gradient-bg rounded-t-lg border-b bg-gray-50 p-4">
         <div className="space-y-3">

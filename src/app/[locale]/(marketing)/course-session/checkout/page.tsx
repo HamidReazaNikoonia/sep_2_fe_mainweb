@@ -77,10 +77,10 @@ export default function CourseSessionCheckout() {
           toast.success('سفارش با موفقیت ثبت شد');
           setShowPaidStatusModal(true);
           setTimeout(() => {
-            router.push(`/dashboard/course-session/${data.order.classProgramId}`);
+            router.push(`/dashboard/course-session?program_id=${data.order.classProgramId}`);
           }, 4000);
           toast.loading('در حال انتقال به دوره خریداری شده');
-          router.push(`/dashboard/course-session/${data.order.classProgramId}`);
+          // router.push(`/dashboard/course-session?program_id=${data.order.classProgramId}`);
         } else {
           toast.error('خطا در ثبت سفارش');
         }
@@ -597,7 +597,7 @@ export default function CourseSessionCheckout() {
                 را کلیک کنید
               </span>
               <Link
-                href="/dashboard/course-session"
+                href={`/dashboard/course-session?program_id=${programId}`}
                 className="rounded-xl bg-purple-800 px-5 py-2 font-semibold text-white transition hover:bg-purple-700"
               >
                 <>
