@@ -1,10 +1,12 @@
 /* eslint-disable style/multiline-ternary */
-import { CalendarDays, Clock, MapPin, User, Video } from 'lucide-react';
+import { Ban, CalendarCheck, CheckCheck, Clock, FolderPlus, MapPin, School, User, Video } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { toPersianDigits } from '@/utils/Helpers';
 
 type EnrollmentCardItemProps = {
   enrollment: any;
@@ -51,22 +53,34 @@ export default function EnrollmentCardItem({
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full rounded-lg">
       {/* Header Section */}
-      <div className="border-b bg-gray-50 p-4">
+      <div className="test-gradient-bg rounded-t-lg border-b bg-gray-50 p-4">
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-2">
-            <h2 className="text-sm font-medium text-gray-600">
-              {enrollment?.is_completed ? 'تکمیل شده' : 'در حال برگذاری'}
-            </h2>
+            <div className="mb-4">
+              {!enrollment?.is_completed ? (
+                <div className="flex items-center gap-2">
+                  <span className="relative flex size-3">
+                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
+                  </span>
+                  <span className="animate-fade-in-slow text-xs font-semibold text-white transition-colors md:text-sm">
+                    در حال برگذاری
+                  </span>
+                </div>
+              ) : (
+                <h2 className="text-xs font-normal text-white md:text-sm">تکمیل شده</h2>
+              )}
+            </div>
             <div className="flex flex-wrap justify-end gap-1.5">
               <Badge
                 variant="outline"
-                className={`text-xs ${enrollment?.program_type === 'ONLINE' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'}`}
+                className={`text-xs text-white ${enrollment?.program_type === 'ONLINE' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'}`}
               >
                 {enrollment?.program_type === 'ONLINE' ? 'آنلاین' : 'حضوری'}
               </Badge>
-              <Badge className={`text-xs ${getStatusColor(enrollment?.status)}`}>
+              <Badge className={`text-xs text-white ${getStatusColor(enrollment?.status)}`}>
                 {enrollment?.status === 'active'
                   ? 'فعال'
                   : enrollment?.status === 'completed' ? 'تکمیل شده' : 'غیرفعال'}
@@ -75,11 +89,13 @@ export default function EnrollmentCardItem({
           </div>
 
           <div className="text-right">
-            <h3 className="mb-1 text-base font-bold">
-              {enrollment?.course?.title}
+            <h3 className="mb-0 text-base font-bold text-white">
+              <Link href={`/course-session/${enrollment?.course?.id}`}>
+                {enrollment?.course?.title}
+              </Link>
             </h3>
-            <p className="text-sm text-gray-600">
-              {enrollment?.course?.sub_title}
+            <p className="text-sm text-gray-300">
+              {enrollment?.course?.sub_title?.length > 40 ? `${enrollment?.course?.sub_title?.substring(0, 40)}...` : enrollment?.course?.sub_title}
             </p>
           </div>
         </div>
@@ -94,7 +110,7 @@ export default function EnrollmentCardItem({
                   <Image
                     src={`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${enrollment.coach.avatar.file_name}`}
                     alt={`${enrollment?.coach?.first_name} ${enrollment?.coach?.last_name || ''}`}
-                    className="size-full rounded-full object-cover"
+                    className="size-full rounded-full border border-purple-500 object-cover shadow-lg"
                     width={86}
                     height={86}
                   />
@@ -122,8 +138,8 @@ export default function EnrollmentCardItem({
         {/* Class Information */}
         {enrollment?.class_id?.class_title && (
           <div className="flex items-center gap-2 rounded-lg bg-gray-50 p-2.5 text-sm text-gray-600">
-            <CalendarDays className="size-4 shrink-0" />
-            <span className="text-right">
+            <School className="size-5 shrink-0 text-purple-600" />
+            <span className="text-right text-xs">
               کلاس:
               {' '}
               {enrollment?.class_id?.class_title}
@@ -133,9 +149,9 @@ export default function EnrollmentCardItem({
 
         {/* Sessions Accordion */}
         <div className="space-y-2">
-          <h4 className="border-b pb-2 text-sm font-semibold text-gray-900">
+          <h4 className="border-b pb-2 text-sm font-semibold text-purple-800">
             جلسات دوره (
-            {sortedSessions.length}
+            {sortedSessions.length && toPersianDigits(sortedSessions.length)}
             )
           </h4>
 
@@ -150,22 +166,37 @@ export default function EnrollmentCardItem({
                   <AccordionTrigger className="px-3 py-2 hover:bg-white/50 hover:no-underline">
                     <div className="flex w-full items-center justify-between gap-2 pr-2">
                       <div className="flex items-center gap-2 text-right">
-                        <span className="text-xs font-medium text-gray-700">
+                        <span className="text-xs font-medium text-gray-500">
                           جلسه
                           {' '}
-                          {index + 1}
+                          {toPersianDigits(index + 1)}
                         </span>
-                        <span className="text-xs text-gray-600">
+                        <span className="text-xs text-gray-800">
                           {formatDate(session.date)}
                         </span>
                       </div>
                       <Badge
                         variant="outline"
-                        className={`text-xs ${getSessionStatusColor(session.status)}`}
+                        className={`ml-3 flex max-w-36 flex-1 items-center gap-1 text-xs ${getSessionStatusColor(session.status)}`}
                       >
-                        {session.status === 'scheduled'
-                          ? 'برنامه‌ریزی شده'
-                          : session.status === 'completed' ? 'تکمیل شده' : 'لغو شده'}
+                        {session.status === 'completed' && (
+                          <>
+                            <CheckCheck className="size-4 text-green-500" />
+                            <span>تکمیل شده</span>
+                          </>
+                        )}
+                        {session.status === 'scheduled' && (
+                          <>
+                            <CalendarCheck className="size-4 text-yellow-500" />
+                            <span>برنامه‌ریزی شده</span>
+                          </>
+                        )}
+                        {session.status === 'cancelled' && (
+                          <>
+                            <Ban className="size-4 text-red-500" />
+                            <span>لغو شده</span>
+                          </>
+                        )}
                       </Badge>
                     </div>
                   </AccordionTrigger>
@@ -175,13 +206,16 @@ export default function EnrollmentCardItem({
                       {/* Time Range */}
                       <div className="flex items-center gap-3 text-sm">
                         <div className="flex flex-1 items-center gap-1.5">
-                          <Clock className="size-4 shrink-0 text-gray-500" />
-                          <span className="text-gray-700">{formatTime(session.startTime)}</span>
+                          <span className="mr-1 text-xs text-gray-500">از ساعت</span>
+                          <span className="text-purple-700">{formatTime(session.startTime)}</span>
+                          <Clock className="size-4 shrink-0 text-purple-600" />
                         </div>
                         <span className="text-gray-400">-</span>
                         <div className="flex flex-1 items-center gap-1.5">
-                          <Clock className="size-4 shrink-0 text-gray-500" />
+                          <span className="text-xs text-gray-500">تا ساعت</span>
                           <span className="text-gray-700">{formatTime(session.endTime)}</span>
+                          <Clock className="size-4 shrink-0 text-purple-600" />
+
                         </div>
                       </div>
 
@@ -218,7 +252,7 @@ export default function EnrollmentCardItem({
                         <span className="text-xs text-gray-600">حضور و غیاب:</span>
                         <Badge
                           variant="outline"
-                          className={`text-xs ${getAttendanceStatusColor(getUserAttendanceStatus(session))}`}
+                          className={`text-xs font-normal ${getAttendanceStatusColor(getUserAttendanceStatus(session))}`}
                         >
                           {getAttendanceStatusLabel(getUserAttendanceStatus(session))}
                         </Badge>
@@ -227,11 +261,12 @@ export default function EnrollmentCardItem({
                       {/* View Report Button */}
                       {session.status === 'completed' && session.sessionReport && (
                         <Button
-                          variant="outline"
+                          variant="ligth"
                           size="sm"
                           onClick={() => handleViewReport(session.sessionReport)}
                           className="mt-2 w-full text-xs"
                         >
+                          <FolderPlus className="size-4 shrink-0" />
                           مشاهده گزارش جلسه
                         </Button>
                       )}

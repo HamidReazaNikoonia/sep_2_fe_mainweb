@@ -1,8 +1,9 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { CalendarDays, Clock, Download, MapPin, User, Video } from 'lucide-react';
+import { Ban, CalendarCheck, CheckCheck, Clock, Download, MapPin, School, User, Video } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getUserProfileRequest } from '@/API/auth';
 import EnrollmentCardItem from '@/components/EnrollmentCardItem';
@@ -11,9 +12,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import useAuth from '@/hooks/useAuth';
+import { toPersianDigits } from '@/utils/Helpers';
 
 type FilterType = 'active' | 'completed' | 'all';
 
@@ -86,13 +88,13 @@ export default function CourseSessionPage() {
   const getAttendanceStatusColor = (status: string | null) => {
     switch (status) {
       case 'present':
-        return 'bg-green-100 text-green-800';
+        return 'font-normal bg-green-100 text-green-800';
       case 'absent':
-        return 'bg-red-100 text-red-800';
+        return 'font-normal bg-red-100 text-red-800';
       case 'excused':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'font-normal bg-yellow-100 text-yellow-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'font-normal bg-gray-100 text-gray-800';
     }
   };
 
@@ -101,10 +103,10 @@ export default function CourseSessionPage() {
     setIsReportModalOpen(true);
   };
 
-  const handleCloseReportModal = () => {
-    setIsReportModalOpen(false);
-    setSelectedSessionReport(null);
-  };
+  // const handleCloseReportModal = () => {
+  //   setIsReportModalOpen(false);
+  //   setSelectedSessionReport(null);
+  // };
 
   const handleDownloadFile = (fileUrl: string) => {
     window.open(fileUrl, '_blank');
@@ -129,13 +131,13 @@ export default function CourseSessionPage() {
   const getSessionStatusColor = (status: string) => {
     switch (status) {
       case 'scheduled':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'flex font-normal items-center gap-2 bg-yellow-100 text-yellow-800';
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'flex font-normal items-center gap-2 bg-green-100 text-green-800';
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'flex font-normal items-center gap-2 bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'flex font-normal items-center gap-2 bg-gray-100 text-gray-800';
     }
   };
 
@@ -144,7 +146,7 @@ export default function CourseSessionPage() {
   };
 
   const formatTime = (time: string) => {
-    return time;
+    return toPersianDigits(time);
   };
 
   if (profileIsLoading) {
@@ -175,9 +177,9 @@ export default function CourseSessionPage() {
   return (
     <div className="container mx-auto space-y-6 p-4 md:p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-right text-base font-bold md:text-lg">کلاس های من</h1>
+        <h1 className="text-right text-base font-bold text-purple-800 md:text-lg">کلاس های من</h1>
         <Badge variant="outline">
-          {courseSessionEnrollments?.length}
+          {toPersianDigits(courseSessionEnrollments?.length)}
           {' '}
           دوره
         </Badge>
@@ -188,31 +190,31 @@ export default function CourseSessionPage() {
         <Button
           variant={filterType === 'active' ? 'default' : 'outline'}
           onClick={() => setFilterType('active')}
-          className="text-xs md:text-sm"
+          className="text-xs"
         >
           دوره های در حال برگذاری
-          <Badge variant="secondary" className="mr-2">
-            {courseSessionEnrollments.filter(e => e.is_completed === false && e.is_active === true).length}
+          <Badge variant="purple" className="mr-2 text-xs">
+            {toPersianDigits(courseSessionEnrollments.filter((e: any) => e.is_completed === false && e.is_active === true).length)}
           </Badge>
         </Button>
         <Button
           variant={filterType === 'completed' ? 'default' : 'outline'}
           onClick={() => setFilterType('completed')}
-          className="text-xs md:text-sm"
+          className="hidden text-xs md:block"
         >
           دوره های برگذار شده
-          <Badge variant="secondary" className="mr-2">
-            {courseSessionEnrollments.filter(e => e.is_completed === true).length}
+          <Badge variant="purple" className="mr-2 text-xs text-purple-500">
+            {toPersianDigits(courseSessionEnrollments.filter((e: any) => e.is_completed === true).length)}
           </Badge>
         </Button>
         <Button
           variant={filterType === 'all' ? 'default' : 'outline'}
           onClick={() => setFilterType('all')}
-          className="text-xs md:text-sm"
+          className="text-xs"
         >
           همه دوره ها
-          <Badge variant="secondary" className="mr-2">
-            {courseSessionEnrollments.length}
+          <Badge variant="purple" className="mr-2 text-xs">
+            {toPersianDigits(courseSessionEnrollments.length)}
           </Badge>
         </Button>
       </div>
@@ -246,16 +248,32 @@ export default function CourseSessionPage() {
         {filteredEnrollments.map(enrollment => (
           <Card key={enrollment._id} className="w-full">
             <CardHeader>
-              <div>
-                <h2 className='text-sm font-normal md:text-lg'>{enrollment?.is_completed ? 'تکمیل شده' : 'در حال برگذاری'}</h2>
+              <div className="mb-4">
+                {!enrollment?.is_completed
+                  ? (
+                      <div className="flex items-center gap-2">
+                        <span className="relative flex size-3">
+                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
+                        </span>
+                        <span className="animate-fade-in-slow text-xs font-semibold text-purple-700 transition-colors md:text-sm">
+                          در حال برگذاری
+                        </span>
+                      </div>
+                    )
+                  : (
+                      <h2 className="text-xs font-normal md:text-sm">تکمیل شده</h2>
+                    )}
               </div>
               <div className="flex items-start justify-between">
-                <div className="space-y-2">
-                  <CardTitle className="text-lg">
-                    {enrollment?.course?.title}
+                <div className="space-y-0.5">
+                  <CardTitle className="text-sm md:text-xl">
+                    <Link href={`/course-session/${enrollment?.course?.id}`}>
+                      {enrollment?.course?.title}
+                    </Link>
                   </CardTitle>
                   <p className="text-sm text-gray-600">
-                    {enrollment?.course?.sub_title}
+                    {enrollment?.course?.sub_title?.length > 60 ? `${enrollment?.course?.sub_title?.substring(0, 100)}...` : enrollment?.course?.sub_title}
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -297,7 +315,9 @@ export default function CourseSessionPage() {
                 </div>
                 <div>
                   <p className="font-medium">
-                    {enrollment?.coach?.first_name} {enrollment?.coach?.last_name || ''}
+                    {enrollment?.coach?.first_name}
+                    {' '}
+                    {enrollment?.coach?.last_name || ''}
                   </p>
                   <p className="flex items-center gap-1 text-sm text-gray-600">
                     <User className="size-4" />
@@ -307,12 +327,16 @@ export default function CourseSessionPage() {
               </div>
 
               {/* Class Information */}
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <CalendarDays className="size-4" />
-                <span>
-                  کلاس: {enrollment?.class_id?.class_title}
-                </span>
-              </div>
+              {enrollment?.class_id?.class_title && (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <School className="size-4 text-purple-600" />
+                  <span>
+                    کلاس:
+                    {' '}
+                    {enrollment?.class_id?.class_title}
+                  </span>
+                </div>
+              )}
 
               {/* Sessions Table */}
               <div className="space-y-2">
@@ -338,14 +362,14 @@ export default function CourseSessionPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex items-center gap-1">
-                              <Clock className="size-4" />
                               {formatTime(session.startTime)}
+                              <Clock className="size-3 text-purple-600" />
                             </div>
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex items-center gap-1">
-                              <Clock className="size-4" />
                               {formatTime(session.endTime)}
+                              <Clock className="size-3 text-purple-600" />
                             </div>
                           </TableCell>
                           <TableCell className="text-right">
@@ -377,6 +401,15 @@ export default function CourseSessionPage() {
                               variant="outline"
                               className={getSessionStatusColor(session.status)}
                             >
+                              {session.status === 'completed' && (
+                                <CheckCheck className="ml-1 inline-block size-5 text-green-600" />
+                              )}
+                              {session.status === 'scheduled' && (
+                                <CalendarCheck className="ml-1 inline-block size-5 text-yellow-600" />
+                              )}
+                              {session.status === 'cancelled' && (
+                                <Ban className="ml-1 inline-block size-5 text-red-600" />
+                              )}
                               {session.status === 'scheduled'
                                 ? 'برنامه‌ریزی شده'
                                 : session.status === 'completed' ? 'تکمیل شده' : 'لغو شده'}
@@ -422,7 +455,7 @@ export default function CourseSessionPage() {
           <DialogHeader>
             <DialogTitle className="text-right text-xl font-bold">گزارش جلسه</DialogTitle>
           </DialogHeader>
- 
+
           {selectedSessionReport && (
             <div className="space-y-6 py-4">
               {selectedSessionReport.description && (
