@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-dom/no-missing-button-type */
 /* eslint-disable tailwindcss/no-custom-classname */
 
@@ -140,12 +141,17 @@ const CourseDescriptionSection2: React.FC = () => {
   ];
 
   // Mock profile images (replace with actual images)
-  // const profileImages = [
-  //   'https://randomuser.me/api/portraits/women/45.jpg',
-  //   'https://randomuser.me/api/portraits/women/68.jpg',
-  //   'https://randomuser.me/api/portraits/men/32.jpg',
-  //   'https://randomuser.me/api/portraits/men/64.jpg',
-  // ];
+  const profileImages = [
+    'https://randomuser.me/api/portraits/women/45.jpg',
+    'https://randomuser.me/api/portraits/women/68.jpg',
+    'https://randomuser.me/api/portraits/men/32.jpg',
+    'https://randomuser.me/api/portraits/men/64.jpg',
+    'https://randomuser.me/api/portraits/men/34.jpg',
+    'https://randomuser.me/api/portraits/men/36.jpg',
+    'https://randomuser.me/api/portraits/men/38.jpg',
+
+
+  ];
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-gray-50 to-white">
@@ -167,13 +173,13 @@ const CourseDescriptionSection2: React.FC = () => {
       </div>
 
       {/* Main content */}
-      <div className="container relative z-10 mx-auto px-4 py-16 md:py-24">
+      <div className="container relative z-10 mx-auto px-4 py-10 md:py-16">
         <div className="flex flex-col items-center justify-between gap-12 lg:flex-row">
 
           {/* Left side - Skills and Stats */}
           <div className="relative flex-1">
             {/* Skills section */}
-            <div className="relative mb-16">
+            <div className="relative mb-8 md:mb-16">
               <div className="flex flex-col items-center space-y-8">
                 {/* Centered counter */}
                 <div className="text-center">
@@ -185,20 +191,18 @@ const CourseDescriptionSection2: React.FC = () => {
                 </div>
 
                 {/* Skills around the circle */}
-                <div dir="rtl" className="grid grid-cols-2 gap-3 text-right md:gap-6">
+                <div dir="rtl" className="grid grid-cols-2 gap-2 text-right md:gap-3">
                   {skills.map((skill, index) => (
                     <div
                       key={skill.id}
-                      className={`flex items-center gap-2 rounded-lg p-3 shadow-md transition-all duration-300 hover:scale-105 md:pl-8${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      }`}
+                      className="flex items-center gap-2 rounded-lg bg-white p-2.5 shadow-md transition-all duration-300 hover:scale-105 md:p-3 md:pl-8"
                     >
-                      <div className="rounded-lg bg-white p-2 shadow-sm">
+                      <div className="rounded-lg bg-white p-1 shadow-sm md:p-2">
                         {skill.icon}
                       </div>
                       <div className="space-y-1 text-right">
-                        <h4 className="text-sm font-medium text-gray-900">{skill.name}</h4>
-                        <p className="text-xs text-gray-600">{skill.category}</p>
+                        <h4 className="text-xs font-medium text-gray-900 md:text-sm">{skill.name}</h4>
+                        <p className=" text-[9px] text-gray-600 md:text-xs">{skill.category}</p>
                       </div>
                     </div>
                   ))}
@@ -206,39 +210,62 @@ const CourseDescriptionSection2: React.FC = () => {
               </div>
 
               {/* Profile avatars */}
-              {/* <div className="absolute left-10 top-20">
+              <div className="animate-slow-bounce-scale absolute left-[50px] top-[-25px] block opacity-50 delay-500 md:hidden">
                 <img
                   src={profileImages[0]}
                   alt="Profile"
                   className="size-10 rounded-full border-2 border-white shadow-md"
                 />
               </div>
-              <div className="absolute right-16 top-40">
+              <div className="animate-slow-bounce-scale absolute right-[30px] top-[40px] block opacity-50 md:hidden">
                 <img
                   src={profileImages[1]}
                   alt="Profile"
                   className="size-10 rounded-full border-2 border-white shadow-md"
                 />
               </div>
-              <div className="absolute bottom-20 left-1/2 -translate-x-1/2">
+              <div className="animate-slow-bounce-scale absolute left-[18px] top-[42px] block -translate-x-1/2 opacity-50 md:hidden">
                 <img
                   src={profileImages[2]}
                   alt="Profile"
                   className="size-10 rounded-full border-2 border-white shadow-md"
                 />
               </div>
-              <div className="absolute bottom-16 right-20">
+              <div className="animate-slow-bounce-scale absolute right-[6px] top-[-27px] block opacity-50 md:hidden">
                 <img
                   src={profileImages[3]}
                   alt="Profile"
                   className="size-10 rounded-full border-2 border-white shadow-md"
                 />
-              </div> */}
+              </div>
+
+              {/* Smaller */}
+              <div className="animate-slow-bounce-scale absolute right-[65px] top-[-6px] block opacity-50 md:hidden">
+                <img
+                  src={profileImages[4]}
+                  alt="Profile"
+                  className="size-8 rounded-full border-2 border-white shadow-md"
+                />
+              </div>
+              <div className="animate-slow-bounce-scale absolute left-[4px] top-[-8px] block opacity-50 md:hidden">
+                <img
+                  src={profileImages[5]}
+                  alt="Profile"
+                  className="size-8 rounded-full border-2 border-white shadow-md"
+                />
+              </div>
+              <div className="animate-slow-bounce-scale absolute left-[76px] top-[39px] block opacity-50 md:hidden">
+                <img
+                  src={profileImages[6]}
+                  alt="Profile"
+                  className="size-8 rounded-full border-2 border-white shadow-md"
+                />
+              </div>
             </div>
 
             {/* Stats section */}
-            <div className="rounded-2xl bg-white p-6 shadow-xl backdrop-blur-sm">
-              <div className="grid grid-cols-3 gap-6">
+            <div className="rounded-2xl bg-white p-3 md:p-6 shadow-xl backdrop-blur-sm">
+              <div className="grid grid-cols-3 gap-4 md:gap-6">
                 {stats.map(stat => (
                   <div
                     key={stat.id}
@@ -249,7 +276,7 @@ const CourseDescriptionSection2: React.FC = () => {
                         {stat.icon}
                       </div>
                     </div>
-                    <div className="text-base font-bold text-gray-900 md:text-2xl">
+                    <div className="text-sm font-bold text-gray-900 md:text-2xl">
                       {stat.value}
                     </div>
                     <div className="mt-1 text-xs text-gray-600">{stat.label}</div>
@@ -264,13 +291,13 @@ const CourseDescriptionSection2: React.FC = () => {
             <h1 className={`mb-6 text-4xl font-bold leading-tight text-gray-900 md:text-5xl ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'} transition-all duration-1000 ease-out`}>
               یادگیری آفلاین
             </h1>
-            <p className={`mb-8 text-xl text-gray-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'} transition-all delay-200 duration-1000 ease-out`}>
+            <p className={`mb-4 md:mb-8 text-xl text-gray-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'} transition-all delay-200 duration-1000 ease-out`}>
               کشف کن، تجربه کن، پیشرفت کن!
             </p>
             <p className={`mx-auto mb-8 max-w-lg px-2 text-xs leading-6 text-gray-600 md:mx-0 md:px-0 md:text-base ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'} delay-400 transition-all duration-1000 ease-out`}>
               روش‌های قدیمی رو کنار بذار! با یادگیری تعاملی، مفاهیم رو عمیقتر درک کن و مهارت‌هات رو تقویت کن.
             </p>
-            <div className="flex flex-col justify-center gap-4 sm:flex-row md:justify-start">
+            <div className="mx-4 flex flex-col justify-center gap-2 sm:flex-row md:mx-0 md:justify-start md:gap-4">
               <button className={`rounded-full bg-white px-6 py-3 font-medium text-gray-900 shadow-md transition-shadow duration-300 hover:shadow-lg ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'} delay-600 transition-all duration-1000 ease-out`}>
                 مشاوره
               </button>
@@ -283,7 +310,7 @@ const CourseDescriptionSection2: React.FC = () => {
       </div>
 
       {/* Graduation cap decoration */}
-      <div className="absolute bottom-16 right-16">
+      <div className="absolute bottom-16 right-16 hidden md:block">
         <svg className="size-12 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2L18 7.5L12 13L6 7.5L12 2Z" />
           <path d="M12 13L18 18.5L12 24L6 18.5L12 13Z" />

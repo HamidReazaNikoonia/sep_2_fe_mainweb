@@ -57,7 +57,7 @@ export default async function Portfolio() {
         <HeroSwiperSection />
       </div>
 
-      <div className='w-full'>
+      <div className="w-full">
         <CourseDescriptionSection2 />
       </div>
 
