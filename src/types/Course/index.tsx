@@ -1,5 +1,6 @@
 /* eslint-disable ts/consistent-type-definitions */
 export interface ICourseTypes {
+  price_real(price_real: any): import("react").ReactNode;
   price_discount: any;
   id: string;
   _id: string;

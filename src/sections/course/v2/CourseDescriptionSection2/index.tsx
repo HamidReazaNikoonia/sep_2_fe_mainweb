@@ -298,7 +298,7 @@ const CourseDescriptionSection2: React.FC = () => {
               روش‌های قدیمی رو کنار بذار! با یادگیری تعاملی، مفاهیم رو عمیقتر درک کن و مهارت‌هات رو تقویت کن.
             </p>
             <div className="mx-4 flex flex-col justify-center gap-2 sm:flex-row md:mx-0 md:justify-start md:gap-4">
-              <button className={`rounded-full bg-white px-6 py-3 font-medium text-gray-900 shadow-md transition-shadow duration-300 hover:shadow-lg ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'} delay-600 transition-all duration-1000 ease-out`}>
+              <button className={`rounded-full bg-purple-500 px-6 py-3 font-medium text-white shadow-md transition-shadow duration-300 hover:shadow-lg ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'} delay-600 transition-all duration-1000 ease-out`}>
                 مشاوره
               </button>
               <button className={`pink-gradient-bg rounded-full px-6 py-3 font-medium text-white shadow-md transition-shadow duration-300 hover:shadow-lg ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'} delay-800 transition-all duration-1000 ease-out`}>

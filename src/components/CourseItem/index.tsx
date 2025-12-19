@@ -1,3 +1,5 @@
+/* eslint-disable style/multiline-ternary */
+/* eslint-disable tailwindcss/no-contradicting-classname */
 /* eslint-disable tailwindcss/enforces-negative-arbitrary-values */
 'use client';
 import type { ICourseTypes } from '@/types/Course';
@@ -11,7 +13,7 @@ import { useState } from 'react';
 // import { useCartStore } from '@/_store/Cart';
 import sampleImage from '@/public/assets/images/product_placeholder.png';
 // Utils
-import { filterPriceNumber, truncateDescription } from '@/utils/Helpers';
+import { filterPriceNumber, toPersianDigits, truncateDescription } from '@/utils/Helpers';
 // import toast from 'react-hot-toast';
 
 import './styles.css';
@@ -77,14 +79,14 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
           </Link>
           {course?.price_discount && (
             <div
-              className="absolute -bottom-[18px] left-5 rounded-full border-4 border-white bg-[#cf741e] p-2 text-xs text-white "
+              className="absolute -bottom-[18px] left-5 rounded-full border-4 border-white bg-[#cf741e] px-3 py-1.5 text-[14px] text-white "
             >
               {/* <ShoppingBasket className="size-5 text-left" /> */}
               تخفیف ویژه
               {' '}
               {filterPriceNumber(course?.price_discount)}
               {' '}
-              تومان
+              ریال
             </div>
           )}
 
@@ -95,16 +97,16 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
           </div>
         </div>
 
-        <div className="p-4">
+        <div className="px-5 py-4">
           <div className="mb-4">
-            <h4 className="mb-1 mt-2 text-[15px] font-bold leading-normal">
+            <h4 className="mb-3 mt-2 text-base font-bold leading-7">
               <Link href={`/course/${course?.id}`} className="text-black hover:text-primary">
                 {course?.title}
               </Link>
             </h4>
 
-            <h6 className="mb-4 text-xs text-gray-500">
-              {course?.sub_title ? truncateDescription(course?.sub_title, 100) : ''}
+            <h6 className="mx-0.5 mb-4 text-xs leading-5 text-gray-500">
+              {course?.sub_title ? truncateDescription(course?.sub_title, 200) : ''}
             </h6>
             {/* <div className="inline-block rounded bg-[#e1dfe2] px-2 py-1 text-xs text-black">
               {courseTypeMap[course?.course_type] || courseTypeMap.HOZORI}
@@ -128,21 +130,41 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
                   );
                 })}
               </div>
-              <span className="mt-3 text-xs text-black">
-                بدون امتیاز (
-                {(course?.score || 0)}
+              <span className="mt-0 text-[9px] text-gray-600 md:mt-3 md:text-xs">
+                امتیاز (
                 {' '}
-                رای)
+                {toPersianDigits((course?.score || 0) || 0)}
+                {' '}
+                )
               </span>
             </div>
 
             {course?.coach_id && (
-              <div className="rounded-lg border bg-[#d8e9e9] px-4 py-1.5 text-gray-800 hover:opacity-85">
-                <Link href="teacher/teacher.user_id" className="flex items-center text-xs">
-                  <UserRound className="ml-1 size-4" />
-                  {course?.coach_id?.first_name || ''}
-                  {' '}
-                  {course?.coach_id?.last_name || ''}
+              <div className="relative flex max-h-[42px] flex-row-reverse   items-center overflow-visible rounded-lg bg-gray-200 px-4 py-1.5 text-gray-700 hover:opacity-85" dir="rtl">
+                <div className="absolute right-[-28px] top-1/2 z-10 flex -translate-y-1/2 items-center md:right-[-28px]">
+                  {/* Avatar or UserRound in a big circle, circle extends beyond top and bottom of bar */}
+                  <div className="flex size-14 items-center justify-center rounded-full border border-[#d8e9e9] bg-white " style={{ boxShadow: '0 2px 8px #d8e9e955' }}>
+                    {course?.coach_id?.avatar?.file_name
+                      ? (
+                          <Image
+                            src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${course?.coach_id?.avatar?.file_name}`}
+                            alt={`${course?.coach_id?.first_name || ''} ${course?.coach_id?.last_name || ''}`}
+                            width={48}
+                            height={48}
+                            className="size-12 rounded-full object-cover"
+                          />
+                        )
+                      : (
+                          <UserRound className="size-8 text-gray-400" />
+                        )}
+                  </div>
+                </div>
+                <Link href={`/teacher/${course?.coach_id?.id || ''}`} className="flex h-full min-h-[22px] items-center pr-5">
+                  <span className="ml-0 max-w-[120px] truncate text-[11px] font-semibold">
+                    {course?.coach_id?.first_name || ''}
+                    {' '}
+                    {course?.coach_id?.last_name || ''}
+                  </span>
                 </Link>
               </div>
             )}
@@ -158,7 +180,7 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
             </div> */}
           </div>
 
-          <div className=" flex items-center justify-center py-1">
+          <div className=" flex items-center justify-center py-0.5">
             {/* <div
               className="group relative flex items-center rounded  px-2 py-1 text-sm text-black"
               aria-label="تعداد شرکت کننده"
@@ -177,18 +199,32 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
             </div> */}
             <div className="flex items-center justify-center text-lg font-bold text-black">
               {course?.price_discount ? (
-                <div className="relative">
-                  <div className="flex items-center text-base font-medium text-gray-500">
-                    {filterPriceNumber(course?.price_real)}
-                    <span className="mr-1 text-xs">ریال</span>
+
+                <div className="flex gap-2">
+                  {/* DiscountedPrice */}
+                  <div className="flex items-center text-base font-semibold text-black">
+                    <span className="mr-1 text-sm">قیمت دوره : </span>
+                    &nbsp;
+                    {filterPriceNumber(course?.price_discount)}
+                    <span className="mr-1 text-sm">ریال</span>
                   </div>
-                  {/* Custom diagonal line through the original price */}
-                  <div className="absolute left-0 top-1/2 h-[1.5px] w-full -rotate-12 bg-red-500"></div>
+
+                  {/* OriginalPrice */}
+                  <div className="relative">
+                    <div className="flex items-center text-base font-medium text-gray-500">
+                      {filterPriceNumber(course?.price_real)}
+                      <span className="mr-1 text-[10px]">ریال</span>
+                    </div>
+                    {/* Custom diagonal line through the original price */}
+                    <div className="absolute left-0 top-1/2 h-[1.5px] w-full -rotate-12 bg-red-500"></div>
+                  </div>
                 </div>
+
               ) : (
-                <div className="flex items-center text-base font-bold text-black">
+                <div className="flex items-center text-base font-semibold text-black">
                   <span className="mr-1 text-sm">قیمت دوره : </span>
-                  &nbsp;{filterPriceNumber(course?.price_real)}
+                  &nbsp;
+                  {filterPriceNumber(course?.price_real)}
                   <span className="mr-1 text-sm">ریال</span>
                 </div>
               )}

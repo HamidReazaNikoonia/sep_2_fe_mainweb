@@ -1,3 +1,5 @@
+/* eslint-disable tailwindcss/no-custom-classname */
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable style/multiline-ternary */
 'use client';
 
@@ -594,9 +596,12 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
       {title && (
         <div className="border-b bg-white shadow-sm">
           <div className="container mx-auto px-4 py-2 md:py-4">
-            <h1 className="my-2 text-center text-lg font-bold text-gray-800 md:text-2xl">
-              {title}
-            </h1>
+            <div className="flex items-center justify-center gap-2">
+              <img alt="courses" decoding="async" src="/assets/images/Presentation.svg" className="lazyloaded size-12 md:h-auto md:w-[70px] " data-lazy-src="https://www.aryatehran.com/wp-content/uploads/2024/12/online-learning.png" data-ll-status="loaded" />
+              <h1 className="my-2 text-center text-lg font-bold text-gray-800 md:text-2xl">
+                {title}
+              </h1>
+            </div>
           </div>
 
           {filterBadge && filterBadge.length > 0 && (
