@@ -12,14 +12,14 @@ export default function VideoSampleGallery({ sampleMedia }: { sampleMedia: any }
     <>
       <div className="flex w-full flex-col items-end justify-center">
         {/* Title */}
-        <h3 className="mb-6 flex text-lg text-gray-900">
+        <h3 className="mb-6 mr-2 flex items-center justify-center text-lg font-semibold text-purple-900 md:text-xl">
           نمونه کار های این دوره
-          <SwatchBook className="ml-3" />
+          <SwatchBook size={28} className="ml-3 text-purple-600" />
         </h3>
 
         {(!sampleMedia || sampleMedia.length === 0) && (
           <div className="text-center text-sm text-gray-600">
-            هیچ ویدیویی برای نمایش وجود ندارد
+            هیچ نمونه ایی برای نمایش وجود ندارد
           </div>
         )}
 

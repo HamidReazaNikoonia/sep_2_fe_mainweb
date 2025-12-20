@@ -3,13 +3,19 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { Book, Clock, FileText, Lock, Play } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+// API
+import { getUserProfileRequest } from '@/API/auth';
 import LessonModal from '@/components/LessonModal';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
+
 import { Button } from '@/components/ui/button';
+import useAuth from '@/hooks/useAuth';
 import { formatDurationWithPersian, toPersianDigits } from '@/utils/Helpers';
+import toast from 'react-hot-toast';
 
 // Types based on the provided data structure
 type LessonFile = {
@@ -41,6 +47,7 @@ type CourseObject = {
 };
 
 type CourseSubjectLessonsListProps = {
+  courseId: string;
   course_objects: CourseObject[];
   onLessonClick?: (lesson: Lesson, subject: CourseObject) => void;
   onDownloadFile?: (file: LessonFile | SubjectFiles, type: 'lesson' | 'subject') => void;
@@ -48,6 +55,7 @@ type CourseSubjectLessonsListProps = {
 };
 
 export default function CourseSubjectLessonsList({
+  courseId,
   course_objects,
   onLessonClick,
   onDownloadFile,
@@ -58,10 +66,51 @@ export default function CourseSubjectLessonsList({
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<CourseObject | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUserPermission, setIsUserPermission] = useState(userPermission);
+
+  const [isCourseEnrolled, setIsCourseEnrolled] = useState(false);
+
+  const { user } = useAuth();
+
+
+  const { data: profileData, isLoading: profileIsLoading, isError: profileIsError, error: profileError, isSuccess: profileIsSuccess } = useQuery({
+    // @ts-expect-error
+    queryKey: ['profile', user?.id],
+    // @ts-expect-error
+    queryFn: user ? () => getUserProfileRequest({ userId: user.id }) : undefined,
+    enabled: !!user, // Prevents query execution when user is null
+  });
+
+  useEffect(() => {
+    if (profileData) {
+      console.log(profileData)
+      if(Array.isArray(profileData.courses)) {
+        const courseIds = profileData.courses.map((course: any) => course.id || course._id);
+        console.log(courseIds, 'courseIds');
+        if(courseIds.includes(courseId)) {
+          setIsUserPermission(true);
+        }
+      }
+    }
+  }, [profileIsSuccess, profileData, courseId])
+
+
+  const downloadfile = (file: SubjectFiles, type: 'subject') => {
+    const fileUrl = `${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${file.file_name}`;
+    // Create a hidden link and trigger click to download
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.setAttribute('download', file.file_name);
+    // For Chrome, Firefox, etc.
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    onDownloadFile?.(file, type);
+  };
 
   useEffect(() => {
     // TODO: Change the Logic From Back-end
-    if (userPermission) {
+    if (isUserPermission) {
       const data = course_objects.map((subject) => {
         const filteredLessons = subject.lessons.map((lesson) => {
           lesson.status = 'PUBLIC';
@@ -72,8 +121,8 @@ export default function CourseSubjectLessonsList({
       setCourseObjectsState(data);
     }
     // eslint-disable-next-line no-console
-    console.log(userPermission);
-  }, [course_objects, userPermission]);
+    console.log(isUserPermission);
+  }, [course_objects, isUserPermission]);
 
   // Calculate total lessons count for a subject
   const getTotalLessonsCount = (lessons: Lesson[]) => lessons.length ? toPersianDigits(lessons.length) : 0;
@@ -113,11 +162,11 @@ export default function CourseSubjectLessonsList({
                     <div className="flex min-w-0 flex-1 items-start gap-2 md:items-center md:gap-3">
                       <Book className="mt-0.5 size-4 shrink-0 text-blue-600 md:mt-0 md:size-5" />
                       <div className="min-w-0 flex-1 text-right">
-                        <h3 className="text-xs font-semibold leading-tight text-gray-900 md:text-base md:text-sm">
+                        <h3 className="text-xs font-semibold leading-6 text-purple-900 md:text-sm">
                           {subject.subject_title}
                         </h3>
                         {subject.description && (
-                          <p className="mt-1 line-clamp-2 text-[10px] text-gray-600 md:text-sm">
+                          <p className="mt-1 text-[9px] text-gray-600 md:text-sm">
                             {subject.description}
                           </p>
                         )}
@@ -126,11 +175,11 @@ export default function CourseSubjectLessonsList({
 
                     <div className="flex shrink-0 flex-col items-end gap-1 text-xs text-gray-500 md:flex-row md:items-center md:gap-3 md:text-sm">
                       <div className="flex items-center gap-1">
-                        <Clock className="size-3 md:size-4" />
-                        <span className="text-xs md:text-sm">{formatDurationWithPersian(subject.duration)}</span>
+                        <Clock className="size-2.5 md:size-4" />
+                        <span className="text-[9px] md:text-sm">{formatDurationWithPersian(subject.duration)}</span>
                       </div>
-                      <Badge variant="secondary" className="whitespace-nowrap text-[10px] font-medium text-gray-800 md:text-sm">
-                        {getTotalLessonsCount(subject.lessons)}
+                      <Badge variant="secondary" className="whitespace-nowrap text-[8px] font-medium text-gray-800 md:text-sm">
+                        {subject?.lessons && subject?.lessons?.length > 0 ? getTotalLessonsCount(subject.lessons) : 0}
                         {' '}
                         درس
                       </Badge>
@@ -145,15 +194,15 @@ export default function CourseSubjectLessonsList({
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <FileText className="size-3 text-gray-500 md:size-4" />
-                          <span className="text-xs font-medium text-gray-700 md:text-sm">
+                          <span className="text-[10px] font-medium text-gray-700 md:text-sm">
                             فایل‌های سرفصل
                           </span>
                         </div>
                         <Button
                           variant="link"
                           size="sm"
-                          onClick={() => onDownloadFile?.(subject.files, 'subject')}
-                          className="h-7 px-2 text-xs md:h-8 md:px-3"
+                          onClick={() => downloadfile?.(subject.files, 'subject')}
+                          className="h-7 px-2 text-[10px] md:h-8 md:px-3"
                         >
                           دانلود
                         </Button>
@@ -168,10 +217,9 @@ export default function CourseSubjectLessonsList({
                       .map((lesson, lessonIndex) => (
                         <div
                           key={`lesson-${lesson.order}-${lessonIndex}`}
-                          className={`rounded-lg border p-3 transition-all duration-200 md:p-4 ${
-                            lesson.status === 'PUBLIC'
-                              ? 'cursor-pointer border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm'
-                              : 'cursor-not-allowed border-gray-200 bg-gray-100'
+                          className={`rounded-lg border p-3 transition-all duration-200 md:p-4 ${lesson.status === 'PUBLIC'
+                            ? 'cursor-pointer border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm'
+                            : 'cursor-not-allowed border-gray-200 bg-gray-100'
                           }`}
                           onClick={() => handleLessonClick(lesson, subject)}
                         >
@@ -195,15 +243,13 @@ export default function CourseSubjectLessonsList({
                               </div>
 
                               <div className="min-w-0 flex-1 text-right">
-                                <h4 className={`text-sm font-medium leading-tight md:text-base ${
-                                  lesson.status === 'PUBLIC' ? 'text-gray-900' : 'text-gray-500'
+                                <h4 className={`text-xs font-medium leading-6 md:text-base ${lesson.status === 'PUBLIC' ? 'text-gray-900' : 'text-gray-500'
                                 }`}
                                 >
                                   {lesson.title}
                                 </h4>
                                 {lesson.description && (
-                                  <p className={`mt-1.5 line-clamp-2 text-xs md:mt-1 md:text-sm ${
-                                    lesson.status === 'PUBLIC' ? 'text-gray-600' : 'text-gray-400'
+                                  <p className={`mt-0.5 text-[11px] md:mt-1 md:text-sm ${lesson.status === 'PUBLIC' ? 'text-gray-600' : 'text-gray-400'
                                   }`}
                                   >
                                     {lesson.description}
@@ -213,7 +259,7 @@ export default function CourseSubjectLessonsList({
                             </div>
 
                             <div className="flex shrink-0 flex-col items-start gap-1.5 md:flex-row md:items-end md:gap-3">
-                              <div className="mt-2 flex items-center gap-1 text-xs text-gray-500 md:mt-0 md:text-sm">
+                              <div className="mt-1.5 flex items-center gap-1 text-[10px] text-gray-500 md:mt-0 md:text-sm">
                                 <Clock className="size-3 md:size-4" />
                                 <span>{formatDurationWithPersian(lesson.duration)}</span>
                               </div>

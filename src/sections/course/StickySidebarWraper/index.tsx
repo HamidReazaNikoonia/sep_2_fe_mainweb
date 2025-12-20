@@ -167,13 +167,13 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
             {/* Buttons */}
             <div className='w-full flex flex-col justify-center items-center'>
               {/* Price Section */}
-              <div className='flex w-full justify-between items-center border-2 border-green-600 border-dashed p-2 rounded-xl'>
+              <div className='flex w-full px-12 md:px-4 justify-between items-center border-2 border-green-600 border-dashed py-2 rounded-xl'>
                 <div className='flex flex-col items-start'>
                   {price_discount ? (
                     <>
                       <div className='flex items-center'>
                         <div className='text-sm md:text-lg text-gray-900 font-bold mr-2'>ریال</div>
-                        <div className='text-xl md:text-4xl text-gray-900'>{(price_discount).toLocaleString('ar-EG')}</div>
+                        <div className='text-lg md:text-2xl text-gray-900'>{(price_discount).toLocaleString('ar-EG')}</div>
                         <div className='ml-2 px-3 py-1 bg-[#cf741e] text-white text-xs md:text-sm rounded-full'>تخفیف ویژه</div>
                       </div>
                       <div className='flex items-center mt-1 relative'>
@@ -190,18 +190,18 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                     </div>
                   )}
                 </div>
-                <div className='text-sm md:text-xl text-gray-900'>قیمت</div>
+                <div className='text-sm md:text-xl font-semibold text-gray-900'>قیمت</div>
               </div>
 
               {/* Buttons Section */}
               <div className='flex flex-col space-y-2 mt-6 w-full justify-between items-center'>
 
-                <LoadingButton disabled={addToCartMutation.isPending} isLoading={addToCartMutation.isPending} onClick={attToBasketHandler} className="text-white flex justify-center items-center w-full pink-gradient-bg px-4 py-1.5 rounded text-sm md:text-lg">
-                  ثبت نام
+                <LoadingButton disabled={addToCartMutation.isPending} isLoading={addToCartMutation.isPending} onClick={attToBasketHandler} className="text-white flex justify-center items-center w-full pink-gradient-bg px-4 py-1.5 rounded-xl text-sm md:text-lg">
+                   خرید دوره
                   <SquareArrowUpLeft className='ml-2' />
                 </LoadingButton>
 
-                <button type='button' className="bg-[#251f3e] text-white hover:opacity-80 w-full flex justify-center px-4 py-2 rounded  text-sm md:text-base">
+                <button type='button' className="bg-[#251f3e] text-white hover:opacity-80 w-full flex justify-center px-4 py-2 rounded-xl  text-sm md:text-base">
                   افزودن به علاقه مندی ها
                   <Heart className='ml-3' />
                 </button>
@@ -214,17 +214,17 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
         {/* Button Section for mobile */}
         {/* Buttons Section - Absolute positioned over image */}
-        <div className='bg-white rounded-lg shadow-lg p-4 flex md:hidden'>
+        <div className='bg-white rounded-lg shadow-lg py-4 px-5 flex md:hidden'>
           {/* Buttons */}
           <div className='w-full flex flex-col justify-center items-center'>
             {/* Price Section */}
-            <div className='flex w-full justify-between items-center border-2 border-green-600 border-dashed p-2 rounded-xl'>
+            <div className='flex w-full px-4 justify-between items-center border-2 border-green-600 border-dashed p-2 rounded-xl'>
               <div className='flex flex-col items-start'>
                 {price_discount ? (
                   <>
                     <div className='flex items-center'>
                       <div className='text-sm md:text-lg text-gray-900 font-bold mr-2'>ریال</div>
-                      <div className='text-xl md:text-4xl text-gray-900'>{(price_discount).toLocaleString('ar-EG')}</div>
+                      <div className='text-2xl md:text-4xl text-gray-900'>{(price_discount).toLocaleString('ar-EG')}</div>
                       <div className='ml-2 px-3 py-1 bg-[#cf741e] text-white text-xs md:text-sm rounded-full'>تخفیف ویژه</div>
                     </div>
                     <div className='flex items-center mt-1 relative'>
@@ -241,19 +241,19 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                   </div>
                 )}
               </div>
-              <div className='text-sm md:text-xl text-gray-900'>قیمت</div>
+              <div className='text-base md:text-xl font-semibold text-gray-900'>قیمت</div>
             </div>
 
             {/* Buttons Section */}
             <div className='flex flex-col space-y-2 mt-6 w-full justify-between items-center'>
 
-              <LoadingButton disabled={addToCartMutation.isPending} isLoading={addToCartMutation.isPending} onClick={attToBasketHandler} className="text-white flex justify-center items-center w-full pink-gradient-bg px-4 py-1.5 rounded text-sm md:text-lg">
-                  ثبت نام
+              <LoadingButton disabled={addToCartMutation.isPending} isLoading={addToCartMutation.isPending} onClick={attToBasketHandler} className="text-white flex justify-center items-center w-full pink-gradient-bg px-4 py-1.5 rounded-xl text-sm md:text-lg">
+                خرید دوره
                 <SquareArrowUpLeft className='ml-2' />
               </LoadingButton>
 
-              <button type='button' className="bg-[#251f3e] text-white hover:opacity-80 w-full flex justify-center px-4 py-2 rounded  text-sm md:text-base">
-                  افزودن به علاقه مندی ها
+              <button type='button' className="bg-[#251f3e] text-white hover:opacity-80 w-full flex justify-center px-4 py-2 rounded-xl  text-sm md:text-base">
+                افزودن به علاقه مندی ها
                 <Heart className='ml-3' />
               </button>
             </div>
@@ -262,7 +262,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
         </div>
 
 
-        <div className="flex flex-col-reverse md:flex-row px-0 mt-3 space-x-0 md:mt-4 md:px-6 md:space-x-4">
+        <div className="flex flex-col-reverse md:flex-row px-0 mt-1 space-x-0 md:mt-4 md:px-6 md:space-x-4">
 
           {/* Left Side (Sticky Side Bar) */}
           <div className="md:w-1/3 space-y-6 mt-6 md:mt-1.5 px-4 md:px-0">
@@ -300,7 +300,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                   </div>
 
                   <div className='text-right'>
-                  زبان آموزشی
+                    زبان آموزشی
                   </div>
 
                   <Languages size={20} className="ml-2" />
@@ -314,7 +314,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                   </div>
 
                   <div className='text-right'>
-                  مدت زمان آموزش
+                    مدت زمان آموزش
                   </div>
 
                   <Timer size={20} className="ml-2" />
@@ -343,7 +343,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                   </div>
 
                   <div className=''>
-                  سرفصل های این دوره
+                    سرفصل های این دوره
                   </div>
 
                   <BookAudio size={20} className="ml-2" />
@@ -357,7 +357,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                   </div>
 
                   <div className=''>
-                  گواهی
+                    گواهی
                   </div>
 
                   <Scroll size={20} className="ml-2" />
@@ -405,7 +405,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                 </div>
 
                 {/* Item */}
-                <div className="w-full flex flex-col py-4">
+                {/* <div className="w-full flex flex-col py-4">
 
                   <div className='flex w-full justify-end'>
                     <span className='ml-2'>  لینک کوتاه  </span>
@@ -414,11 +414,11 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
 
                   <div className='text-right text-xs p-2 items-center mt-4 flex justify-between border border-gray-300 rounded-md'>
                     <span>
-                    -
+                      -
                     </span>
                     <Copy size={18} />
                   </div>
-                </div>
+                </div> */}
 
               </div>
 
@@ -459,12 +459,12 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
               </div>
 
               {/* Video Sample Gallery */}
-              <div className='w-full bg-white px-6 py-10 rounded-t-lg shadow-lg'>
+              <div className='w-full bg-white px-6 pb-10 pt-6 rounded-t-lg shadow-lg'>
                 <VideoSampleGallery sampleMedia={sample_media} />
               </div>
 
               {/* Course Details information */}
-              <div className='w-full bg-white px-6 py-10 rounded-b-lg'>
+              <div className='w-full bg-white px-4 pb-10 pt-6 rounded-b-lg'>
                 <CourseDetails courseDescriptionLong={description_long} courseDescriptionShort={description} />
               </div>
 

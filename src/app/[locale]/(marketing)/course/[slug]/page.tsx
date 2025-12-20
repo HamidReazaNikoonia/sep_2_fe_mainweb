@@ -1,15 +1,16 @@
 /* eslint-disable tailwindcss/classnames-order */
 import type { ICourseTypes } from '@/types/Course';
+// import { AppConfig } from '@/utils/AppConfig';
+import { Clapperboard } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 // import Image from 'next/image';
 import { SERVER_API_URL } from '@/API/config';
+
 import CommentLayout from '@/components/Comment';
-
 import CourseSubjectLessonsList from '@/components/CourseSubjectLessonsList';
-import CoursePageHeader from '@/sections/course/CoursePageHeader';
 
+import CoursePageHeader from '@/sections/course/CoursePageHeader';
 import StickySidebarWraper from '@/sections/course/StickySidebarWraper';
-// import { AppConfig } from '@/utils/AppConfig';
 
 type IPortfolioDetailProps = {
   params: Promise<{ slug: string; locale: string }>;
@@ -170,9 +171,12 @@ export default async function SpecificCoursePage(props: IPortfolioDetailProps) {
           <StickySidebarWraper dataFromServer={productsData} />
         </div>
 
-        <div className="w-full  pink-gradient-bg pb-14 pt-10 px-4 md:px-12">
-          <h2 className="text-right text-lg md:text-2xl font-bold mb-6">فهرست درس ها</h2>
-          <CourseSubjectLessonsList course_objects={productsData.course_objects} />
+        <div className="w-full pink-gradient-bg pb-14 pt-10 px-4 md:px-12">
+          <h2 className="flex items-center justify-end text-right mr-2 text-lg md:text-2xl font-bold mb-6">
+            فهرست درس ها
+            <Clapperboard size={28} className="ml-2" />
+          </h2>
+          <CourseSubjectLessonsList courseId={productsData.id || productsData._id} course_objects={productsData.course_objects} />
         </div>
 
         {/* Comment Section */}

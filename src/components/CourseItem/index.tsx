@@ -114,7 +114,7 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
           </div>
 
           <div className="mb-4 flex items-center justify-between text-sm">
-            <div className="flex translate-y-[7px] flex-col  items-start">
+            <div className="flex translate-y-[5px] flex-col  items-start">
               {/* <div className="text-yellow-400">★★★★★</div> */}
               <div style={{ display: 'flex', gap: '2px', flexDirection: 'row-reverse' }}>
                 {Array.from({ length: 5 }, (_, index) => {
@@ -123,7 +123,7 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
                     <Star
                       key={starIndex}
                       strokeWidth={1}
-                      size={18}
+                      size={14}
                       fill={starIndex <= (course?.score || 0) ? '#facc15' : 'gray'} // Fill based on selection
                       stroke="none"
                     />
