@@ -1,13 +1,16 @@
+/* eslint-disable curly */
 /* eslint-disable tailwindcss/no-custom-classname */
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { CircleUserRound, Copy, GraduationCap, Heart, Logs, Wallet } from 'lucide-react';
+import { BookOpenCheck, CircleUserRound, Copy, GraduationCap, Heart, Logs, Wallet } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 // API
 import { getUserProfileRequest } from '@/API/auth';
+
+import ProgramBanner from '@/sections/dashboard/profile/ProgramBanner/index';
 
 import LoadingSpinner from '@/components/LoadingSpiner';
 import { Button } from '@/components/ui/button';
@@ -43,7 +46,7 @@ export default function DashboardPage() {
 
       setProfileData({
         courseCount: Array.isArray(profileData.courses) ? profileData.courses.length : 0,
-        courseSessionCount: Array.isArray(profileData?.profile?.course_session_program_enrollments) ? profileData.profile.course_session_program_enrollments.length : 0,
+        courseSessionCount: Array.isArray(profileData?.programs) ? profileData?.programs.length : 0,
         orderCount: Array.isArray(profileData.orders) ? profileData.orders.length : 0,
         favorites: 0,
       });
@@ -184,6 +187,33 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </Link>
+      </div>
+
+
+      <div className="w-full">
+        {/* Active Programs Banner Section */}
+        {profileData?.programs && (() => {
+          // Filter active and non-completed programs
+          const activePrograms = profileData.programs.filter(
+            (program: any) => program.is_active === true && program.is_completed !== true
+          );
+
+          if (activePrograms.length === 0) return null;
+
+          return (
+            <div className="mb-6 px-4 md:px-8">
+              <h2 className="mb-4 mr-2 flex items-center gap-2 text-base font-bold text-purple-800 md:text-lg">
+                <BookOpenCheck className="text-purple-800" />
+                <span>کلاس های نزدیک شما</span>
+              </h2>
+              <div className="space-y-6">
+                {activePrograms.map((program: any) => (
+                  <ProgramBanner key={program._id} program={program} />
+                ))}
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
