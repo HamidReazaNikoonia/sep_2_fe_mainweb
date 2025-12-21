@@ -16,7 +16,7 @@ import useAuth from '@/hooks/useAuth';
 import { toPersianDigits } from '@/utils/Helpers';
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const [profileDataState, setProfileData] = useState({
     courseCount: 0,
@@ -37,6 +37,10 @@ export default function DashboardPage() {
     console.log(profileData, 'profileData');
 
     if (profileData && profileData?.profile) {
+      if (profileData?.profile?.user) {
+        updateUser(profileData.profile.user);
+      }
+
       setProfileData({
         courseCount: Array.isArray(profileData.courses) ? profileData.courses.length : 0,
         courseSessionCount: Array.isArray(profileData?.profile?.course_session_program_enrollments) ? profileData.profile.course_session_program_enrollments.length : 0,
