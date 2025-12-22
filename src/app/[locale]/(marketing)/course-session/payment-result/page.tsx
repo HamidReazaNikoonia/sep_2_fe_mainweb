@@ -4,7 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getOrderByIdRequest, retryCheckoutOrderRequest } from '@/API/order/courseSession';
 import Button from '@/components/LoadingButton';
@@ -219,4 +219,10 @@ const PaymentResultPage = () => {
   );
 };
 
-export default PaymentResultPage;
+export default function PaymentResultPagePage(props: any) {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <PaymentResultPage {...props} />
+    </Suspense>
+  );
+}

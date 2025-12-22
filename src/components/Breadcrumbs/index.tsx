@@ -1,5 +1,6 @@
 /* eslint-disable tailwindcss/no-contradicting-classname */
 /* eslint-disable jsx-a11y/anchor-is-valid */
+'use client';
 import { ChevronLeft, House } from 'lucide-react';
 import Link from 'next/link';
 

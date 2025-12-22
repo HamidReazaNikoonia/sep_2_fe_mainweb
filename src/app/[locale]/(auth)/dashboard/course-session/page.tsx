@@ -5,7 +5,7 @@ import { Ban, CalendarCheck, CheckCheck, Clock, Download, MapPin, School, User, 
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { getUserProfileRequest } from '@/API/auth';
 import EnrollmentCardItem from '@/components/EnrollmentCardItem';
 import LoadingSpiner from '@/components/LoadingSpiner';
@@ -20,7 +20,7 @@ import { toPersianDigits } from '@/utils/Helpers';
 
 type FilterType = 'active' | 'completed' | 'all';
 
-export default function CourseSessionPage() {
+function CourseSessionPage() {
   const { user } = useAuth();
 
   // Get `program_id` query from url
@@ -543,5 +543,13 @@ export default function CourseSessionPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function CourseSessionPagePage(props: any) {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <CourseSessionPage {...props} />
+    </Suspense>
   );
 }

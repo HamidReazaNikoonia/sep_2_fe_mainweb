@@ -7,7 +7,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ArrowRight, Coins, MapPinHouse, Package, Receipt, ShoppingBag, TvMinimalPlay, Wallet } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { getUserAddressRequest, submitAddresRequest } from '@/API/order/address';
@@ -60,7 +60,7 @@ type OrderSummaryResponse = {
   couponInfo?: CouponInfo;
 };
 
-export default function CalculateOrderSummaryPage() {
+function CalculateOrderSummaryPage() {
   const router = useRouter();
   const hasFetched = useRef(false);
   const searchParams = useSearchParams();
@@ -639,5 +639,13 @@ export default function CalculateOrderSummaryPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CalculateOrderSummaryPagePage(props: any) {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <CalculateOrderSummaryPage {...props} />
+    </Suspense>
   );
 }

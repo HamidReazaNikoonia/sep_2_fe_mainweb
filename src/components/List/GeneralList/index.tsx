@@ -5,7 +5,7 @@
 
 import { Filter, Loader2, Search, X } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CategorySelector from '@/components/CategorySelector';
 import PriceRangeSlider from '@/components/PriceRangeSlider';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -781,4 +781,12 @@ const ListWithFiltersAndPagination: React.FC<ListWithFiltersAndPaginationProps> 
   );
 };
 
-export default ListWithFiltersAndPagination;
+function ListWithFiltersAndPaginationPage(props: any) {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <ListWithFiltersAndPagination {...props} />
+    </Suspense>
+  );
+}
+
+export default ListWithFiltersAndPaginationPage;

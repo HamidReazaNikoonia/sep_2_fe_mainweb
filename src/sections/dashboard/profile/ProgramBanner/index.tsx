@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { toPersianDigits, truncateDescription } from '@/utils/Helpers';
+import Link from 'next/link';
 
 // Helper function to check if a date is today or tomorrow
 const isTodayOrTomorrow = (dateString: string) => {
@@ -215,9 +216,11 @@ const ProgramBanner = ({ program }: { program: any }) => {
 
         {/* Course Title and Subtitle */}
         <div className="absolute bottom-0 right-0 p-6 text-right text-white">
-          <h3 className="mb-2 text-lg font-bold drop-shadow-lg md:text-xl">
-            {programState?.course?.title || 'عنوان دوره'}
-          </h3>
+          <Link href={`/dashboard/course-session?program_id=${programState?.id || programState?._id}`}>
+            <h3 className="mb-2 text-lg font-bold drop-shadow-lg md:text-xl">
+              {programState?.course?.title || 'عنوان دوره'}
+            </h3>
+          </Link>
           {programState?.course?.sub_title && (
             <p className="text-xs leading-5 text-gray-200 drop-shadow-md md:text-sm">
               {programState?.course?.sub_title && truncateDescription(programState?.course?.sub_title, 200)}

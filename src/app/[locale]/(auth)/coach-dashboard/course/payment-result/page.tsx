@@ -1,10 +1,10 @@
 'use client';
-import { getTransactionByIdRequest } from '@/API/transaction';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { getTransactionByIdRequest } from '@/API/transaction';
 
 const PaymentResult = () => {
   const searchParams = useSearchParams();
@@ -92,4 +92,12 @@ const PaymentResult = () => {
   );
 };
 
-export default PaymentResult;
+function PaymentResultPage(props: any) {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <PaymentResult {...props} />
+    </Suspense>
+  );
+}
+
+export default PaymentResultPage;

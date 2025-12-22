@@ -135,7 +135,7 @@ const SessionTimeline = ({ sessions }: { sessions: Session[] }) => {
 const MediaShowcase = ({ media }: { media: any[] }) => (
   <div className="flex justify-center md:justify-start flex-wrap gap-3 md:gap-4">
     {[...media, ...media].map((item, index) => (
-      <div key={item._id || index} className="group max-w-[150px] border-2 border-gray-500 shadow-lg md:max-w-48 relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+      <div key={item._id || index} className="group max-w-[140px] border-2 border-gray-500 shadow-lg md:max-w-48 relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
         {item.media_type === 'IMAGE'
           ? (
               <a

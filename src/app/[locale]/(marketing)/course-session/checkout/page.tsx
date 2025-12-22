@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { Book, BookOpenCheck, Calendar, Coins, Package, Plus, ReceiptText, User, Wallet } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { calculateOrderSummaryRequest, createOrderRequest } from '@/API/order/courseSession';
 import CouponInput from '@/components/CouponInput';
@@ -18,7 +18,7 @@ import useAuth from '@/hooks/useAuth';
 import { CourseSessioonProgramHelper } from '@/utils/CourseSession';
 import { convertDateToPersian, filterPriceNumber } from '@/utils/Helpers';
 
-export default function CourseSessionCheckout() {
+function CourseSessionCheckout() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const hasFetched = useRef(false);
@@ -626,5 +626,13 @@ export default function CourseSessionCheckout() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CourseSessionCheckoutPage(props: any) {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <CourseSessionCheckout {...props} />
+    </Suspense>
   );
 }
