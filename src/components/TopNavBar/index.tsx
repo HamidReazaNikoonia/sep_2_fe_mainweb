@@ -20,7 +20,7 @@ import UserAvatar from "@/components/UserAvatar";
 import useResponsiveEvent from "@/hooks/useResponsiveEvent";
 import { toPersianDigits } from '@/utils/Helpers';
 import UnreadNotificationBadge from '@/components/UnreadNotificationBadge';
-
+import SearchComponent from '@/components/TopNavBar/Search';
 
 import MobileNavDrawer from "./MobileNavDrawer";
 
@@ -156,32 +156,10 @@ const Navbar = () => {
         <div className="container mx-auto w-full">
           {/* Search Mode */}
           {isSearching ? (
-            <div className="flex w-full animate-fade-in-down items-center justify-between">
-              <button
-                className="rounded-lg border border-white/50 bg-white/30 px-4 py-2 text-sm shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-white/50"
-                onClick={handleSearchToggle}
-              >
-                <Search strokeWidth={1} size={isMobileScreen ? 16 : 24} />
-              </button>
-              {/* <input
-              type="text"
-              placeholder="جستجو کنید"
-              className="flex-grow rounded bg-gray-700 px-4 py-2 text-white focus:outline-none"
-            /> */}
-
-              <input
-                autoFocus
-                type="text"
-                placeholder="جستجو کنید"
-                className="w-full rounded-lg border border-white bg-white/70 px-4 py-2 text-right text-sm shadow-sm backdrop-blur-sm transition-all duration-200 placeholder:text-gray-500 focus:border-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-              <button
-                className="ml-2 text-gray-700"
-                onClick={handleSearchToggle}
-              >
-                <span className=""><X size={isMobileScreen ? 16 : 24} /></span>
-              </button>
-            </div>
+            <SearchComponent
+              isMobileScreen={isMobileScreen}
+              onClose={handleSearchToggle}
+            />
           ) : (
             <div className="flex items-center justify-between">
               {/* Left Side: Buttons */}
