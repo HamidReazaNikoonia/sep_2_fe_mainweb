@@ -1,3 +1,4 @@
+/* eslint-disable react-dom/no-missing-button-type */
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable style/multiline-ternary */
 /* eslint-disable @next/next/no-img-element */
@@ -128,6 +129,9 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
   const [isUploadingNationalCard, setIsUploadingNationalCard] = useState(false);
   const [nationalCardUploadProgress, setNationalCardUploadProgress] = useState(0);
 
+  const [isProfileCompleteModalOpen, setIsProfileCompleteModalOpen] = useState(false);
+  const [isUserCompleteProfile, setIsUserCompleteProfile] = useState(false);
+
   // Add new state for form errors
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -177,6 +181,8 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
         updateUser(response);
         toast.success('پروفایل با موفقیت بروزرسانی شد');
         fetchUserFromServer();
+        setIsUserCompleteProfile(response.isProfileCompleted);
+        setIsProfileCompleteModalOpen(true);
       } else {
         toast.error('خطا در بروزرسانی پروفایل');
       }
@@ -307,6 +313,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           ...(type === 'avatar' ? { avatar: response.data.uploadedFile._id } : {}),
           ...(type === 'personal_img' ? { personal_img: response.data.uploadedFile._id } : {}),
         }));
+        //
         toast.success('تصویر با موفقیت آپلود شد');
         toast.success('برای ثبت تغییرات باید دکمه ذخیره را کلیک کنید');
       }
@@ -474,11 +481,11 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
   const citiesByProvince = cities?.cities ? cities?.cities : [];
 
   return (
-    <div className="my-6">
+    <div className="m-6">
       <div className="container mx-auto">
         {/* Profile Card */}
         <div className="flex flex-col items-center justify-center ">
-          <h1 className="mb-8 text-2xl font-bold">پروفایل کاربری</h1>
+          <h1 className="mb-8 text-xl font-bold md:text-2xl">پروفایل کاربری</h1>
           <Card className="w-full max-w-5xl shadow-lg">
             <CardContent dir="rtl" className="p-6">
               <div className="mb-6 flex items-center justify-center">
@@ -526,7 +533,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
               <div className="space-y-4">
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-500 md:text-sm">نام و نام خانوادگی</span>
-                  <span className="mt-2 text-sm font-medium">
+                  <span className="mt-2 text-base font-medium">
                     {user?.first_name}
                     {' '}
                     {user?.last_name}
@@ -634,7 +641,6 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                     accept="image/*"
                   />
 
-
                   <div className="flex w-full flex-col items-center  justify-between md:flex-row">
                     <button
                       type="button"
@@ -663,7 +669,6 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                       </div>
                     </div>
                   )}
-
 
                 </div>
 
@@ -772,7 +777,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                   </div>
 
                   <div className="flex-1">
-                    <label className="mb-2 block text-xs md:text-sm text-gray-500">شهر</label>
+                    <label className="mb-2 block text-xs text-gray-500 md:text-sm">شهر</label>
                     <Select
                       dir="rtl"
                       value={formData.city || undefined}
@@ -849,10 +854,10 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 </div>
 
                 {/* educational_qualification && field_of_study */}
-                <div className="w-full mt-0 md:mt-4">
+                <div className="mt-0 w-full md:mt-4">
                   <div className="flex flex-col gap-4 md:flex-row">
                     <div className="flex-1">
-                      <label className="mb-2 block text-xs md:text-sm text-gray-500"> رشته تحصیلی</label>
+                      <label className="mb-2 block text-xs text-gray-500 md:text-sm"> رشته تحصیلی</label>
                       <input
                         type="text"
                         name="field_of_study"
@@ -944,6 +949,112 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
               انصراف
             </button>
           </div>
+        </div>
+      </Modal>
+
+      {/* profile complete modal */}
+      <Modal
+        isOpen={isProfileCompleteModalOpen}
+        onClose={() => setIsProfileCompleteModalOpen(false)}
+      >
+        <div dir="rtl" className="flex flex-col items-center gap-4 py-12 px-6">
+          {/* Success/Warning Icon */}
+          {isUserCompleteProfile ? (
+            <svg
+              className="size-24 text-green-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          ) : (
+            <svg
+              className="size-24 text-yellow-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+          )}
+
+          {/* Success/Warning Message */}
+          <div className="text-center pb-6 pt-4">
+            {isUserCompleteProfile ? (
+              <>
+                <p className="text-base mb-4 font-semibold text-green-700">
+                  پروفایل شما با موفقیت تکمیل شد!
+                </p>
+                <p className="text-xs leading-6 md:text-sm text-gray-600">
+                  شما میتوانید کلاس های آموزشی خود را ثبت نام کنید تا زمانی که همکاران ما اطالاعات هویتی شما را تایید کنند
+                </p>
+              </>
+            ) : (
+              <p className="text-base font-semibold text-yellow-700">
+                پروفایل شما هنوز تکمیل نشده است
+              </p>
+            )}
+          </div>
+
+          {/* Mandatory Fields List (only if profile is incomplete) */}
+          {!isUserCompleteProfile && (
+            <div className="w-full rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+              <p className="mb-2 text-xs font-medium text-gray-700 md:text-sm">
+                لطفاً اطلاعات را تکمیل کنید
+              </p>
+              <ul className="list-inside list-disc space-y-0.5 text-xs text-gray-500 md:text-sm">
+                {!formData.first_name && (
+                  <li>نام</li>
+                )}
+                {!formData.nationalId && (
+                  <li>کد ملی</li>
+                )}
+                {!formData.postalCode && (
+                  <li>کد پستی</li>
+                )}
+                {!formData?.national_card_images?.length && (
+                  <li>تصویر کارت ملی</li>
+                )}
+                {!formData.city && (
+                  <li>شهر</li>
+                )}
+                {!formData.address && (
+                  <li>آدرس</li>
+                )}
+              </ul>
+            </div>
+          )}
+
+          {/* Action Button */}
+          <button
+            onClick={() => {
+              setIsProfileCompleteModalOpen(false);
+              if (!isUserCompleteProfile) {
+                // Optionally scroll to the first incomplete field
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+            className={`rounded-lg px-12 py-2 font-medium transition-colors ${
+              isUserCompleteProfile
+                ? 'bg-green-500 text-white hover:bg-green-600'
+                : 'bg-blue-500 text-white hover:bg-blue-600'
+            }`}
+          >
+            {isUserCompleteProfile ? 'بستن' : 'تکمیل پروفایل'}
+          </button>
         </div>
       </Modal>
     </div>

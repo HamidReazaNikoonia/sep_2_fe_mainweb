@@ -18,6 +18,7 @@ import LoadingButton from '@/components/LoadingButton';
 import useAuth from '@/hooks/useAuth';
 // utils
 import { isEmpty, isValidIranianMobileNumber, storeAuthToken, toPersianDigits } from '@/utils/Helpers';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const AuthCardContainer = ({ children }) => {
   return (
@@ -103,7 +104,7 @@ export default function AuthComponent() {
   const completeProfileMutation = useMutation({
     mutationFn: completeProfileRequest,
     onSuccess: (response) => {
-      if (response?.id) {
+      if (response?._id || response?.id) {
         // eslint-disable-next-line no-console
         console.log('__response__', response);
         updateUser(response);
@@ -222,6 +223,11 @@ export default function AuthComponent() {
       return false;
     }
 
+    if (!gender || isEmpty(gender)) {
+      toast.error('لطفا جنسیت خود را انتخاب کنید');
+      return false;
+    }
+
     if (!curentLoginUserId) {
       toast.error('مشکلی پیش آمده , لطفا صفحه را رفرش کنید و دوباره امتحان کنید');
       return false;
@@ -239,7 +245,7 @@ export default function AuthComponent() {
 
   if (showSetProfileInfo) {
     return (
-      <div className="flex h-screen w-full bg-gray-100 text-gray-700">
+      <div className="flex h-screen w-full bg-white text-gray-700">
         <div className="mx-auto flex w-full  max-w-xl flex-col items-center justify-center px-8 md:px-0">
           <div className="text-center">
             <h2 className="mb-8 text-sm font-extrabold text-gray-700 md:text-xl">
@@ -248,14 +254,14 @@ export default function AuthComponent() {
           </div>
 
           {/* Form */}
-          <div dir="rtl" className="flex w-full flex-col ">
+          <div dir="rtl" className="flex w-full px-6 flex-col ">
             <input
               type="text"
               placeholder="نام خود را وارد کنید "
               value={name}
               onChange={e => setName(e.target.value)}
               required
-              className="mb-4 rounded-md border-gray-900 bg-gray-300 px-4 py-2 text-xs text-gray-800 placeholder:text-gray-600 md:text-sm"
+              className="mb-4 rounded-md border-gray-900 bg-gray-200 px-4 py-2 text-xs text-gray-800 placeholder:text-gray-600 md:text-sm"
             />
             <input
               type="text"
@@ -263,20 +269,35 @@ export default function AuthComponent() {
               value={family}
               onChange={e => setFamily(e.target.value)}
               required
-              className="mb-4 rounded-md border-gray-900 bg-gray-300 px-4 py-2 text-xs text-gray-800 placeholder:text-gray-600 md:text-sm"
+              className="mb-4 rounded-md border-gray-500 bg-gray-200 px-4 py-2 text-xs text-gray-800 placeholder:text-gray-600 md:text-sm"
             />
 
             <div className="relative mb-4">
-              <select
+              {/* <select
                 value={gender}
                 onChange={e => setGender(e.target.value)}
                 required
-                className="w-full appearance-none rounded-md border-gray-700 bg-gray-300 px-4 py-2 pr-10 text-xs text-gray-800 placeholder:text-gray-600 md:text-sm"
+                className="w-full appearance-none rounded-md border-gray-00 bg-gray-300 px-4 py-2 pr-10 text-xs text-gray-800 placeholder:text-gray-600 md:text-sm"
               >
                 <option style={{ padding: '10px 0' }} value="" disabled>جنسیت خود را انتخاب کنید</option>
                 <option value="W">زن</option>
                 <option value="M">مرد</option>
-              </select>
+              </select> */}
+
+
+              <Select
+              dir="rtl"
+              value={gender}
+              onValueChange={(value: string) => setGender(value)}
+            >
+              <SelectTrigger className="border border-gray-500 bg-gray-200 text-xs placeholder:text-xs md:text-sm">
+                <SelectValue placeholder="جنسیت خود را انتخاب کنید" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="W">زن</SelectItem>
+                <SelectItem value="M">مرد</SelectItem>
+              </SelectContent>
+            </Select>
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-400">
                 <svg className="size-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
