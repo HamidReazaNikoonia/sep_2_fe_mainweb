@@ -169,6 +169,13 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     if (user?.personal_img) {
       setpersonalImagePreview(`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${user?.personal_img?.file_name}`);
     }
+
+    // Cleanup function to revoke object URLs
+    return () => {
+      if (personalImagePreview && personalImagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(personalImagePreview);
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -340,16 +347,28 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
     }
   };
 
+  // const handlePersonalImgFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     await handleFileUpload(file, 'personal_img');
+  //   }
+  // };
+
   const handlePersonalImgFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Create a local preview URL immediately
+      const previewUrl = URL.createObjectURL(file);
+      setpersonalImagePreview(previewUrl);
+
+      // Then upload the file
       await handleFileUpload(file, 'personal_img');
     }
   };
 
   const handleSaveAvatarEdit = async () => {
     if (editorRef.current && previewImage) {
-      const canvas = editorRef.current.getImageScaledToCanvas();
+      const canvas = editorRef.current.getImageScaledToCanvas();      
       canvas.toBlob(async (blob) => {
         if (blob) {
           const file = new File([blob], previewImage.name, { type: 'image/jpeg' });
@@ -490,16 +509,27 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
             <CardContent dir="rtl" className="p-6">
               <div className="mb-6 flex items-center justify-center">
                 <div className="flex size-40 items-center justify-center rounded-full bg-gray-100">
-                  {user?.avatar?.file_name ? (
+
+                  {previewImage && (
+                    <img
+                      src={URL.createObjectURL(previewImage)}
+                      alt={`${user?.first_name} ${user?.last_name}`}
+                      className="size-full rounded-full object-cover"
+                    />
+                  )}
+
+                  {!previewImage && user?.avatar?.file_name && (
                     <img
                       src={`${process.env.NEXT_PUBLIC_SERVER_FILES_URL}/${user?.avatar?.file_name}`}
                       alt={`${user?.first_name} ${user?.last_name}`}
                       className="size-full rounded-full object-cover"
                     />
-                  )
-                    : (
-                        <UserRound size={48} className="text-gray-400" />
-                      )}
+                  )}
+
+                  {!previewImage && !user?.avatar?.file_name && (
+                    <UserRound size={48} className="text-gray-400" />
+
+                  )}
                 </div>
               </div>
               <div className="flex flex-col items-center pb-6">
