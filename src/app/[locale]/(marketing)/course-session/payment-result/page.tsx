@@ -76,7 +76,7 @@ const PaymentResultPage = () => {
   // Show loading spinner
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center md:min-h-screen">
         <LoadingSpinner />
       </div>
     );
@@ -85,7 +85,7 @@ const PaymentResultPage = () => {
   // Show error state
   if (isError) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 pt-12">
+      <div className="flex min-h-full items-center justify-center bg-gray-50 pt-12 md:min-h-screen">
         <Card className="mx-4 w-full max-w-lg md:max-w-full">
           <CardContent className="p-6 text-center">
             <XCircle size={60} className="mx-auto mb-4 text-red-500" />
@@ -101,7 +101,7 @@ const PaymentResultPage = () => {
   const isPaymentSuccess = paymentStatusState === 'paid';
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-600 pb-0 pt-16 md:pb-12 md:pt-28" dir="rtl">
+    <div className="flex min-h-full items-center justify-center bg-gray-600 pb-0 pt-16 md:min-h-screen md:pb-12 md:pt-28" dir="rtl">
       <Card className={clsx(
         'mx-0 w-full max-w-full overflow-hidden rounded-none pb-8 md:mx-4 md:max-w-lg md:rounded-xl',
         isPaymentSuccess ? 'border-green-500' : 'border-red-500',
