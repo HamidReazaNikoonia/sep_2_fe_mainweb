@@ -2,7 +2,7 @@
 /* eslint-disable tailwindcss/no-custom-classname */
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { BookOpenCheck, CircleUserRound, Copy, GraduationCap, Heart, Logs, Wallet } from 'lucide-react';
+import { BookOpenCheck, CircleUserRound, Copy, GraduationCap, Heart, Logs, Wallet, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -78,7 +78,7 @@ export default function DashboardPage() {
           </Button>
           <div className="items-strat flex flex-col">
             <h1 className="text-[11px] font-medium md:text-xs">کد معرف شما</h1>
-            <p className="text-[11px] font-semibold text-gray-500 md:text-xs">{ user?.referral_code }</p>
+            <p className="text-[11px] font-semibold text-gray-500 md:text-xs">{user?.referral_code}</p>
           </div>
         </div>
 
@@ -89,7 +89,7 @@ export default function DashboardPage() {
               <GraduationCap size={17} color="#545454" />
               <h1 className="text-[11px] font-medium md:text-xs">شماره دانشجویی</h1>
             </div>
-            <p className="text-[11px] font-medium text-gray-500 md:text-sm">{ user?.student_id ? toPersianDigits(user?.student_id.toString()) : 'ندارد' }</p>
+            <p className="text-[11px] font-medium text-gray-500 md:text-sm">{user?.student_id ? toPersianDigits(user?.student_id.toString()) : 'ندارد'}</p>
           </div>
 
           <div className="flex flex-col items-start gap-2 border-r border-gray-300 pr-2 text-right md:pr-4">
@@ -106,10 +106,10 @@ export default function DashboardPage() {
         </div>
 
       </div>
-      <div className="mb-6 mt-4 flex gap-4">
+      <div className="mb-6 mt-4 flex flex-col gap-1">
 
         <Link href="/dashboard/user-profile" className="w-full">
-          <div className="flex w-full cursor-pointer flex-row gap-2 rounded-xl border border-white/10 bg-white p-4 backdrop-blur-sm md:gap-3">
+          <div className="flex w-full cursor-pointer flex-row gap-2 rounded-xl border border-white/10 bg-white px-6 py-4 backdrop-blur-sm md:gap-3 md:px-4">
             <CircleUserRound size={40} className="text-gray-400" />
             <div className="flex flex-col gap-2">
               <h1 className="text-xs font-bold md:text-sm">مشاهده پروفایل کاربری</h1>
@@ -119,6 +119,17 @@ export default function DashboardPage() {
           </div>
         </Link>
 
+        <Link href="/dashboard/user-profile" className="w-full">
+          <div className="mx-4 mt-2 md:mx-0">
+            {user?.isProfileCompleted === false && (
+              <div className="mb-3 flex items-center gap-2 rounded-lg border border-yellow-400 bg-yellow-50 px-3 py-2 text-[11px] font-semibold text-yellow-800">
+                <TriangleAlert className="size-6 text-yellow-400" />
+
+                شما اطلاعات پروفایل خود را تکمیل نکرده اید
+              </div>
+            )}
+          </div>
+        </Link>
       </div>
 
       <div dir="rtl" className="grid grid-cols-1 gap-4 px-4 pb-12 sm:grid-cols-2 md:px-8 lg:grid-cols-4">
