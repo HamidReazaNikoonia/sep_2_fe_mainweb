@@ -1,3 +1,5 @@
+/* eslint-disable tailwindcss/no-custom-classname */
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable style/multiline-ternary */
 'use client';
 
@@ -591,9 +593,10 @@ const ProgramListWithFiltersAndPagination: React.FC<ListWithFiltersAndPagination
     <div className={`bg-gray-200 ${className}`} dir="rtl">
       {/* Header Section */}
       {title && (
-        <div className="border-b bg-white shadow-sm">
+        <div className="border-b bg-purple-500 shadow-sm">
           <div className="container mx-auto px-4 py-2 md:py-4">
-            <h1 className="my-2 text-center text-lg font-bold text-gray-800 md:text-2xl">
+            <h1 className="my-2 flex items-center justify-center gap-2 text-center text-lg font-bold text-white md:text-xl">
+              <img alt="courses" decoding="async" src="/assets/images/Presentation.svg" className="lazyloaded size-16 md:h-auto md:w-[70px] " data-lazy-src="https://www.aryatehran.com/wp-content/uploads/2024/12/online-learning.png" data-ll-status="loaded" />
               {title}
             </h1>
           </div>

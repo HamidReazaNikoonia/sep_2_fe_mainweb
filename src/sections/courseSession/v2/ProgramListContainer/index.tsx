@@ -185,7 +185,7 @@ const ProgramListContainer = () => {
         title="فهرست کلاس‌ های آموزشی"
         queryKey="courses-list"
         className="bg-gray-200"
-        itemClassName="grid grid-cols-1 gap-x-4 gap-y-3 md:gap-y-6"
+        itemClassName="grid grid-cols-1 gap-x-4 gap-y-1 md:gap-y-3"
         showFiltersOnMobile
         loadingComponent={loadingComponent}
         errorComponent={errorComponent}

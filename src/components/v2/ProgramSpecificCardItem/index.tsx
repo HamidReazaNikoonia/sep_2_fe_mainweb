@@ -1,11 +1,11 @@
 /* eslint-disable tailwindcss/no-unnecessary-arbitrary-value */
-import { Phone } from 'lucide-react';
+import { Phone, UserRound } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { CourseSessioonProgramHelper } from '@/utils/CourseSession';
-import { convertDateToPersian, toPersianDigits } from '@/utils/Helpers';
+import { convertDateToPersian, toPersianDigits, truncateDescription } from '@/utils/Helpers';
 
 type CourseSessionProgramCardItemProps = {
   programData: any;
@@ -23,6 +23,9 @@ const ProgramSpecificCardItem: React.FC<CourseSessionProgramCardItemProps> = ({
   const programTitle = programData?.course?.title || '';
   const programSubTitle = programData?.course?.sub_title || '';
   // const score = programData?.course?.score || 0;
+
+  const coach = programData?.coach;
+  const coachName = `${coach?.first_name} ${coach?.last_name}`;
 
   const price = programData?.price_real;
   const discountPrice = programData?.price_discounted;
@@ -47,7 +50,7 @@ const ProgramSpecificCardItem: React.FC<CourseSessionProgramCardItemProps> = ({
           />
         </div>
 
-        <div className="relative block  h-32 w-full shrink-0 md:hidden">
+        <div className="relative block  h-52 w-full shrink-0 md:hidden">
           <Image
             src={imageUrl}
             alt={programTitle}
@@ -58,7 +61,7 @@ const ProgramSpecificCardItem: React.FC<CourseSessionProgramCardItemProps> = ({
         </div>
 
         {/* Middle Section - Course Info */}
-        <div className=" flex flex-col gap-1 pt-0 md:pt-2">
+        <div className=" flex flex-col gap-1 px-2 pt-0 md:px-0 md:pt-2">
           {/* Title */}
           <h3 className="text-sm font-bold text-gray-800 md:text-lg">{programTitle}</h3>
           {/* <div className="flex flex-row gap-2"> */}
@@ -76,8 +79,8 @@ const ProgramSpecificCardItem: React.FC<CourseSessionProgramCardItemProps> = ({
           {/* </div> */}
 
           {/* Description */}
-          <p className="text-xs text-gray-600">
-            {programSubTitle}
+          <p className="mt-1 text-xs leading-5 tracking-tight  text-gray-600">
+            {(programSubTitle && truncateDescription(programSubTitle, 200)) || ''}
           </p>
         </div>
       </div>
@@ -85,9 +88,36 @@ const ProgramSpecificCardItem: React.FC<CourseSessionProgramCardItemProps> = ({
       {/* Second Section - Course Details */}
       <div dir="rtl" className="flex flex-col items-end gap-2 border-t pt-4 md:min-w-[200px] md:border-r md:border-t-0 md:pr-4 md:pt-0">
         {/* Price */}
-        <div className="flex w-full flex-row items-center justify-between border-b pb-3 md:flex-col md:justify-center md:border-b-0 md:pb-0">
+        <div className="flex w-full flex-row items-center justify-between border-b px-1.5 pb-3 md:flex-col md:justify-center md:border-b-0 md:pb-0">
           <div className="text-xs text-gray-600">
-            قیمت
+            {/* Coach Info */}
+            <div className="flex items-center gap-0 rounded-full bg-blue-50">
+              {/* Coach Avatar */}
+              <div className="relative size-12 shrink-0">
+                {coach?.avatar?.file_name
+                  ? (
+                      <Image
+                        src={`${NEXT_PUBLIC_SERVER_FILES_URL}/${coach.avatar.file_name}`}
+                        alt={coachName}
+                        fill
+                        className="rounded-full object-cover"
+                        sizes="32px"
+                      />
+                    )
+                  : (
+                      <div className="flex size-12 items-center justify-center ">
+                        <UserRound className="size-6 text-gray-500" />
+                      </div>
+                    )}
+              </div>
+
+              {/* Coach Name */}
+              <div className="flex flex-col items-center justify-center rounded-full bg-blue-50 py-1 pl-4 pr-1">
+                <span className="border-b border-blue-100 pb-0.5 text-[10px] text-gray-500 md:text-xs">استاد دوره</span>
+
+                <span className="mt-0.5 text-[10px] font-medium text-blue-700 md:text-xs">{coachName}</span>
+              </div>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {discountPrice
@@ -95,11 +125,11 @@ const ProgramSpecificCardItem: React.FC<CourseSessionProgramCardItemProps> = ({
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center justify-center gap-1">
                       <span className="text-center text-xs font-bold text-gray-400 line-through">{price.toLocaleString('fa-IR')}</span>
-                      <span className="text-sm text-gray-400">تومان</span>
+                      <span className="text-sm text-gray-400">ریال</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="text-center text-lg font-bold text-green-600">{discountPrice.toLocaleString('fa-IR')}</span>
-                      <span className="text-sm text-green-600">تومان</span>
+                      <span className="text-center text-base font-bold text-green-600 md:text-lg">{discountPrice && discountPrice.toLocaleString('fa-IR')}</span>
+                      <span className="text-sm text-green-600">ریال</span>
                       <div className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-medium text-green-800">
                         تخفیف
                       </div>
@@ -107,9 +137,16 @@ const ProgramSpecificCardItem: React.FC<CourseSessionProgramCardItemProps> = ({
                   </div>
                 )
               : (
-                  <div className="flex items-center gap-1">
-                    <span className="text-center text-lg font-bold">{price.toLocaleString('fa-IR')}</span>
-                    <span className="text-sm">تومان</span>
+                  <div className="flex flex-col items-center gap-1">
+
+                    <div className="text-xs text-purple-600">
+                      قیمت دوره
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-center text-base font-bold md:text-lg">{price && price.toLocaleString('fa-IR')}</span>
+                      <span className="text-sm">ریال</span>
+                    </div>
+
                   </div>
                 )}
           </div>
