@@ -87,9 +87,9 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ isMobileScreen, onClo
       {showSuggestions && (
         <div dir="rtl" className="absolute inset-x-0 top-full z-[99999] mt-2 rounded-lg border border-gray-200 bg-white shadow-xl">
           <div className="py-2">
-            <div 
+            <div
               className="flex cursor-pointer items-center gap-2 px-4 py-3 text-right text-sm hover:bg-gray-50 md:gap-3"
-              onClick={() => handleSearchNavigation(`/course-session?search=${encodeURIComponent(debouncedSearchTerm)}`)}
+              onClick={() => handleSearchNavigation(`/course?search=${encodeURIComponent(debouncedSearchTerm)}`)}
             >
               <Video className="size-4 text-gray-400" />
               <span className="text-[10px] font-normal leading-3 tracking-tighter text-gray-500 md:text-sm">
@@ -97,7 +97,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ isMobileScreen, onClo
               </span>
               <span className="font-[500] tracking-normal text-gray-800">{debouncedSearchTerm}</span>
             </div>
-            <div 
+            <div
               className="flex cursor-pointer items-center gap-2 px-4 py-3 text-right text-sm hover:bg-gray-50 md:gap-3"
               onClick={() => handleSearchNavigation(`/program?search=${encodeURIComponent(debouncedSearchTerm)}`)}
             >
@@ -112,7 +112,9 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ isMobileScreen, onClo
                 className="cursor-pointer px-4 py-3 text-right text-sm text-gray-700 hover:bg-gray-50"
                 onClick={() => handleSearchNavigation(`/products?search=${encodeURIComponent(debouncedSearchTerm)}`)}
               >
-                جستجو در محصولات: {debouncedSearchTerm}
+                جستجو در محصولات:
+                {' '}
+                {debouncedSearchTerm}
               </div>
             )}
           </div>
