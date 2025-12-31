@@ -3,17 +3,17 @@
 
 import { ChevronsLeft } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Button } from '@/components/ui/button';
 
+import { Button } from '@/components/ui/button';
 import { truncateDescription } from '@/utils/Helpers';
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import Link from 'next/link';
 
 // Types
 type NewsItem = {

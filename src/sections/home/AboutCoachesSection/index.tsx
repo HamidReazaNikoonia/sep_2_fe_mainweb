@@ -48,7 +48,7 @@ const AboutCoachesSection = () => {
 
         {/* Right Side - Avatar Grid with Color Blocks */}
         <div className="order-1 flex w-full justify-center">
-          <div className="flex max-w-[200px] items-center justify-center md:max-w-full">
+          <div className="flex max-w-[280px] items-center justify-center md:max-w-full">
             {/* Background: Soft Gradient Overlay */}
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-100 via-transparent to-purple-100 opacity-70 blur-xl"></div>
 
