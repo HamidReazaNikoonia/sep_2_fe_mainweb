@@ -43,7 +43,7 @@ export default async function Courses(props: IAboutProps) {
   console.log(productsData.data.products);
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#000000] pt-16 text-white">
+    <div className="primary-gradient-bg min-h-screen overflow-hidden pt-16 text-white">
       <div className="container mx-auto pt-8">
         {/* Header */}
         <ProductListHeader />

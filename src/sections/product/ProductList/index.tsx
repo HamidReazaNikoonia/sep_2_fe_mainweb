@@ -116,9 +116,9 @@ export default function ProductList({ productsData }: { productsData: { count: n
       </div>
 
       {/* Filter and Search */}
-      {/* <div className="w-full order-first md:order-last mb-12 md:mb-0 md:w-1/4 bg-gray-100 rounded-xl pb-6 pt-4 " style={{ maxHeight: '650px' }}>
+      <div className="w-full order-first md:order-last mb-12 md:mb-0 md:w-1/4 bg-gray-100 rounded-xl pb-6 pt-4 " style={{ maxHeight: '650px' }}>
         <FilterAndSearch onFilter={handleFilter} />
-      </div> */}
+      </div>
     </div>
   )
 }

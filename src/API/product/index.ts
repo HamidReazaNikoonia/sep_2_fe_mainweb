@@ -32,7 +32,7 @@ async function getCategories() {
   };
 
   const response = fetch(
-    `${API_BASE_URL}/product/categories`,
+    `${API_BASE_URL}/product/category`,
     options
   )
     .then((response) => response.json())
