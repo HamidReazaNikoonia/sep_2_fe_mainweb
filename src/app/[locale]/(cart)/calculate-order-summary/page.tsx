@@ -163,22 +163,26 @@ function CalculateOrderSummaryPage() {
         if (!response.newOrder) {
           toast.error('خطایی رخ داده');
           setSubmitCartIsLoading(false);
+          toast.dismiss();
           return;
         }
 
-        // navigate to the bank
-        if (!response?.userWalletAmount) {
-          if (response.payment.code === 100 && response.payment.url) {
-            setSubmitCartIsLoading(false);
-            toast.loading('شما در حال انتقال به بانک هستید');
-            window && window.location.replace(response.payment.url);
-          } else {
-            // Server Order Service Success but Payment Error
-            validateErrResponseFromBank(response.payment);
+        if (!response.payment && response.newOrder) {
+          if (response.newOrder.paymentStatus === 'paid') {
+            toast.dismiss();
+            toast.success('سفارش با موفقیت ثبت شد');
+            router.push(`/dashboard/orders/${response.newOrder._id}`);
           }
-        } else if (typeof response?.userWalletAmount === 'number' && !Number.isNaN(response.userWalletAmount)) {
-          toast.success('سفارش با موفقیت ثبت شد');
-          router.push(`/dashboard/orders/${response.newOrder._id}`);
+        }
+
+        // navigate to the bank
+        if (response.payment.code === 100 && response.payment.url) {
+          setSubmitCartIsLoading(false);
+          toast.loading('شما در حال انتقال به بانک هستید');
+          window && window.location.replace(response.payment.url);
+        } else {
+          // Server Order Service Success but Payment Error
+          validateErrResponseFromBank(response.payment);
         }
       }
 
@@ -268,7 +272,7 @@ function CalculateOrderSummaryPage() {
     const validCoupons = orderSummaryData?.couponInfo?.validCoupons?.map(coupon => coupon.code);
     const hasProductItemProperty = orderSummaryData?.products?.some(item => 'product' in item);
 
-    console.log({ kir: validCoupons });
+    console.log({ validCoupons });
     console.log({ couponCodes, cartId });
     console.log({ selectedAddress });
 
