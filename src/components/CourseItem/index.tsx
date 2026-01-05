@@ -1,3 +1,4 @@
+/* eslint-disable curly */
 /* eslint-disable style/multiline-ternary */
 /* eslint-disable tailwindcss/no-contradicting-classname */
 /* eslint-disable tailwindcss/enforces-negative-arbitrary-values */
@@ -9,18 +10,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useRef } from 'react';
 
-
+import { useToggleFavorite } from '@/API/profile/useToggleFavorite';
 // Import the hooks
 import { useUserFavorites } from '@/API/profile/useUserFavorites';
-import { useToggleFavorite } from '@/API/profile/useToggleFavorite';
 // import { useCartStore } from '@/_store/Cart';
 import sampleImage from '@/public/assets/images/product_placeholder.png';
-// Utils
-import { filterPriceNumber, toPersianDigits, truncateDescription } from '@/utils/Helpers';
+import { canMakeApiCall, decrementApiCallCount, incrementApiCallCount, setDebounceTimeout } from '@/utils/favoriteRateLimiter';
 // import toast from 'react-hot-toast';
 
+// Utils
+import { filterPriceNumber, toPersianDigits, truncateDescription } from '@/utils/Helpers';
 import './styles.css';
 
 const NEXT_PUBLIC_SERVER_FILES_URL = process.env.NEXT_PUBLIC_SERVER_FILES_URL || '';
@@ -54,25 +54,25 @@ const courseTypeMap: {
   OFFLINE: 'آنلاین',
 };
 
-// Rate limiting configuration
-const MAX_API_CALLS_PER_MINUTE = 10;
-const DEBOUNCE_DELAY = 1000; // 
+// // Rate limiting configuration
+// const MAX_API_CALLS_PER_MINUTE = 10;
+// const DEBOUNCE_DELAY = 1000; // 
 
 export default function CourseItem({ course, isLikedByUser = false }: ICourseItem) {
   const [isLikedByUserState, setIsLikedByUserState] = useState(isLikedByUser);
   const [isRateLimited, setIsRateLimited] = useState(false);
 
   // Rate limiting state
-  const apiCallCountRef = useRef(0);
-  const lastResetTimeRef = useRef(Date.now());
+  // const apiCallCountRef = useRef(0);
+  // const lastResetTimeRef = useRef(Date.now());
 
   // Debouncing refs
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const pendingToggleRef = useRef<boolean | null>(null);
+  // const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // const pendingToggleRef = useRef<boolean | null>(null);
 
   // Get favorite IDs for courses
   const { data: favoriteIds, isLoading: favoritesLoading } = useUserFavorites('course');
-  
+
   // Toggle favorite mutation
   const toggleFavoriteMutation = useToggleFavorite();
 
@@ -83,106 +83,84 @@ export default function CourseItem({ course, isLikedByUser = false }: ICourseIte
       // Flatten favorite IDs
       const _favoriteIds = favoriteIds?.map((item: any) => item?.id || item?._id) || [];
       const isFavorited = _favoriteIds.includes(course.id);
-      console.log('isFavorited', isFavorited);  
-      console.log('favoriteIds', favoriteIds);
       setIsLikedByUserState(isFavorited);
     }
   }, [favoriteIds, course?.id]);
-
-  // Reset API call count every minute
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = Date.now();
-      if (now - lastResetTimeRef.current >= 60000) { // 1 minute
-        apiCallCountRef.current = 0;
-        lastResetTimeRef.current = now;
-        setIsRateLimited(false);
-      }
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Check rate limit
-  const checkRateLimit = useCallback(() => {
-    const now = Date.now();
-    
-    // Reset counter if more than a minute has passed
-    if (now - lastResetTimeRef.current >= 60000) {
-      apiCallCountRef.current = 0;
-      lastResetTimeRef.current = now;
-      setIsRateLimited(false);
-    }
-
-    if (apiCallCountRef.current >= MAX_API_CALLS_PER_MINUTE) {
-      setIsRateLimited(true);
-      return false;
-    }
-
-    return true;
-  }, []);
-
-  // Debounced API call function
-  const executeToggleFavorite = useCallback(() => {
-    if (!course?.id || !checkRateLimit()) return;
-
-    const newLikedState = pendingToggleRef.current;
-    if (newLikedState === null) return;
-
-    apiCallCountRef.current += 1;
-
-    toggleFavoriteMutation.mutate(
-      { 
-        favItemId: course.id, 
-        type: 'course' 
-      },
-      {
-        onSuccess: (data) => {
-          setIsLikedByUserState(data.isFavorited);
-          console.log(`Course ${data.action} successfully`);
-        },
-        onError: (error) => {
-          // Revert optimistic update on error
-          setIsLikedByUserState(!newLikedState);
-          console.error('Failed to toggle favorite:', error);
-          
-          // Decrease counter on error
-          apiCallCountRef.current = Math.max(0, apiCallCountRef.current - 1);
-        }
-      }
-    );
-
-    pendingToggleRef.current = null;
-  }, [course?.id, checkRateLimit, toggleFavoriteMutation]);
 
   // Handler for toggling favorite with debouncing
   const handleToggleFavorite = useCallback(() => {
     if (isRateLimited || toggleFavoriteMutation.isPending) return;
 
     // Clear existing timeout
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
+    // if (debounceTimeoutRef.current) {
+    //   clearTimeout(debounceTimeoutRef.current);
+    // }
+
+    // Prevent action if already pending or rate-limited
+    if (toggleFavoriteMutation.isPending || isRateLimited) return;
+
+    if (!canMakeApiCall()) {
+      setIsRateLimited(true);
+      // Auto-clear rate limit after 1 minute (optional UX improvement)
+      setTimeout(() => setIsRateLimited(false), 60000);
+      return;
     }
 
-    // Optimistically update UI immediately
+    // Optimistic UI update
     const newLikedState = !isLikedByUserState;
     setIsLikedByUserState(newLikedState);
-    pendingToggleRef.current = newLikedState;
+
+    // Debounce the API call
+    setDebounceTimeout(course.id, () => {
+      // Re-check rate limit at execution time (in case user spammed)
+      if (!canMakeApiCall()) {
+        setIsLikedByUserState(!newLikedState); // revert
+        setIsRateLimited(true);
+        setTimeout(() => setIsRateLimited(false), 60000);
+        return;
+      }
+
+      incrementApiCallCount();
+
+      toggleFavoriteMutation.mutate(
+        { favItemId: course.id, type: 'course' },
+        {
+          onSuccess: (data) => {
+            // Optional: sync with new server state (React Query usually handles this)
+            // setIsLikedByUserState(data.isFavorited);
+            setIsLikedByUserState(data.isFavorited);
+            // console.log(`Course ${data.action} successfully`);
+          },
+          onError: (error) => {
+            // Revert optimistic update
+            setIsLikedByUserState(!newLikedState);
+            // Revert optimistic update on error
+            console.error('Failed to toggle favorite:', error);
+            decrementApiCallCount(); // give back the quota on error
+          },
+        },
+      );
+    });
+
+    // Optimistically update UI immediately
+    // const newLikedState = !isLikedByUserState;
+    // setIsLikedByUserState(newLikedState);
+    // pendingToggleRef.current = newLikedState;
 
     // Set new timeout for API call
-    debounceTimeoutRef.current = setTimeout(() => {
-      executeToggleFavorite();
-    }, DEBOUNCE_DELAY);
-  }, [isLikedByUserState, isRateLimited, toggleFavoriteMutation.isPending, executeToggleFavorite]);
+    // debounceTimeoutRef.current = setTimeout(() => {
+    //   executeToggleFavorite();
+    // }, DEBOUNCE_DELAY);
+  }, [course.id, isLikedByUserState, isRateLimited, toggleFavoriteMutation]);
 
   // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     if (debounceTimeoutRef.current) {
+  //       clearTimeout(debounceTimeoutRef.current);
+  //     }
+  //   };
+  // }, []);
 
   // const addToCart = useCartStore(state => state.addToCart);
 
