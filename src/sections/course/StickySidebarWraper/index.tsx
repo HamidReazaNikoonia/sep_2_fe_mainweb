@@ -1,3 +1,4 @@
+/* eslint-disable curly */
 /* eslint-disable tailwindcss/no-custom-classname */
 /* eslint-disable style/multiline-ternary */
 /* eslint-disable style/jsx-quotes */
@@ -11,7 +12,7 @@ import moment from 'moment-jalaali';
 
 import Image from 'next/image';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import toast from 'react-hot-toast';
 import { useCartStore } from '@/_store/Cart';
@@ -32,6 +33,11 @@ import CourseDetails from '@/sections/course/CourseDetails';
 import VideoSampleGallery from '@/sections/course/VideoSampleGallery';
 import { formatDurationWithPersian } from '@/utils/Helpers';
 import TeacherInfoSection from '../SpecificCoursePage/TeacherInfoSection';
+import { useUserFavorites } from '@/API/profile/useUserFavorites';
+import { canMakeApiCall, decrementApiCallCount, incrementApiCallCount, setDebounceTimeout } from '@/utils/favoriteRateLimiter';
+import { useToggleFavorite } from '@/API/profile/useToggleFavorite';
+import DotLoading from '@/components/DotLoading';
+
 
 moment.loadPersian({ usePersianDigits: true });
 
@@ -41,6 +47,10 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
   const stickyRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const [isSticky, setIsSticky] = useState(false);
+  const [isLikedByUserState, setIsLikedByUserState] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState(false);
+
+
   const isMobileScreen = useResponsiveEvent(768, 200);
 
   const queryClient = useQueryClient();
@@ -71,7 +81,77 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
   });
 
   const { isAuthenticated } = useAuth();
+  const toggleFavoriteMutation = useToggleFavorite();
+
   const addToCartInLocalStorage = useCartStore(state => state.addToCart);
+
+  const { data: favoriteIds, isLoading: favoritesLoading } = useUserFavorites('course');
+
+  // Check if current course is favorited and update state
+  useEffect(() => {
+    if (favoriteIds && dataFromServer?.id) {
+      // Flatten favorite IDs
+      const _favoriteIds = favoriteIds?.map((item: any) => item?.id || item?._id) || [];
+      const isFavorited = _favoriteIds.includes(dataFromServer.id);
+      setIsLikedByUserState(isFavorited);
+    }
+  }, [favoriteIds, dataFromServer?.id]);
+
+  // Handler for toggling favorite with debouncing
+  const handleToggleFavorite = useCallback(() => {
+    if (isRateLimited || toggleFavoriteMutation.isPending) return;
+
+    // Clear existing timeout
+    // if (debounceTimeoutRef.current) {
+    //   clearTimeout(debounceTimeoutRef.current);
+    // }
+
+    // Prevent action if already pending or rate-limited
+    if (toggleFavoriteMutation.isPending || isRateLimited) return;
+
+    if (!canMakeApiCall()) {
+      setIsRateLimited(true);
+      // Auto-clear rate limit after 1 minute (optional UX improvement)
+      setTimeout(() => setIsRateLimited(false), 60000);
+      return;
+    }
+
+    // Optimistic UI update
+    const newLikedState = !isLikedByUserState;
+    setIsLikedByUserState(newLikedState);
+
+    // Debounce the API call
+    setDebounceTimeout(dataFromServer.id, () => {
+      // Re-check rate limit at execution time (in case user spammed)
+      if (!canMakeApiCall()) {
+        setIsLikedByUserState(!newLikedState); // revert
+        setIsRateLimited(true);
+        setTimeout(() => setIsRateLimited(false), 60000);
+        return;
+      }
+
+      incrementApiCallCount();
+
+      toggleFavoriteMutation.mutate(
+        { favItemId: dataFromServer.id, type: 'course' },
+        {
+          onSuccess: (data) => {
+            // Optional: sync with new server state (React Query usually handles this)
+            // setIsLikedByUserState(data.isFavorited);
+            setIsLikedByUserState(data.isFavorited);
+            // console.log(`Course ${data.action} successfully`);
+          },
+          onError: (error) => {
+            // Revert optimistic update
+            setIsLikedByUserState(!newLikedState);
+            // Revert optimistic update on error
+            console.error('Failed to toggle favorite:', error);
+            decrementApiCallCount(); // give back the quota on error
+          },
+        },
+      );
+    });
+  }, [dataFromServer.id, isLikedByUserState, isRateLimited, toggleFavoriteMutation]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -156,7 +236,7 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
       <div className='w-full'>
         {/* Thumb Image */}
         <div className='bg-white w-full relative py-0'>
-          
+
           {/* Image with full width */}
           <div className='w-full max-h-[600px] overflow-hidden'>
             <Image className=' w-full' alt="" width={600} height={450} src={tumbnailImage} />
@@ -197,13 +277,17 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
               <div className='flex flex-col space-y-2 mt-6 w-full justify-between items-center'>
 
                 <LoadingButton disabled={addToCartMutation.isPending} isLoading={addToCartMutation.isPending} onClick={attToBasketHandler} className="text-white flex justify-center items-center w-full pink-gradient-bg px-4 py-1.5 rounded-xl text-sm md:text-lg">
-                   خرید دوره
+                  خرید دوره
                   <SquareArrowUpLeft className='ml-2' />
                 </LoadingButton>
 
-                <button type='button' className="bg-[#251f3e] text-white hover:opacity-80 w-full flex justify-center px-4 py-2 rounded-xl  text-sm md:text-base">
-                  افزودن به علاقه مندی ها
-                  <Heart className='ml-3' />
+                <button type='button' onClick={() => handleToggleFavorite()} className="bg-[#251f3e] text-white hover:opacity-80 w-full flex gap-2 justify-center items-center px-4 py-2 rounded-xl min-h-[40px]  text-sm md:text-base">
+                  {(favoritesLoading || toggleFavoriteMutation.isPending) ? <DotLoading containerbg="bg-[#251f3e]" dotColor="bg-white" /> : (
+                    <>
+                      {isLikedByUserState ? 'حذف از علاقه مندی ها' : 'افزودن به علاقه مندی ها'}
+                      <Heart fill={isLikedByUserState ? 'red' : 'none'} strokeWidth={isLikedByUserState ? 0 : 2} />
+                    </>
+                  )}
                 </button>
               </div>
 
@@ -252,15 +336,18 @@ export default function StickyComponent({ dataFromServer }: { dataFromServer: IC
                 <SquareArrowUpLeft className='ml-2' />
               </LoadingButton>
 
-              <button type='button' className="bg-[#251f3e] text-white hover:opacity-80 w-full flex justify-center px-4 py-2 rounded-xl  text-sm md:text-base">
-                افزودن به علاقه مندی ها
-                <Heart className='ml-3' />
+              <button type='button' onClick={() => handleToggleFavorite()} className="bg-[#251f3e] text-white hover:opacity-80 w-full flex gap-2 justify-center items-center px-4 py-2 rounded-xl min-h-[40px]  text-sm md:text-base">
+                {(favoritesLoading || toggleFavoriteMutation.isPending) ? <DotLoading containerbg="bg-[#251f3e]" dotColor="bg-white" /> : (
+                  <>
+                    {isLikedByUserState ? 'حذف از علاقه مندی ها' : 'افزودن به علاقه مندی ها'}
+                    <Heart fill={isLikedByUserState ? 'red' : 'none'} strokeWidth={isLikedByUserState ? 0 : 2} />
+                  </>
+                )}
               </button>
             </div>
 
           </div>
         </div>
-
 
         <div className="flex flex-col-reverse md:flex-row px-0 mt-1 space-x-0 md:mt-4 md:px-6 md:space-x-4">
 
