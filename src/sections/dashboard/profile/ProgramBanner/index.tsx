@@ -201,41 +201,54 @@ const ProgramBanner = ({ program }: { program: any }) => {
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 shadow-xl transition-all hover:shadow-2xl">
       {/* Banner Header with Image and Course Info */}
-      <div className="relative h-40 overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 md:h-48">
-        {/* Background Image */}
-        {programState.course?.tumbnail?.file_name && (
-          <div className="absolute inset-0">
-            <img
-              src={getImageUrl(programState?.course?.tumbnail?.file_name)}
-              alt={programState?.course?.title}
-              className="size-full object-cover opacity-30"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          </div>
-        )}
-
-        {/* Course Title and Subtitle */}
-        <div className="absolute bottom-0 right-0 p-6 text-right text-white">
-          <Link href={`/dashboard/course-session?program_id=${programState?.id || programState?._id}`}>
-            <h3 className="mb-2 text-lg font-bold drop-shadow-lg md:text-xl">
-              {programState?.course?.title || 'عنوان دوره'}
-            </h3>
-          </Link>
-          {programState?.course?.sub_title && (
-            <p className="text-xs leading-5 text-gray-200 drop-shadow-md md:text-sm">
-              {programState?.course?.sub_title && truncateDescription(programState?.course?.sub_title, 200)}
-            </p>
+      <Link href={`/dashboard/course-session?program_id=${programState?.id || programState?._id}`}>
+        <div className="relative h-40 overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 md:h-48">
+          {/* Background Image */}
+          {programState.course?.tumbnail?.file_name && (
+            <div className="absolute inset-0">
+              <img
+                src={getImageUrl(programState?.course?.tumbnail?.file_name)}
+                alt={programState?.course?.title}
+                className="size-full object-cover opacity-30"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            </div>
           )}
+
+          {/* Course Title and Subtitle */}
+          <div className="absolute bottom-0 right-0 p-6 text-right text-white">
+            <Link href={`/dashboard/course-session?program_id=${programState?.id || programState?._id}`}>
+              <h3 className="mb-0.5 text-lg font-bold drop-shadow-lg md:text-xl">
+                {programState?.course?.title || 'عنوان دوره'}
+              </h3>
+            </Link>
+            {programState?.course?.sub_title && (
+              <p className="text-xs leading-5 text-gray-200 drop-shadow-md md:text-sm">
+                {programState?.course?.sub_title && truncateDescription(programState?.course?.sub_title, 200)}
+              </p>
+            )}
+
+            <div className="mt-3 flex items-center gap-2 text-xs md:text-sm">
+
+              <div className="text-gray-300">استاد دوره :</div>
+
+              <div className="font-semibold">
+                {`${programState?.coach?.first_name} ${programState?.coach?.last_name}`} 
+              </div>
+
+            </div>
+          </div>
+
+          {/* Active Badge */}
+          <div className="absolute left-4 top-4">
+            <span className="flex items-center gap-2 rounded-full bg-green-500 px-3 py-1 text-xs font-semibold text-white shadow-lg">
+              <span className="size-2 animate-pulse rounded-full bg-white"></span>
+              فعال
+            </span>
+          </div>
         </div>
 
-        {/* Active Badge */}
-        <div className="absolute left-4 top-4">
-          <span className="flex items-center gap-2 rounded-full bg-green-500 px-3 py-1 text-xs font-semibold text-white shadow-lg">
-            <span className="size-2 animate-pulse rounded-full bg-white"></span>
-            فعال
-          </span>
-        </div>
-      </div>
+      </Link>
 
       {/* Sessions Section */}
       {upcomingSessions.length > 0 && (
@@ -300,9 +313,18 @@ const ProgramBanner = ({ program }: { program: any }) => {
 
       {/* No upcoming sessions message */}
       {upcomingSessions.length === 0 && (
-        <div className="p-6">
+        <div className="p-4 md:p-6">
           <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
-            <p className="text-sm text-gray-600">هیچ کلاسی برای امروز یا فردا برنامه‌ریزی نشده است</p>
+            <p className="text-xs text-gray-600 md:text-sm">هیچ کلاسی برای امروز یا فردا برنامه‌ریزی نشده است</p>
+            <p className="mt-1 text-[8px] leading-6 text-gray-500 md:mt-2 md:text-xs">
+              برای اطمینان بیشتر از زمان کلاس ها حتما به صفحه 
+              <span className="font-semibold text-purple-800">
+                <Link href={`/dashboard/course-session?program_id=${programState?.id || programState?._id}`}>
+              &nbsp;کلاس های من&nbsp;
+                </Link>
+              </span>
+              مراجعه کنید
+            </p>
           </div>
         </div>
       )}

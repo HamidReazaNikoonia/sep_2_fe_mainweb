@@ -13,18 +13,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 // eslint-disable-next-line ts/consistent-type-imports
 import { Order } from '@/types/Order';
-import { filterPriceNumber } from '@/utils/Helpers';
+import { filterPriceNumber, toPersianDigits } from '@/utils/Helpers';
 
 // type OrderStatus = 'waiting' | 'confirmed' | 'shipped' | 'finish' | 'cancelled' | 'returned' | 'delivered';
 
 const statusMap = {
-  waiting: { status: 'waiting', label: 'در انتظار تایید', color: 'text-blue-800', icon: <Clock className="mr-2" color="blue" size={16} /> },
-  confirmed: { status: 'confirmed', label: 'تایید', color: 'text-green-800', icon: <CircleCheckBig className="mr-2" color="green" size={16} /> },
-  delivered: { status: 'delivered', label: 'دریافت', color: 'text-green-800', icon: <Flag className="mr-2" color="green" size={16} /> },
-  shipped: { status: 'shipped', label: 'ارسال', color: 'text-green-800', icon: <Truck className="mr-2" color="green" size={16} /> },
+  waiting: { status: 'waiting', label: 'در انتظار تایید', color: 'text-blue-800', icon: <Clock className="ml-2" color="blue" size={16} /> },
+  confirmed: { status: 'confirmed', label: 'تایید', color: 'text-green-800', icon: <CircleCheckBig className="ml-2" color="green" size={16} /> },
+  delivered: { status: 'delivered', label: 'دریافت', color: 'text-green-800', icon: <Flag className="ml-2" color="green" size={16} /> },
+  shipped: { status: 'shipped', label: 'ارسال', color: 'text-green-800', icon: <Truck className="ml-2" color="green" size={16} /> },
   finish: { status: 'finish', label: 'اتمام سفارش', color: 'text-green-800', icon: <BadgeCheck className="mr-2" color="green" size={16} /> },
-  cancelled: { status: 'cancelled', label: 'لغو شده', color: 'text-red-800', icon: <Ban className="mr-2" color="red" size={16} /> },
-  returned: { status: 'returned', label: 'برگشت داده شده', color: 'text-red-800', icon: <Undo2 className="mr-2" color="red" size={16} /> },
+  cancelled: { status: 'cancelled', label: 'لغو شده', color: 'text-red-800', icon: <Ban className="ml-2" color="red" size={16} /> },
+  returned: { status: 'returned', label: 'برگشت داده شده', color: 'text-red-800', icon: <Undo2 className="ml-2" color="red" size={16} /> },
 };
 
 moment.loadPersian({ usePersianDigits: true });
@@ -94,9 +94,16 @@ export default function OrdersPage() {
     );
   }
   return (
-    <Card className="mx-2 mb-12 md:mx-8">
+    <Card className="mx-3 mb-12 md:mx-4">
       <CardHeader>
-        <CardTitle dir="rtl">سفارشات</CardTitle>
+        <CardTitle dir="rtl">
+          <div className="dashboard_header_title flex items-center gap-x-2">
+            <CircleCheckBig className="size-6" />
+            <span>
+              سفارشات
+            </span>
+          </div>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {/* Category Filter Buttons */}
@@ -108,9 +115,9 @@ export default function OrdersPage() {
                 variant={selectedCategory === category.key ? 'default' : 'outline'}
                 size="sm"
                 className={clsx(
-                  'text-xs transition-all duration-200',
+                  'responsive_text_size transition-all duration-200',
                   selectedCategory === category.key
-                    ? 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
+                    ? 'test-gradient-bg border-blue-600 text-white hover:opacity-90'
                     : 'hover:bg-gray-50',
                   // Hide desktop-only categories on mobile
                   !category.mobile && 'hidden lg:inline-flex',
@@ -121,7 +128,7 @@ export default function OrdersPage() {
               >
                 {category.label}
                 {selectedCategory === category.key && (
-                  <span className="mr-1 text-xs">
+                  <span className="mr-1 responsive_text_size">
                     (
                     {filteredOrders.filter((order: Order) =>
                       category.key === 'all' ? true : order.status === category.key,
@@ -140,7 +147,9 @@ export default function OrdersPage() {
               <TableRow>
                 <TableHead>تاریخ</TableHead>
                 <TableHead>مجموع</TableHead>
+                <TableHead>مبلغ پرداختی</TableHead>
                 <TableHead>وضعیت</TableHead>
+                <TableHead>وضعیت پرداخت</TableHead>
                 <TableHead className="text-center">جزئیات</TableHead>
               </TableRow>
             </TableHeader>
@@ -149,15 +158,43 @@ export default function OrdersPage() {
                 <TableRow key={order._id}>
                   <TableCell className="text-xs">{order.createdAt && moment(order?.createdAt).format('jYYYY jMMMM jD')}</TableCell>
                   <TableCell className="text-xs">
+                    {order.total && filterPriceNumber(order.total + order.taxes + order.deliveryFees)}
+                    {' '}
+                    تومان
+                  </TableCell>
+
+                  <TableCell className="text-xs">
                     {order.totalAmount && filterPriceNumber(order.totalAmount)}
                     {' '}
                     تومان
                   </TableCell>
+
                   <TableCell className={clsx('flex items-center justify-start text-xs leading-8', statusMap[order.status as keyof typeof statusMap]?.color)}>
-                    {statusMap[order.status as keyof typeof statusMap] && statusMap[order.status as keyof typeof statusMap].label }
-                    {' '}
                     {statusMap[order.status as keyof typeof statusMap] && statusMap[order.status as keyof typeof statusMap].icon }
+                    {' '}
+                    {statusMap[order.status as keyof typeof statusMap] && statusMap[order.status as keyof typeof statusMap].label }
                   </TableCell>
+
+                  <TableCell>
+                    {order?.paymentStatus === 'paid'
+                      ? (
+                          <div className="flex items-center gap-x-1.5 text-xs text-green-600">
+                            <BadgeCheck size={16} />
+                            <span>
+                              پرداخت شده
+                            </span>
+                          </div>
+                        )
+                      : (
+                          <div className="flex items-center gap-x-1.5 text-xs text-red-700">
+                            <Ban size={16} />
+                            <span>
+                              عدم پرداخت
+                            </span>
+                          </div>
+                        )}
+                  </TableCell>
+
                   <TableCell className="text-center">
                     <Link href={`/dashboard/orders/${order._id}`}>
                       <Button variant="outline" className="text-xs ">
@@ -178,20 +215,20 @@ export default function OrdersPage() {
               <CardContent className="p-4">
                 {/* Reference at top center */}
                 <div className="mb-4 text-center">
-                  <div className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold text-gray-800">
+                  <div className="inline-flex items-center rounded-full border shadow border-dashed bg-gray-100 px-3 py-1.5 text-sm font-semibold text-purple-800">
                     کد پیگیری:
                     {' '}
-                    {order.reference}
+                    {order.reference && toPersianDigits(order.reference)}
                   </div>
                 </div>
 
                 {/* Header with date and animated status */}
-                <div className="mb-3 flex items-start justify-between">
-                  <div className="text-sm text-gray-600">
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="text-xs text-gray-600">
                     {order.createdAt && moment(order?.createdAt).format('jYYYY jMMMM jD')}
                   </div>
                   <div className={clsx(
-                    'flex items-center rounded-full px-2 py-1 text-sm',
+                    'flex items-center rounded-full px-2 py-1 text-xs',
                     statusMap[order.status as keyof typeof statusMap]?.color,
                     (order.status === 'waiting' || order.status === 'confirmed' || order.status === 'shipped') && 'animate-pulse bg-blue-50',
                   )}
@@ -203,9 +240,9 @@ export default function OrdersPage() {
                 </div>
 
                 {/* Order details */}
-                <div className="mb-4 space-y-2 rounded-lg border border-dashed border-gray-400 px-1.5 py-2">
+                <div className="mb-4 space-y-2 rounded-lg border border-dashed border-gray-600 px-2.5 py-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">جمع محصولات:</span>
+                    <span className="text-sm text-gray-600">جمع محصولات</span>
                     <span className="text-sm font-medium">
                       {order.total && filterPriceNumber(order.total)}
                       {' '}
@@ -214,7 +251,7 @@ export default function OrdersPage() {
                   </div>
                   {order?.shippingAddress && (
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">هزینه ارسال:</span>
+                      <span className="text-sm text-gray-600">هزینه ارسال</span>
                       <span className="text-sm font-medium">
                         {order.deliveryFees && filterPriceNumber(order.deliveryFees)}
                         {' '}
@@ -224,7 +261,7 @@ export default function OrdersPage() {
                   )}
                   {order?.taxes && (
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">مالیات:</span>
+                      <span className="text-sm text-gray-600">مالیات</span>
                       <span className="text-sm font-medium">
                         {order.taxes && filterPriceNumber(order.taxes)}
                         {' '}
@@ -233,7 +270,7 @@ export default function OrdersPage() {
                     </div>
                   )}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">مبلغ پرداختی:</span>
+                    <span className="text-sm text-gray-600">مبلغ پرداختی</span>
                     <span className="text-sm font-medium">
                       {order.totalAmount && filterPriceNumber(order.totalAmount)}
                       {' '}
@@ -245,14 +282,14 @@ export default function OrdersPage() {
                 {/* Products section */}
                 {order.products && order.products.length > 0 && (
                   <div className="mb-4 mt-6">
-                    <h4 className="mb-2 text-center text-sm font-medium text-gray-700">محصولات سفارش:</h4>
+                    <h4 className="mb-2 text-center text-sm font-medium text-purple-800">محصولات سفارش</h4>
                     <div className="space-y-2">
                       {order.products.map((item: any, index: number) => (
                         <div key={index} className="flex items-center justify-between rounded-lg bg-gray-50 p-2">
                           <div className="flex items-center gap-2">
                             {item.product && (
                               <>
-                                <span className="inline-flex items-center gap-1.5 text-xs">
+                                <span className="inline-flex items-center gap-1.5 text-[10px]">
                                   <ShoppingBag className="size-3.5 text-purple-500" />
                                   {item.product.title}
 
@@ -266,7 +303,7 @@ export default function OrdersPage() {
                               </>
                             )}
                             {item.course && (
-                              <span className="inline-flex items-center gap-1.5 text-xs">
+                              <span className="inline-flex items-center gap-1.5 text-[10px] text-purple-900">
                                 <BookOpenCheck className="size-3.5 text-purple-500" />
                                 {item.course.title}
                               </span>

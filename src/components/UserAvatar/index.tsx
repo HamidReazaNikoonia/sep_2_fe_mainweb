@@ -4,7 +4,7 @@ import useAuth from '@/hooks/useAuth';
 /* eslint-disable react-dom/no-missing-button-type */
 import { toPersianDigits } from '@/utils/Helpers';
 
-import { GraduationCap, LayoutDashboard, LogOut, Logs, UserRound, Layers2 } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, LogOut, Calendar, Logs, UserRound, BookOpenCheck, Send } from 'lucide-react';
 
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -60,8 +60,10 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ user, isMobile }) => {
   const items: DropdownItem[] = [
     { title: 'داشبورد', link: '/dashboard', icon: <LayoutDashboard size={16} color="rgb(55, 65, 81)" /> },
     { title: 'سفارش ها', link: '/dashboard/orders', icon: <Logs size={16} color="rgb(55, 65, 81)" /> },
-    { title: 'دوره ها', link: '/dashboard/course-sessions', icon: <GraduationCap size={16} color="rgb(55, 65, 81)" /> },
-    { title: 'آموزش ها', link: '/dashboard/course', icon: <Layers2 size={16} color="rgb(55, 65, 81)" /> },
+    { title: 'دوره ها', link: '/dashboard/course', icon: <GraduationCap size={16} color="rgb(55, 65, 81)" /> },
+    { title: 'کلاس های آموزشی', link: '/dashboard/course-session', icon: <BookOpenCheck size={16} color="rgb(55, 65, 81)" /> },
+    { title: 'پشتیبانی', link: '/dashboard/ticket', icon: <Send size={16} color="rgb(55, 65, 81)" /> },
+    { title: 'تقویم آموزشی', link: '/dashboard/calendar', icon: <Calendar size={16} color="rgb(55, 65, 81)" /> },
 
     ...(user?.role === 'coach'
       ? [
@@ -82,22 +84,27 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ user, isMobile }) => {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative min-w-[100px]" ref={dropdownRef}>
       {/* Avatar Button */}
       <button
         onClick={toggleDropdown}
-        className="ml-3 flex size-8 cursor-pointer items-center justify-center rounded-full border bg-white hover:bg-gray-100 focus:outline-none md:size-10"
+        className=" w-full "
       >
 
         <span className="font-semibold text-gray-500">
-          <UserRound strokeWidth={1} size={isMobile ? 20 : 26} />
+          <div className="ml-3 hidden size-8 cursor-pointer items-center justify-center rounded-full border bg-white hover:bg-gray-100 focus:outline-none md:flex md:size-10">
+            <UserRound strokeWidth={1} size={isMobile ? 20 : 26} />
+          </div>
+          <span className="pink-gradient-bg ml-2 block rounded px-2.5 py-1  text-xs text-white md:hidden">
+            پنل کاربری شما
+          </span>
         </span>
 
       </button>
 
       {/* Dropdown Menu */}
       {isDropdownOpen && (
-        <div className="absolute left-0 z-10 mt-2 w-48 rounded-lg border border-gray-200 bg-white pb-2 text-right shadow-lg">
+        <div className="absolute right-[-30px] z-10 mt-2 w-48 rounded-lg border border-gray-200 bg-white pb-2 text-right shadow-lg">
           <div className="w-full border-b pb-1">
             <div className="mr-3 py-2 text-xs text-gray-700 md:text-sm">
               {user.first_name}

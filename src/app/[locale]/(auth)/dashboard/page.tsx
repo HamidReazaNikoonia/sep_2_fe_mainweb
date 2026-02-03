@@ -44,11 +44,22 @@ export default function DashboardPage() {
         updateUser(profileData.profile.user);
       }
 
+      const userProfile = profileData?.profile;
+
+      // count favorites item from `likedCourse` - `likedCourseSession` - `likedProduct`
+      const likedCourse = userProfile?.likedCourse || [];
+      const likedCourseSession = userProfile?.likedCourseSession || [];
+      const likedProduct = userProfile?.likedProduct || [];
+      // total count
+      const favTotalCounts = (likedCourse?.length && likedCourse?.length)
+        + (likedCourseSession?.length && likedCourseSession?.length)
+        + (likedProduct?.length && likedProduct?.length);
+
       setProfileData({
         courseCount: Array.isArray(profileData.courses) ? profileData.courses.length : 0,
         courseSessionCount: Array.isArray(profileData?.programs) ? profileData?.programs.length : 0,
         orderCount: Array.isArray(profileData.orders) ? profileData.orders.length : 0,
-        favorites: 0,
+        favorites: favTotalCounts,
       });
     }
   }, [profileIsSuccess, profileData]);
@@ -132,13 +143,13 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      <div dir="rtl" className="grid grid-cols-1 gap-4 px-4 pb-12 sm:grid-cols-2 md:px-8 lg:grid-cols-4">
+      <div dir="rtl" className="grid grid-cols-1 gap-3 px-6 pb-12 sm:grid-cols-2 md:px-4 lg:grid-cols-4">
 
         <Link href="/dashboard/orders" className="w-full">
-          <Card>
+          <Card className="test-gradient-bg text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">کل سفارشات</CardTitle>
-              <Logs size={18} color="gray" />
+              <Logs size={18} color="white" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -152,10 +163,10 @@ export default function DashboardPage() {
         {/* Courses */}
 
         <Link href="/dashboard/courses" className="w-full">
-          <Card>
+          <Card className="test-gradient-bg text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">دوره‌های ثبت‌نام شده</CardTitle>
-              <GraduationCap size={18} color="gray" />
+              <GraduationCap size={18} color="white" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -169,10 +180,10 @@ export default function DashboardPage() {
         {/* Courses Session Program */}
 
         <Link href="/dashboard/course-session" className="w-full">
-          <Card>
+          <Card className="test-gradient-bg text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">کلاس های ثبت‌نام شده</CardTitle>
-              <GraduationCap size={18} color="gray" />
+              <BookOpenCheck size={18} color="white" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -185,10 +196,10 @@ export default function DashboardPage() {
 
         {/* FAV */}
         <Link href="/dashboard/favorites" className="w-full">
-          <Card>
+          <Card className="test-gradient-bg text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">علاقه‌مندی‌ها</CardTitle>
-              <Heart size={18} color="gray" />
+              <Heart size={18} color="white" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -212,7 +223,7 @@ export default function DashboardPage() {
           if (activePrograms.length === 0) return null;
 
           return (
-            <div className="mb-6 px-4 md:px-8">
+            <div className="mb-6 px-6 md:px-4">
               <h2 className="mb-4 mr-2 flex items-center gap-2 text-base font-bold text-purple-800 md:text-lg">
                 <BookOpenCheck className="text-purple-800" />
                 <span>کلاس های نزدیک شما</span>

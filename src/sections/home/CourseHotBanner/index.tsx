@@ -17,8 +17,6 @@ export default function CourseHotBanner() {
       {/* Header */}
       <div className="flex w-full  pb-8">
 
-        
-        
       </div>
       <div className="w-full px-2 md:px-0 ">
 

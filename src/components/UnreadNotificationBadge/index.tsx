@@ -25,7 +25,7 @@ export default function UnreadNotificationBadge({
   return (
     <span
       className={clsx(
-        'absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-red-500 text-xs text-white',
+        'absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-red-500 text-[12px] text-white shadow-sm md:size-5 md:text-xs',
         className,
       )}
     >

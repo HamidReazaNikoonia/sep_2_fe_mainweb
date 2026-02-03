@@ -7,7 +7,7 @@
 'use client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { Upload, UserRound } from 'lucide-react';
+import { IdCard, SquareUser, Upload, UserRound } from 'lucide-react';
 import { type ReactNode, use, useEffect, useRef, useState } from 'react';
 import AvatarEditor from 'react-avatar-editor';
 import toast from 'react-hot-toast';
@@ -457,6 +457,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
       }));
 
       toast.success('تصاویر کارت ملی با موفقیت آپلود شدند');
+      toast.success('برای ثبت تغییرات باید دکمه ذخیره را کلیک کنید');
     } catch (error) {
       toast.error('خطا در آپلود تصویر کارت ملی');
       console.error(error);
@@ -504,11 +505,18 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
       <div className="container mx-auto">
         {/* Profile Card */}
         <div className="flex flex-col items-center justify-center ">
-          <h1 className="mb-8 text-xl font-bold md:text-2xl">پروفایل کاربری</h1>
-          <Card className="w-full max-w-5xl shadow-lg">
+          <h1 className="mb-6 flex items-center gap-x-3 text-xl font-bold text-purple-800 md:text-2xl">
+            <UserRound />
+
+            <span>
+              {' '}
+              پروفایل کاربری
+            </span>
+          </h1>
+          <Card className="w-full shadow-lg">
             <CardContent dir="rtl" className="p-6">
               <div className="mb-6 flex items-center justify-center">
-                <div className="flex size-40 items-center justify-center rounded-full bg-gray-100">
+                <div className="flex size-40 items-center justify-center rounded-full border border-[#ebbdeb] bg-gray-100 shadow-sm">
 
                   {previewImage && (
                     <img
@@ -544,7 +552,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex max-w-64 items-center justify-center rounded-md border border-gray-300 p-2 text-xs hover:bg-gray-50"
+                  className="flex max-w-64 items-center justify-center rounded-md border border-gray-300 p-2 px-6 text-xs text-gray-800 hover:bg-gray-50"
                 >
                   <Upload className="ml-2 size-4" />
                   انتخاب تصویر
@@ -560,7 +568,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                   </div>
                 )}
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 rounded-md bg-[aliceblue] p-4">
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-500 md:text-sm">نام و نام خانوادگی</span>
                   <span className="mt-2 text-base font-medium">
@@ -586,9 +594,17 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           </Card>
 
           {/* Edit Profile Form Card */}
-          <Card className="mt-8 w-full max-w-5xl shadow-lg">
+          <Card className="mt-4 w-full  shadow-lg">
             <CardContent dir="rtl" className="p-6">
-              <h2 className="mb-6 text-xl font-semibold">اطلاعات هویتی</h2>
+              <h2 className="dashboard_header_title mb-6 flex items-center gap-x-3">
+
+                <IdCard className="size-6" />
+                <span>
+                  اطلاعات هویتی
+
+                </span>
+
+              </h2>
               <form className="space-y-4">
                 <div className="flex flex-col">
                   <label className="mb-2 text-xs text-gray-500 md:text-sm">نام</label>
@@ -780,9 +796,17 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           </Card>
 
           {/* User Information */}
-          <Card className="mt-8 w-full max-w-5xl shadow-lg">
+          <Card className="mt-4 w-full shadow-lg">
             <CardContent dir="rtl" className="p-6">
-              <h2 className="mb-6 text-xl font-semibold">اطلاعات کاربری</h2>
+              <h2 className="dashboard_header_title mb-6 flex items-center gap-x-3">
+
+                <SquareUser className="size-6" />
+                <span>
+                  اطلاعات کاربری
+
+                </span>
+
+              </h2>
               <div className="flex w-full flex-col gap-4 pb-4">
                 <div className="flex w-full flex-col gap-4 md:flex-row">
                   <div className="flex-1">
@@ -915,19 +939,20 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
                 </div>
 
               </div>
+
+              <div className="mt-6 flex w-full max-w-5xl justify-center">
+                <LoadingButton
+                  onClick={handleSubmit}
+                  isLoading={updateProfileMutation.isPending}
+                  className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  disabled={updateProfileMutation.isPending}
+                >
+                  ذخیره
+                </LoadingButton>
+              </div>
             </CardContent>
           </Card>
 
-          <div className="mt-8 flex w-full max-w-5xl justify-center">
-            <LoadingButton
-              onClick={handleSubmit}
-              isLoading={updateProfileMutation.isPending}
-              className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              disabled={updateProfileMutation.isPending}
-            >
-              ذخیره
-            </LoadingButton>
-          </div>
         </div>
       </div>
 
@@ -987,7 +1012,7 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
         isOpen={isProfileCompleteModalOpen}
         onClose={() => setIsProfileCompleteModalOpen(false)}
       >
-        <div dir="rtl" className="flex flex-col items-center gap-4 py-12 px-6">
+        <div dir="rtl" className="flex flex-col items-center gap-4 px-6 py-12">
           {/* Success/Warning Icon */}
           {isUserCompleteProfile ? (
             <svg
@@ -1022,13 +1047,13 @@ export default function UserProfilePage({ params }: IUserProfilePageProps) {
           )}
 
           {/* Success/Warning Message */}
-          <div className="text-center pb-6 pt-4">
+          <div className="pb-6 pt-4 text-center">
             {isUserCompleteProfile ? (
               <>
-                <p className="text-base mb-4 font-semibold text-green-700">
+                <p className="mb-4 text-base font-semibold text-green-700">
                   پروفایل شما با موفقیت تکمیل شد!
                 </p>
-                <p className="text-xs leading-6 md:text-sm text-gray-600">
+                <p className="text-xs leading-6 text-gray-600 md:text-sm">
                   شما میتوانید کلاس های آموزشی خود را ثبت نام کنید تا زمانی که همکاران ما اطالاعات هویتی شما را تایید کنند
                 </p>
               </>

@@ -89,7 +89,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ isMobileScreen, onClo
           <div className="py-2">
             <div
               className="flex cursor-pointer items-center gap-2 px-4 py-3 text-right text-sm hover:bg-gray-50 md:gap-3"
-              onClick={() => handleSearchNavigation(`/course?search=${encodeURIComponent(debouncedSearchTerm)}`)}
+              onClick={() => handleSearchNavigation(`/course?q=${encodeURIComponent(debouncedSearchTerm)}`)}
             >
               <Video className="size-4 text-gray-400" />
               <span className="text-[10px] font-normal leading-3 tracking-tighter text-gray-500 md:text-sm">

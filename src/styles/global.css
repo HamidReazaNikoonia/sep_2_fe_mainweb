@@ -258,6 +258,32 @@ input#datePicker_to {
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
+/* Css Dot Line */
+.dot-line {
+  display: flex;
+  align-items: center;
+}
+
+.dot-line::before,
+.dot-line::after {
+  content: '';
+  width: 5px; /* Adjust the size of the dots */
+  height: 2px; /* Adjust the thickness of the line */
+  background-color: #007bff; /* Change the color to your preference */
+  margin: 0 3px; /* Add some space between the dots */
+}
+
+.dot-line::before {
+  position: relative;
+  top: -1px; /* Position the dot above the text */
+}
+
+.dot-line::after {
+  position: relative;
+  bottom: -1px; /* Position the dot below the text */
+}
+
+
 /* Flip card styles */
 .transform-style-preserve-3d {
   transform-style: preserve-3d;
@@ -492,4 +518,28 @@ input#datePicker_to {
 .richtext-view ul,
 .richtext-view ol {
   all: revert;
+}
+
+.dashboard_header_title {
+  @apply text-lg font-semibold text-purple-950 md:text-xl;
+}
+
+
+/* cutome class */
+/* src/main.css */
+
+.responsive_text_size {
+  font-size: 11px;
+}
+
+@media (max-width: 400px) {
+  .responsive_text_size {
+      font-size: 10px;
+  }
+}
+
+@media (min-width: 501px) {
+  .responsive_text_size {
+      font-size: 12px;
+  }
 }

@@ -1,6 +1,7 @@
 import {IProduct} from '@/types/Product'
 
 export interface Order {
+  paymentStatus: string
   total: any
   total_discount_price: boolean
   deliveryFees: any

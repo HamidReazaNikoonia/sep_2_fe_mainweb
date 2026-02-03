@@ -180,13 +180,12 @@ const Navbar = () => {
 
                 <div className="relative inline-flex">
                   <Link href="/cart" alt="go to cart items">
-                    <button className="rounded-lg border border-white/50 bg-white/30 px-4 py-2 text-sm shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-white/50"
-                    >
+                    <button className="rounded-lg border border-white/50 bg-white/30 px-4 py-2 text-sm shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-white/50">
                       <ShoppingBasket strokeWidth={1} size={isMobileScreen ? 16 : 24} />
                     </button>
                   </Link>
                   {(productCountBadge > 0) && (
-                    <span className="absolute -top-2 -right-2 flex h-4 w-4 md:h-5 md:w-5 items-center justify-center rounded-full bg-red-500 text-[11px] md:text-xs text-white shadow-sm" >
+                    <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-red-500 text-[12px] text-white shadow-sm md:size-5 md:text-xs" >
                       {toPersianDigits(productCountBadge)}
                     </span>
                   )}
